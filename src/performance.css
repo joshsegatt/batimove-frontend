@@ -1,0 +1,75 @@
+/* 60fps Smooth Scrolling & Performance Optimizations */
+
+* {
+  /* Enable hardware acceleration for all elements */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  /* Smooth scrolling with 60fps target */
+  scroll-behavior: smooth;
+  /* Optimize for 60fps rendering */
+  -webkit-overflow-scrolling: touch;
+}
+
+body {
+  /* Prevent layout shifts */
+  overflow-x: hidden;
+  /* Force GPU acceleration */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  /* Optimize text rendering */
+  text-rendering: optimizeLegibility;
+}
+
+/* Optimize animations for 60fps */
+@media (prefers-reduced-motion: no-preference) {
+  * {
+    /* Use will-change sparingly for animated elements */
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* Force hardware acceleration for transforms */
+[class*="transform"],
+[class*="translate"],
+[class*="rotate"],
+[class*="scale"] {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Optimize video playback */
+video {
+  /* Force GPU rendering */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  /* Prevent flickering */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Optimize images */
+img {
+  /* Force GPU rendering */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  /* Improve image quality */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Smooth scroll container */
+.smooth-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent scroll jank */
+@supports (scrollbar-gutter: stable) {
+  html {
+    scrollbar-gutter: stable;
+  }
+}
