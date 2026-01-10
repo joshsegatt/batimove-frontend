@@ -107,7 +107,7 @@ export const Badge: React.FC<{ children: React.ReactNode; variant?: 'blue' | 're
 // --- Official Logo ---
 export const Logo: React.FC<React.ImgHTMLAttributes<HTMLImageElement>> = (props) => (
   <img
-    src="/batimove-logo.png"
+    src="/batimove-logo-3d.png"
     alt="Batimove Logo"
     {...props}
   />
