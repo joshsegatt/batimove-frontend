@@ -20,7 +20,7 @@ const servicesList = [
     subtitle: "Business Solutions",
     description: "Minimisez l'impact sur votre productivité. Nos équipes opèrent le soir ou le week-end pour garantir une reprise d'activité immédiate dès le lundi matin.",
     features: ["Intervention hors horaires", "Gestion de parc informatique", "Archives et confidentialité", "Coordinateur de projet dédié"],
-    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop",
+    image: "/service-business.png",
     isPopular: false
   },
   {
@@ -47,7 +47,7 @@ const servicesList = [
     subtitle: "Accès Difficiles",
     description: "Passage par la fenêtre jusqu'au 12ème étage. Idéal pour les canapés volumineux ou les cages d'escalier étroites des immeubles anciens.",
     features: ["Jusqu'à 300kg de charge", "Opérateur qualifié inclus", "Sécurisation de la zone", "Permis de voirie géré"],
-    image: "/service-demenagement.png",
+    image: "/service-lift.png",
     isPopular: false
   },
   {
@@ -56,7 +56,7 @@ const servicesList = [
     subtitle: "Douanes & Logistique",
     description: "Quittez ou rejoignez la Suisse sans tracas administratifs. Nous gérons les formalités douanières et la logistique transfrontalière.",
     features: ["Gestion formalités douanières", "Fret routier, maritime ou aérien", "Emballage export spécifique", "Réseau de partenaires mondiaux"],
-    image: "/service-cleaning.png",
+    image: "/service-international.png",
     isPopular: false
   }
 ];
