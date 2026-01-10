@@ -8,16 +8,16 @@ interface ButtonProps extends HTMLMotionProps<"button"> {
   isLoading?: boolean;
 }
 
-export const Button: React.FC<ButtonProps> = ({ 
-  children, 
-  variant = 'primary', 
-  size = 'md', 
-  isLoading, 
-  className = '', 
-  ...props 
+export const Button: React.FC<ButtonProps> = ({
+  children,
+  variant = 'primary',
+  size = 'md',
+  isLoading,
+  className = '',
+  ...props
 }) => {
   const baseStyles = "inline-flex items-center justify-center rounded-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
-  
+
   const variants = {
     primary: "bg-batimove-red text-white hover:bg-red-700 focus:ring-batimove-red shadow-lg shadow-red-500/30",
     secondary: "bg-batimove-blue text-white hover:bg-blue-800 focus:ring-batimove-blue shadow-lg shadow-blue-500/30",
@@ -62,9 +62,8 @@ export const Input: React.FC<InputProps> = ({ label, error, className = '', ...p
     <div className="flex flex-col gap-1.5 w-full">
       {label && <label className="text-sm font-medium text-slate-700">{label}</label>}
       <input
-        className={`px-4 py-2 rounded-lg border bg-white focus:ring-2 focus:ring-batimove-blue focus:border-batimove-blue outline-none transition-all ${
-          error ? 'border-red-500 focus:ring-red-200' : 'border-slate-300'
-        } ${className}`}
+        className={`px-4 py-2 rounded-lg border bg-white focus:ring-2 focus:ring-batimove-blue focus:border-batimove-blue outline-none transition-all ${error ? 'border-red-500 focus:ring-red-200' : 'border-slate-300'
+          } ${className}`}
         {...props}
       />
       {error && <span className="text-xs text-red-500">{error}</span>}
@@ -106,28 +105,10 @@ export const Badge: React.FC<{ children: React.ReactNode; variant?: 'blue' | 're
 };
 
 // --- Official Logo ---
-export const Logo: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
-    {/* Blue House (Left) */}
-    <path d="M256 60 L40 190 V460 H256 V60 Z" fill="#0052A3"/>
-    
-    {/* Chimney */}
-    <path d="M70 140 V80 H110 V115" fill="#0052A3"/>
-    
-    {/* House Window */}
-    <rect x="90" y="240" width="80" height="80" rx="4" fill="white"/>
-    <path d="M130 240 V320 M90 280 H170" stroke="#0052A3" strokeWidth="8"/>
-    
-    {/* House Door Cutout */}
-    <path d="M180 460 V360 H230 V460" fill="white"/>
-    
-    {/* Red Box (Right) - Perspective */}
-    <path d="M256 60 L460 140 V420 L256 460 V60 Z" fill="#E10600"/>
-    
-    {/* Box Top Flap Detail (Subtle) */}
-    <path d="M256 60 L460 140" stroke="white" strokeWidth="4" strokeOpacity="0.2"/>
-    
-    {/* Swiss Cross on Box */}
-    <path d="M358 280 H328 V240 H358 V210 H398 V240 H428 V280 H398 V310 H358 V280 Z" fill="white"/>
-  </svg>
+export const Logo: React.FC<React.ImgHTMLAttributes<HTMLImageElement>> = (props) => (
+  <img
+    src="/batimove-logo.png"
+    alt="Batimove Logo"
+    {...props}
+  />
 );
