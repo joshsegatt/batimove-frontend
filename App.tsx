@@ -1,6 +1,7 @@
 import React from 'react';
 import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Navbar, Footer } from './components/Layout';
+import '../src/performance.css'; // 60fps optimizations
 import { Home } from './pages/Home';
 import { Quote } from './pages/Quote';
 import { Services } from './pages/Services';
@@ -32,7 +33,7 @@ const App: React.FC = () => {
             <Route path="/business" element={<Business />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/contact" element={<Contact />} />
-            
+
             {/* Legal Routes */}
             <Route path="/privacy" element={<Legal type="privacy" />} />
             <Route path="/terms" element={<Legal type="terms" />} />

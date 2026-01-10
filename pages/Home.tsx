@@ -143,8 +143,8 @@ export const Home: React.FC = () => {
 
                   </div>
 
-                  {/* 3. RIGHT COLUMN: VIDEO CARD (Clean, no avatar) */}
-                  <div className="relative h-[600px] hidden lg:flex items-center justify-center perspective-[2000px]">
+                  {/* 3. RIGHT COLUMN: VIDEO CARD + FLOATING MASCOT */}
+                  <div className="relative h-[600px] hidden lg:flex items-center justify-end perspective-[2000px]">
 
                      {/* Floating Glow */}
                      <motion.div
