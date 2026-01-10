@@ -43,11 +43,9 @@ export const Navbar: React.FC = () => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
-          <Link to="/" className="flex items-center gap-2 z-50">
-            {/* Logo with white background */}
-            <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center p-2 shadow-md">
-              <Logo className="w-full h-full" />
-            </div>
+          <Link to="/" className="flex items-center gap-1.5 z-50">
+            {/* 3D Logo - No background */}
+            <Logo className="w-14 h-14" />
             <span className={`text-2xl font-extrabold tracking-tight transition-colors ${isImmersivePage && !isMobileMenuOpen ? 'text-white' : 'text-slate-900'
               }`}>
               Batimove
@@ -160,10 +158,8 @@ export const Footer: React.FC = () => {
 
           {/* Identity Block - Compact */}
           <div className="space-y-3 max-w-xs">
-            <Link to="/" className="flex items-center gap-2 text-white text-lg font-bold font-display hover:opacity-80 transition-opacity">
-              <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center p-1.5">
-                <Logo className="w-full h-full" />
-              </div>
+            <Link to="/" className="flex items-center gap-1.5 text-white text-lg font-bold font-display hover:opacity-80 transition-opacity">
+              <Logo className="w-9 h-9" />
               Batimove
             </Link>
             <div className="text-xs leading-relaxed text-slate-500 font-medium">
