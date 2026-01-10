@@ -1,7 +1,7 @@
 import React from 'react';
 import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Navbar, Footer } from './components/Layout';
-import '../src/performance.css'; // 60fps optimizations
+import './src/performance.css'; // 60fps optimizations
 import { Home } from './pages/Home';
 import { Quote } from './pages/Quote';
 import { Services } from './pages/Services';

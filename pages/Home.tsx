@@ -200,6 +200,38 @@ export const Home: React.FC = () => {
                         </div>
                      </motion.div>
 
+                     {/* --- FLOATING MASCOT AVATAR (Fintech Style) --- */}
+                     <motion.div
+                        initial={{ opacity: 0, x: 50, scale: 0.8 }}
+                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                        transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
+                        className="relative z-20 hidden xl:block"
+                     >
+                        {/* Glow Behind Avatar */}
+                        <div className="absolute inset-0 bg-batimove-blue/30 rounded-full blur-[40px] scale-110"></div>
+
+                        {/* Avatar Container */}
+                        <motion.div
+                           animate={{ y: [0, -10, 0] }}
+                           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                           className="relative w-[180px] h-[180px] rounded-full bg-gradient-to-br from-white to-slate-100 p-1 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.4)] ring-2 ring-white/20"
+                        >
+                           <div className="w-full h-full rounded-full bg-white overflow-hidden">
+                              <img
+                                 src="/batimove-mascot.png"
+                                 alt="Expert Batimove"
+                                 className="w-full h-full object-cover scale-110"
+                              />
+                           </div>
+
+                           {/* Status Badge */}
+                           <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-green-500 text-white text-[10px] font-bold shadow-lg flex items-center gap-1.5">
+                              <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
+                              Disponible
+                           </div>
+                        </motion.div>
+                     </motion.div>
+
                      {/* REMOVED FLOATING PARALLAX OBJECTS AS REQUESTED */}
 
                   </div>
