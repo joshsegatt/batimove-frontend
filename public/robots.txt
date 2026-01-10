@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://batimove-frontend-m10xxjvc6-joshs-projects-55d7b93b.vercel.app/sitemap.xml
+
+# Disallow admin or private areas (if any in future)
+# Disallow: /admin/
