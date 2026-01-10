@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 export const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
-  
+
   // Quote page acts as a standalone funnel with its own internal navigation.
   // We hide the global navbar to prevent visual conflicts (white text on white bg) and double headers.
   const isQuotePage = location.pathname === '/quote' || location.pathname.startsWith('/quote/');
@@ -35,34 +35,31 @@ export const Navbar: React.FC = () => {
   ];
 
   return (
-    <nav 
-      className={`absolute top-0 w-full z-50 transition-colors duration-300 ${
-        isImmersivePage 
-          ? 'bg-transparent' 
-          : 'bg-white border-b border-slate-100 shadow-sm'
-      }`}
+    <nav
+      className={`absolute top-0 w-full z-50 transition-colors duration-300 ${isImmersivePage
+        ? 'bg-transparent'
+        : 'bg-white border-b border-slate-100 shadow-sm'
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <Link to="/" className="flex items-center gap-3 z-50">
-             {/* New Official Logo */}
-             <Logo className="w-12 h-12 drop-shadow-md" />
-             <span className={`text-2xl font-extrabold tracking-tight transition-colors ${
-               isImmersivePage && !isMobileMenuOpen ? 'text-white' : 'text-slate-900'
-             }`}>
-               Batimove
-             </span>
+            {/* New Official Logo */}
+            <Logo className="w-16 h-16 drop-shadow-md" />
+            <span className={`text-2xl font-extrabold tracking-tight transition-colors ${isImmersivePage && !isMobileMenuOpen ? 'text-white' : 'text-slate-900'
+              }`}>
+              Batimove
+            </span>
           </Link>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <Link 
-                key={link.name} 
+              <Link
+                key={link.name}
                 to={link.path}
-                className={`text-sm font-medium transition-colors ${
-                  isImmersivePage ? 'text-white/80 hover:text-white' : 'text-slate-600 hover:text-batimove-blue'
-                }`}
+                className={`text-sm font-medium transition-colors ${isImmersivePage ? 'text-white/80 hover:text-white' : 'text-slate-600 hover:text-batimove-blue'
+                  }`}
               >
                 {link.name}
               </Link>
@@ -71,19 +68,19 @@ export const Navbar: React.FC = () => {
 
           <div className="hidden md:flex items-center gap-4">
             <Link to="/quote">
-               <Button variant={isImmersivePage ? "secondary" : "primary"} size="sm">Devis Express</Button>
+              <Button variant={isImmersivePage ? "secondary" : "primary"} size="sm">Devis Express</Button>
             </Link>
           </div>
 
           {/* Mobile Menu Button */}
-          <button 
+          <button
             className="md:hidden z-50 p-2 relative"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
-             {/* Only show menu icon here, X is inside the slide-over */}
-             {!isMobileMenuOpen && (
-                <Menu className={isImmersivePage ? "text-white" : "text-slate-900"} />
-             )}
+            {/* Only show menu icon here, X is inside the slide-over */}
+            {!isMobileMenuOpen && (
+              <Menu className={isImmersivePage ? "text-white" : "text-slate-900"} />
+            )}
           </button>
         </div>
       </div>
@@ -93,16 +90,16 @@ export const Navbar: React.FC = () => {
         {isMobileMenuOpen && (
           <>
             {/* Dark Backdrop */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMobileMenuOpen(false)}
               className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 md:hidden"
             />
-            
+
             {/* Side Panel */}
-            <motion.div 
+            <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
@@ -110,7 +107,7 @@ export const Navbar: React.FC = () => {
               className="fixed top-0 right-0 h-full w-[85%] max-w-sm bg-white shadow-2xl z-50 flex flex-col p-6 md:hidden"
             >
               <div className="flex justify-end mb-8">
-                <button 
+                <button
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="p-2 rounded-full hover:bg-slate-100 transition-colors"
                 >
@@ -120,7 +117,7 @@ export const Navbar: React.FC = () => {
 
               <div className="flex-1 flex flex-col justify-center items-center gap-8">
                 {navLinks.map((link) => (
-                  <Link 
+                  <Link
                     key={link.name}
                     to={link.path}
                     className="text-3xl font-light tracking-tight text-slate-900 hover:text-batimove-blue transition-colors"
@@ -158,11 +155,11 @@ export const Footer: React.FC = () => {
     <footer className="bg-[#0B1E33] text-slate-400 py-8 border-t border-white/5 font-sans">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-start gap-8 md:gap-12 mb-8">
-          
+
           {/* Identity Block - Compact */}
           <div className="space-y-3 max-w-xs">
             <Link to="/" className="flex items-center gap-2 text-white text-lg font-bold font-display hover:opacity-80 transition-opacity">
-              <Logo className="w-8 h-8" />
+              <Logo className="w-10 h-10" />
               Batimove
             </Link>
             <div className="text-xs leading-relaxed text-slate-500 font-medium">
@@ -183,7 +180,7 @@ export const Footer: React.FC = () => {
               <Link to="/services" className="hover:text-white transition-colors">Garde-Meubles</Link>
               <Link to="/services" className="hover:text-white transition-colors">Nettoyage</Link>
             </div>
-            
+
             <div className="flex flex-col gap-2">
               <h4 className="text-white font-semibold font-display mb-1">Société</h4>
               <Link to="/contact" className="hover:text-white transition-colors">Contact</Link>
@@ -204,10 +201,10 @@ export const Footer: React.FC = () => {
         <div className="pt-6 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] font-medium text-slate-600">
           <p>© {new Date().getFullYear()} Batimove SA. Tous droits réservés.</p>
           <div className="flex items-center gap-6">
-             <a href="#" className="hover:text-white transition-colors flex items-center gap-2 group">
-                <Instagram className="w-4 h-4 group-hover:text-batimove-red transition-colors" />
-                <span className="hidden sm:inline">Instagram</span>
-             </a>
+            <a href="#" className="hover:text-white transition-colors flex items-center gap-2 group">
+              <Instagram className="w-4 h-4 group-hover:text-batimove-red transition-colors" />
+              <span className="hidden sm:inline">Instagram</span>
+            </a>
           </div>
         </div>
       </div>
