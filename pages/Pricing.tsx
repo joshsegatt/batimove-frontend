@@ -5,19 +5,75 @@ import { Button } from '../components/UIComponents';
 import { Check, Star, X, Send } from 'lucide-react';
 
 // Data for the 4 Cards with 3D Icons
-image: "https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Gem%20Stone.png",
-  price: "Sur Devis",
-    description: "Pour les villas d'exception, les œuvres d'art, les pianos ou les déménagements internationaux.",
-      features: [
-        "Visite technique offerte",
-        "Logistique Internationale",
-        "Objets lourds / Coffres",
-        "Solution 100% Flexible"
-      ],
-        cta: "Contacter l'Expert",
-          highlight: false,
-            action: "modal", // Triggers the window
-              specialStyle: true
+const plans = [
+  {
+    id: 'basic',
+    name: "Basic",
+    tagline: "Essentiel",
+    image: "https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Package.png",
+    price: "CHF 550",
+    description: "Avez-vous juste besoin d'une petite aide ? L'offre basic c'est votre choix !",
+    features: [
+      "Chargement / Déchargement",
+      "Transport"
+    ],
+    cta: "Choisir Basic",
+    highlight: false,
+    action: "link"
+  },
+  {
+    id: 'standard',
+    name: "Standard",
+    tagline: "Complet",
+    image: "https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Star.png",
+    price: "CHF 850",
+    description: "Le déménagement standard vous donne la tranquillité dont vous avez besoin pour commencer votre nouveau départ.",
+    features: [
+      "Matériaux d'emballages",
+      "Assemblage / Démontage des meubles",
+      "Chargement / Déchargement",
+      "Transport"
+    ],
+    cta: "Choisir Standard",
+    highlight: true,
+    action: "link"
+  },
+  {
+    id: 'premium',
+    name: "Premium",
+    tagline: "Tout Inclus",
+    image: "https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Crown.png",
+    price: "CHF 1'500",
+    description: "Optez pour l'option premium pour rentrer dans une maison prête à vivre dès le premier jour.",
+    features: [
+      "Déballage",
+      "Emballage",
+      "Matériaux d'emballage",
+      "Assemblage / Démontage des meubles",
+      "Chargement / Déchargement",
+      "Transport"
+    ],
+    cta: "Choisir Premium",
+    highlight: false,
+    action: "link"
+  },
+  {
+    id: 'luxe',
+    name: "Luxe",
+    tagline: "Excellence",
+    image: "https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Gem%20Stone.png",
+    price: "CHF 1'700",
+    description: "Avec l'offre du déménagement Luxe vous mettez vos affaires entre les mains des spécialistes qui vont s'assurer de tous vos affaires.",
+    features: [
+      "Emballage",
+      "Matériaux d'emballages",
+      "Assemblage / Démontage des meubles",
+      "Chargement / Déchargement",
+      "Transport"
+    ],
+    cta: "Choisir Luxe",
+    highlight: false,
+    action: "link"
   }
 ];
 
@@ -77,10 +133,10 @@ export const Pricing: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.5, type: "spring", stiffness: 50 }}
                 className={`relative flex flex-col group rounded-[2rem] border transition-all duration-500 snap-center min-w-[280px] md:min-w-0 ${plan.highlight
-                    ? 'bg-gradient-to-b from-white/10 to-white/5 border-white/20 shadow-[0_20px_60px_-15px_rgba(0,82,163,0.3)] z-10 scale-[1.02]'
-                    : plan.specialStyle
-                      ? 'bg-gradient-to-b from-slate-800/50 to-slate-900/50 border-blue-400/20 shadow-[0_0_30px_-10px_rgba(59,130,246,0.15)] hover:border-blue-400/40'
-                      : 'bg-white/5 border-white/5 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02] z-0'
+                  ? 'bg-gradient-to-b from-white/10 to-white/5 border-white/20 shadow-[0_20px_60px_-15px_rgba(0,82,163,0.3)] z-10 scale-[1.02]'
+                  : plan.specialStyle
+                    ? 'bg-gradient-to-b from-slate-800/50 to-slate-900/50 border-blue-400/20 shadow-[0_0_30px_-10px_rgba(59,130,246,0.15)] hover:border-blue-400/40'
+                    : 'bg-white/5 border-white/5 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02] z-0'
                   }`}
               >
                 {/* Highlight Badge */}
@@ -136,8 +192,8 @@ export const Pricing: React.FC = () => {
                       <Link to="/quote">
                         <Button
                           className={`w-full rounded-xl py-4 text-sm font-bold uppercase tracking-widest transition-all font-display ${plan.highlight
-                              ? 'bg-batimove-red text-white hover:bg-[#c00500] shadow-[0_8px_30px_-5px_rgba(225,6,0,0.5)] hover:shadow-[0_10px_40px_-5px_rgba(225,6,0,0.7)] transform hover:-translate-y-1'
-                              : 'bg-white/5 text-white border border-white/10 hover:bg-white/10 hover:border-white/30'
+                            ? 'bg-batimove-red text-white hover:bg-[#c00500] shadow-[0_8px_30px_-5px_rgba(225,6,0,0.5)] hover:shadow-[0_10px_40px_-5px_rgba(225,6,0,0.7)] transform hover:-translate-y-1'
+                            : 'bg-white/5 text-white border border-white/10 hover:bg-white/10 hover:border-white/30'
                             }`}
                         >
                           {plan.cta}
