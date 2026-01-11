@@ -22,7 +22,7 @@ export const Legal: React.FC<LegalProps> = ({ type }) => {
     impressum: {
       title: "Mentions Légales",
       icon: Scale,
-      text: "Batimove Suisse SA\nRue du Rhône 14, 1204 Genève\nIDE/UID: CHE-123.456.789 TVA\nContact: 0800 825 925\nEmail: info@batimove.ch"
+      text: "Batimove Sarl\nRue de Monthoux 64, 1201 Genève\nIDE/UID: CHE-123.456.789 TVA\nContact: 0800 825 925\nEmail: info@batimove.ch"
     }
   };
 
@@ -43,11 +43,11 @@ export const Legal: React.FC<LegalProps> = ({ type }) => {
           <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-8">
             <Icon className="w-8 h-8 text-batimove-blue" />
           </div>
-          
+
           <h1 className="font-display text-3xl font-bold text-slate-900 mb-6">
             {current.title}
           </h1>
-          
+
           <div className="prose prose-slate max-w-none">
             <p className="text-slate-600 text-lg leading-relaxed whitespace-pre-line">
               {current.text}

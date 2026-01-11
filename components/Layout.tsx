@@ -163,8 +163,8 @@ export const Footer: React.FC = () => {
               Batimove
             </Link>
             <div className="text-xs leading-relaxed text-slate-500 font-medium">
-              <p>Rue du Rhône 14</p>
-              <p>1204 Genève</p>
+              <p>Rue de Monthoux 64</p>
+              <p>1201 Genève, Suisse</p>
             </div>
             <a href="tel:+41800825925" className="inline-block text-sm font-bold text-white hover:text-batimove-blue transition-colors">
               0800 825 925
@@ -199,7 +199,7 @@ export const Footer: React.FC = () => {
 
         {/* Essential Bottom Bar */}
         <div className="pt-6 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] font-medium text-slate-600">
-          <p>© {new Date().getFullYear()} Batimove SA. Tous droits réservés.</p>
+          <p>© {new Date().getFullYear()} Batimove Sarl. Tous droits réservés.</p>
           <div className="flex items-center gap-6">
             <a href="#" className="hover:text-white transition-colors flex items-center gap-2 group">
               <Instagram className="w-4 h-4 group-hover:text-batimove-red transition-colors" />

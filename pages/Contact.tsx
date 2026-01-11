@@ -84,7 +84,7 @@ export const Contact: React.FC = () => {
                 />
               </div>
               <h3 className="font-bold text-lg mb-2">Genève</h3>
-              <p className="text-slate-400 text-sm">Rue du Rhône 14<br />1204 Genève</p>
+              <p className="text-slate-400 text-sm">Rue de Monthoux 64<br />1201 Genève</p>
             </div>
 
             {/* Phone Card */}
