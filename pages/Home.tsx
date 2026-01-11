@@ -229,9 +229,6 @@ export const Home: React.FC = () => {
 
                   {/* Feature 1 - Shield */}
                   <div className="group">
-                     <div className="w-20 h-20 mb-8 transition-transform duration-500 group-hover:scale-110 drop-shadow-xl">
-                        <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Shield.png" alt="Security" className="w-full h-full object-contain" />
-                     </div>
                      <h3 className="font-display text-2xl font-bold mb-4 group-hover:text-batimove-blue transition-colors text-slate-900">Patrimoine Sécurisé</h3>
                      <p className="font-sans text-slate-600 leading-relaxed text-lg font-medium">
                         Assurance "All Risk" jusqu'à CHF 5M incluse. Protection des données bancaire et serveurs hébergés en Suisse.
@@ -240,9 +237,6 @@ export const Home: React.FC = () => {
 
                   {/* Feature 2 - Stopwatch */}
                   <div className="group">
-                     <div className="w-20 h-20 mb-8 transition-transform duration-500 group-hover:scale-110 drop-shadow-xl">
-                        <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Stopwatch.png" alt="Precision" className="w-full h-full object-contain" />
-                     </div>
                      <h3 className="font-display text-2xl font-bold mb-4 group-hover:text-batimove-blue transition-colors text-slate-900">Horlogerie Logistique</h3>
                      <p className="font-sans text-slate-600 leading-relaxed text-lg font-medium">
                         Planification à la minute. Nous garantissons les horaires d'intervention et de livraison avec une rigueur absolue.
@@ -251,9 +245,6 @@ export const Home: React.FC = () => {
 
                   {/* Feature 3 - Sparkles/Star */}
                   <div className="group">
-                     <div className="w-20 h-20 mb-8 transition-transform duration-500 group-hover:scale-110 drop-shadow-xl">
-                        <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Activities/Sparkles.png" alt="Premium" className="w-full h-full object-contain" />
-                     </div>
                      <h3 className="font-display text-2xl font-bold mb-4 group-hover:text-batimove-blue transition-colors text-slate-900">Service Gants Blancs</h3>
                      <p className="font-sans text-slate-600 leading-relaxed text-lg font-medium">
                         Uniformes impeccables, discrétion totale et politesse exemplaire. Nos équipes sont formées à l'excellence.
