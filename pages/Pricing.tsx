@@ -45,9 +45,8 @@ const plans = [
     price: "CHF 1'500",
     description: "Optez pour l'option premium pour rentrer dans une maison prête à vivre dès le premier jour.",
     features: [
-      "Déballage",
       "Emballage",
-      "Matériaux d'emballage",
+      "Matériaux d'emballages",
       "Assemblage / Démontage des meubles",
       "Chargement / Déchargement",
       "Transport",
@@ -64,8 +63,9 @@ const plans = [
     price: "CHF 1'700",
     description: "Avec l'offre du déménagement Luxe vous mettez vos affaires entre les mains des spécialistes qui vont s'assurer de tous vos affaires.",
     features: [
+      "Déballage",
       "Emballage",
-      "Matériaux d'emballages",
+      "Matériaux d'emballage",
       "Assemblage / Démontage des meubles",
       "Chargement / Déchargement",
       "Transport",
