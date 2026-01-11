@@ -133,7 +133,7 @@ export const Navbar: React.FC = () => {
               </div>
 
               <div className="mt-auto text-center text-slate-400 text-sm py-8">
-                <p>Batimove Suisse SA</p>
+                <p>Batimove Sarl</p>
                 <p>Excellence in Motion</p>
               </div>
             </motion.div>

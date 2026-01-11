@@ -12,12 +12,12 @@ export const Legal: React.FC<LegalProps> = ({ type }) => {
     privacy: {
       title: "Protection des Données (nLPD)",
       icon: Shield,
-      text: "Conformément à la nouvelle Loi sur la Protection des Données (nLPD), Batimove Suisse SA s'engage à protéger la confidentialité de vos informations personnelles. Vos données ne sont utilisées que dans le cadre strict de l'exécution de nos services de déménagement et ne sont jamais revendues à des tiers."
+      text: "Conformément à la nouvelle Loi sur la Protection des Données (nLPD), Batimove Sarl s'engage à protéger la confidentialité de vos informations personnelles. Vos données ne sont utilisées que dans le cadre strict de l'exécution de nos services de déménagement et ne sont jamais revendues à des tiers."
     },
     terms: {
       title: "Conditions Générales (CGV)",
       icon: FileText,
-      text: "Nos Conditions Générales de Vente régissent l'ensemble des prestations fournies par Batimove Suisse SA. Elles définissent les responsabilités, les assurances incluses (couverture jusqu'à CHF 5M) et les modalités d'annulation ou de modification de service."
+      text: "Nos Conditions Générales de Vente régissent l'ensemble des prestations fournies par Batimove Sarl. Elles définissent les responsabilités, les assurances incluses (couverture jusqu'à CHF 5M) et les modalités d'annulation ou de modification de service."
     },
     impressum: {
       title: "Mentions Légales",
