@@ -10,12 +10,12 @@ const plans = [
     id: 'basic',
     name: "Basic",
     tagline: "Essentiel",
-    image: "https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Package.png",
     price: "CHF 550",
     description: "Avez-vous juste besoin d'une petite aide ? L'offre basic c'est votre choix !",
     features: [
       "Chargement / Déchargement",
-      "Transport"
+      "Transport",
+      "Assurance RC"
     ],
     cta: "Choisir Basic",
     highlight: false,
@@ -25,14 +25,14 @@ const plans = [
     id: 'standard',
     name: "Standard",
     tagline: "Complet",
-    image: "https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Star.png",
     price: "CHF 850",
     description: "Le déménagement standard vous donne la tranquillité dont vous avez besoin pour commencer votre nouveau départ.",
     features: [
       "Matériaux d'emballages",
       "Assemblage / Démontage des meubles",
       "Chargement / Déchargement",
-      "Transport"
+      "Transport",
+      "Assurance RC"
     ],
     cta: "Choisir Standard",
     highlight: true,
@@ -42,7 +42,6 @@ const plans = [
     id: 'premium',
     name: "Premium",
     tagline: "Tout Inclus",
-    image: "https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Crown.png",
     price: "CHF 1'500",
     description: "Optez pour l'option premium pour rentrer dans une maison prête à vivre dès le premier jour.",
     features: [
@@ -51,7 +50,8 @@ const plans = [
       "Matériaux d'emballage",
       "Assemblage / Démontage des meubles",
       "Chargement / Déchargement",
-      "Transport"
+      "Transport",
+      "Assurance RC"
     ],
     cta: "Choisir Premium",
     highlight: false,
@@ -61,7 +61,6 @@ const plans = [
     id: 'luxe',
     name: "Luxe",
     tagline: "Excellence",
-    image: "https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Gem%20Stone.png",
     price: "CHF 1'700",
     description: "Avec l'offre du déménagement Luxe vous mettez vos affaires entre les mains des spécialistes qui vont s'assurer de tous vos affaires.",
     features: [
@@ -69,7 +68,8 @@ const plans = [
       "Matériaux d'emballages",
       "Assemblage / Démontage des meubles",
       "Chargement / Déchargement",
-      "Transport"
+      "Transport",
+      "Assurance RC"
     ],
     cta: "Choisir Luxe",
     highlight: false,
@@ -150,15 +150,6 @@ export const Pricing: React.FC = () => {
                 <div className="p-6 lg:p-8 flex flex-col h-full backdrop-blur-md rounded-[2rem]">
                   {/* Header */}
                   <div className="mb-6 relative">
-                    {/* 3D Icon Container - Floating Effect */}
-                    <div className="w-20 h-20 -ml-2 mb-2 flex items-center justify-center relative z-10 filter drop-shadow-[0_10px_15px_rgba(0,0,0,0.3)] hover:scale-110 transition-transform duration-300">
-                      <img
-                        src={plan.image}
-                        alt={plan.name}
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-
                     <h3 className="font-display text-2xl font-bold text-white mb-1">{plan.name}</h3>
                     <p className={`text-xs uppercase tracking-widest font-bold ${plan.specialStyle ? 'text-indigo-300' : 'text-blue-200/60'}`}>{plan.tagline}</p>
                   </div>
