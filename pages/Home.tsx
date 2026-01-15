@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, ArrowUpRight, Play, Star, Wifi, Battery, Box, Video } from 'lucide-react';
 import { Button } from '../components/UIComponents';
 import { Link } from 'react-router-dom';
+import { QuoteCalculator } from '../components/QuoteCalculator';
 
 // Marketing Slides Data
 const HERO_SLIDES = [
@@ -50,21 +51,20 @@ export const Home: React.FC = () => {
          {/* =========================================================================
           HERO: MARKETING BANNER STYLE (Dynamic Rotor)
           ========================================================================= */}
-         <section className="relative min-h-[92vh] flex items-center bg-[#0B1E33] overflow-hidden pt-24 lg:pt-0">
+         <section className="relative min-h-[92vh] flex items-center overflow-hidden pt-24 lg:pt-0">
 
-            {/* 1. BACKGROUND LAYERS */}
-            <div className="absolute inset-0 bg-[#0B1E33] z-0">
-               {/* Abstract Grid Texture */}
-               <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:100px_100px] opacity-20"></div>
-               {/* Dynamic Gradient Blobs based on slide */}
-               <motion.div
-                  animate={{
-                     background: currentSlide === 0 ? 'radial-gradient(circle at 80% 20%, rgba(59,130,246,0.15), transparent 50%)' :
-                        currentSlide === 1 ? 'radial-gradient(circle at 80% 20%, rgba(99,102,241,0.15), transparent 50%)' :
-                           'radial-gradient(circle at 80% 20%, rgba(255,255,255,0.15), transparent 50%)' // FIXED: Changed from red rgba(225,6,0,0.15) to white
-                  }}
-                  className="absolute inset-0 transition-colors duration-1000"
+            {/* 1. BACKGROUND: 4K GENEVA IMAGE */}
+            <div className="absolute inset-0 z-0">
+               {/* Geneva 4K Background */}
+               <img
+                  src="/hero-geneva-4k.jpg"
+                  alt="Geneva Switzerland"
+                  className="w-full h-full object-cover"
                />
+               {/* Dark Gradient Overlay for Text Contrast */}
+               <div className="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/80 to-slate-900/60" />
+               {/* Subtle Grid Texture */}
+               <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:100px_100px] opacity-20"></div>
             </div>
 
             <div className="max-w-[1600px] mx-auto px-6 lg:px-12 relative z-10 w-full h-full">
@@ -143,66 +143,11 @@ export const Home: React.FC = () => {
 
                   </div>
 
-                  {/* 3. RIGHT COLUMN: VIDEO CARD */}
-                  <div className="relative h-[600px] hidden lg:flex items-center justify-center perspective-[2000px]">
-
-                     {/* Floating Glow */}
-                     <motion.div
-                        animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
-                        transition={{ duration: 6, repeat: Infinity }}
-                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[100px] pointer-events-none"
-                     />
-
-                     {/* --- THE VIDEO CARD --- */}
-                     <motion.div
-                        initial={{ rotateY: -15, rotateX: 5, opacity: 0, scale: 0.95 }}
-                        animate={{ rotateY: -8, rotateX: 5, opacity: 1, scale: 1 }}
-                        transition={{ duration: 1.2, ease: "easeOut" }}
-                        // Fix: Removed 'border border-white/10' to prevent rendering jitter on edges.
-                        // Added 'transform-gpu' to force hardware acceleration.
-                        className="relative w-[700px] aspect-video bg-slate-900 rounded-[2rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.7)] z-10 overflow-hidden group transform-gpu"
-                     >
-                        {/* Video Element - Custom Batimove Video */}
-                        <video
-                           autoPlay
-                           muted
-                           loop
-                           playsInline
-                           className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-[2s] will-change-transform"
-                           poster="https://images.unsplash.com/photo-1600585154526-990dced4db0d?q=80&w=2070&auto=format&fit=crop"
-                        >
-                           <source src="/hero-video.mp4" type="video/mp4" />
-                           Votre navigateur ne supporte pas la vidéo.
-                        </video>
-
-                        {/* Gradient Overlay for Cinematic Feel */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#0B1E33] via-transparent to-transparent opacity-60 pointer-events-none"></div>
-
-                        {/* Glass Overlay Effects & Border Fix */}
-                        {/* Fix: Dedicated border layer 'ring-1' ensures clean anti-aliasing on top of the video */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent opacity-50 pointer-events-none rounded-[2rem] ring-1 ring-white/10"></div>
-
-                        {/* Content Over Video - REMOVED PLAY BUTTON to remove 'player' look */}
-
-                        {/* Bottom Info */}
-                        <div className="absolute bottom-0 left-0 w-full p-6 flex justify-between items-end">
-                           <div>
-                              <div className="px-3 py-1 rounded-full bg-red-600/90 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest inline-flex items-center gap-2 mb-2 shadow-lg">
-                                 <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
-                                 En Direct
-                              </div>
-                              <p className="text-white font-display font-bold text-lg">Opérations Genève</p>
-                           </div>
-                           <div className="text-right">
-                              <p className="text-slate-300 text-xs font-mono">CAM_04</p>
-                              <p className="text-slate-300 text-xs font-mono">REC ●</p>
-                           </div>
-                        </div>
-                     </motion.div>
-
-                     {/* REMOVED FLOATING PARALLAX OBJECTS AS REQUESTED */}
-
+                  {/* 3. RIGHT COLUMN: ELITE 3D CALCULATOR */}
+                  <div className="relative hidden lg:flex items-center justify-end">
+                     <QuoteCalculator className="w-full max-w-[500px]" />
                   </div>
+
                </div>
             </div>
          </section>
