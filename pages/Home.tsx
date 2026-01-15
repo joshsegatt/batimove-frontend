@@ -236,7 +236,7 @@ export const Home: React.FC = () => {
 
                      <div className="mt-12">
                         <Link to="/quote">
-                           <Button className="bg-white text-batimove-dark hover:bg-slate-200 rounded-full px-8 py-4 font-bold font-display tracking-wide shadow-xl shadow-white/5">
+                           <Button className="bg-batimove-red text-white hover:bg-[#c00500] rounded-full px-8 py-4 font-bold font-display tracking-wide shadow-xl shadow-batimove-red/30">
                               Démarrer la Visio-Cotation
                            </Button>
                         </Link>

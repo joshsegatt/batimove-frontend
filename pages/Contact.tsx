@@ -110,7 +110,7 @@ export const Contact: React.FC = () => {
             >
               <div className="w-24 h-24 mb-2 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 drop-shadow-xl">
                 <img
-                  src="/whatsapp-3d.png"
+                  src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Left%20Speech%20Bubble.png"
                   alt="WhatsApp"
                   className="w-full h-full object-contain"
                 />

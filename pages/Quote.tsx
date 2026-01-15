@@ -299,8 +299,8 @@ export const Quote: React.FC = () => {
       whileTap={{ scale: 0.99 }}
       onClick={onClick}
       className={`relative w-full text-left p-6 rounded-2xl border transition-all duration-300 group flex items-start gap-4 shadow-sm ${selected
-          ? 'bg-white border-batimove-blue shadow-xl shadow-blue-900/10 ring-1 ring-batimove-blue'
-          : 'bg-white border-slate-300 hover:border-slate-400 hover:shadow-lg hover:shadow-slate-200/50'
+        ? 'bg-white border-batimove-blue shadow-xl shadow-blue-900/10 ring-1 ring-batimove-blue'
+        : 'bg-white border-slate-300 hover:border-slate-400 hover:shadow-lg hover:shadow-slate-200/50'
         }`}
     >
       <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${selected ? 'bg-batimove-blue text-white' : 'bg-slate-50 text-slate-500 group-hover:bg-slate-100'
@@ -446,10 +446,10 @@ export const Quote: React.FC = () => {
         </div>
 
         <div className="space-y-5 bg-white p-6 md:p-8 rounded-2xl shadow-xl shadow-slate-200/40 border border-slate-100">
-          <LuxuryInput label="Nom Complet" placeholder="Jean Dupont" value={data.contact.name} onChange={(e: any) => updateData('contact', { ...data.contact, name: e.target.value })} icon={User} />
+          <LuxuryInput label="Nom Complet" placeholder="Jean Dupont" value={data.contact.name} onChange={(e) => updateData('contact', { ...data.contact, name: e.target.value })} icon={User} />
           <div className="space-y-5">
-            <LuxuryInput label="Email" placeholder="nom@email.com" type="email" value={data.contact.email} onChange={(e: any) => updateData('contact', { ...data.contact, email: e.target.value })} icon={Mail} />
-            <LuxuryInput label="Téléphone" placeholder="+41 79 000 00 00" type="tel" value={data.contact.phone} onChange={(e: any) => updateData('contact', { ...data.contact, phone: e.target.value })} icon={Phone} />
+            <LuxuryInput label="Email" placeholder="nom@email.com" type="email" value={data.contact.email} onChange={(e) => updateData('contact', { ...data.contact, email: e.target.value })} icon={Mail} />
+            <LuxuryInput label="Téléphone" placeholder="+41 79 000 00 00" type="tel" value={data.contact.phone} onChange={(e) => updateData('contact', { ...data.contact, phone: e.target.value })} icon={Phone} />
           </div>
         </div>
 
