@@ -454,10 +454,10 @@ export const Quote: React.FC = () => {
         </div>
 
         <div className="space-y-5 bg-white p-6 md:p-8 rounded-2xl shadow-xl shadow-slate-200/40 border border-slate-100">
-          <LuxuryInput label="Nom Complet" placeholder="Jean Dupont" value={data.contact.name} onChange={(e) => updateData('contact', { ...data.contact, name: e.target.value })} icon={User} />
+          <LuxuryInput label="Nom Complet" placeholder="Jean Dupont" value={data.contact.name} onChange={(e) => updateContactField('name', e.target.value)} icon={User} />
           <div className="space-y-5">
-            <LuxuryInput label="Email" placeholder="nom@email.com" type="email" value={data.contact.email} onChange={(e) => updateData('contact', { ...data.contact, email: e.target.value })} icon={Mail} />
-            <LuxuryInput label="Téléphone" placeholder="+41 79 000 00 00" type="tel" value={data.contact.phone} onChange={(e) => updateData('contact', { ...data.contact, phone: e.target.value })} icon={Phone} />
+            <LuxuryInput label="Email" placeholder="nom@email.com" type="email" value={data.contact.email} onChange={(e) => updateContactField('email', e.target.value)} icon={Mail} />
+            <LuxuryInput label="Téléphone" placeholder="+41 79 000 00 00" type="tel" value={data.contact.phone} onChange={(e) => updateContactField('phone', e.target.value)} icon={Phone} />
           </div>
         </div>
 
