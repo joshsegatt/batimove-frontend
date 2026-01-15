@@ -109,10 +109,11 @@ export const Contact: React.FC = () => {
               className="bg-gradient-to-br from-green-500/10 to-green-600/10 border border-green-500/30 rounded-2xl p-6 backdrop-blur-sm flex flex-col items-center hover:from-green-500/20 hover:to-green-600/20 hover:border-green-400/50 transition-all group cursor-pointer"
             >
               <div className="w-24 h-24 mb-2 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 drop-shadow-xl">
-                <svg viewBox="0 0 48 48" className="w-full h-full">
-                  <path fill="#25D366" d="M24 0C10.745 0 0 10.745 0 24c0 4.233 1.097 8.214 3.018 11.672L0 48l12.628-3.018C16.086 46.903 19.967 48 24 48c13.255 0 24-10.745 24-24S37.255 0 24 0z" />
-                  <path fill="#FFFFFF" d="M35.707 33.707c-.586.586-3.586 1.586-5.586.586-2-.999-5.586-4.586-7.586-6.586s-5.586-5.586-6.586-7.586c-1-2 0-5 .586-5.586.586-.586 1.414-.586 2 0l2.586 2.586c.586.586.586 1.414 0 2l-1 1c-.586.586-.586 1.414 0 2 1 2 3 4 5 6s4 4 6 5c.586.586 1.414.586 2 0l1-1c.586-.586 1.414-.586 2 0l2.586 2.586c.586.586.586 1.414 0 2z" />
-                </svg>
+                <img
+                  src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Mobile%20Phone.png"
+                  alt="WhatsApp"
+                  className="w-full h-full object-contain"
+                />
               </div>
               <h3 className="font-bold text-lg mb-2 text-white">WhatsApp</h3>
               <p className="text-green-300 text-sm font-semibold">076 771 86 87</p>
