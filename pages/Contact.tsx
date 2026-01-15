@@ -110,7 +110,7 @@ export const Contact: React.FC = () => {
             >
               <div className="w-24 h-24 mb-2 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 drop-shadow-xl">
                 <img
-                  src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Mobile%20Phone%20with%20Arrow.png"
+                  src="/whatsapp-3d.png"
                   alt="WhatsApp"
                   className="w-full h-full object-contain"
                 />
@@ -140,33 +140,49 @@ export const Contact: React.FC = () => {
       {/* FORM SECTION - Centered Card */}
       <div className="relative max-w-3xl mx-auto px-4 sm:px-6 -mt-16 mb-24 z-20">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-white rounded-3xl shadow-2xl shadow-slate-900/10 p-8 md:p-12 border border-slate-100"
+          className="bg-white rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] p-8 md:p-12 max-w-2xl mx-auto border border-slate-100"
         >
-          <h2 className="font-display text-2xl font-bold text-slate-900 mb-8 text-center">Envoyez-nous un message</h2>
+          <h2 className="font-display text-3xl font-bold text-slate-900 mb-2 text-center">Envoyez-nous un message</h2>
+          <p className="text-slate-600 text-center mb-8">Nous vous répondons sous 24h</p>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Prénom</label>
-                <input required name="name" value={formData.name} onChange={handleChange} type="text" className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-batimove-blue focus:border-batimove-blue outline-none transition-all font-medium text-slate-700 placeholder:text-slate-400" placeholder="Jean" />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Nom</label>
-                <input type="text" className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-batimove-blue focus:border-batimove-blue outline-none transition-all font-medium text-slate-700 placeholder:text-slate-400" placeholder="Dupont" />
-              </div>
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Nom complet</label>
+              <input
+                required
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                type="text"
+                className="w-full px-4 py-3.5 rounded-xl bg-slate-50 border-2 border-slate-200 focus:ring-2 focus:ring-batimove-blue focus:border-batimove-blue outline-none transition-all font-medium text-slate-700 placeholder:text-slate-400 shadow-sm hover:border-slate-300"
+                placeholder="Jean Dupont"
+              />
             </div>
 
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Email</label>
-              <input required name="email" value={formData.email} onChange={handleChange} type="email" className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-batimove-blue focus:border-batimove-blue outline-none transition-all font-medium text-slate-700 placeholder:text-slate-400" placeholder="jean.dupont@email.com" />
+              <input
+                required
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                type="email"
+                className="w-full px-4 py-3.5 rounded-xl bg-slate-50 border-2 border-slate-200 focus:ring-2 focus:ring-batimove-blue focus:border-batimove-blue outline-none transition-all font-medium text-slate-700 placeholder:text-slate-400 shadow-sm hover:border-slate-300"
+                placeholder="jean.dupont@email.com"
+              />
             </div>
 
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Sujet</label>
-              <select name="subject" value={formData.subject} onChange={handleChange} className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-batimove-blue focus:border-batimove-blue outline-none transition-all text-slate-700 font-medium">
+              <select
+                name="subject"
+                value={formData.subject}
+                onChange={handleChange}
+                className="w-full px-4 py-3.5 rounded-xl bg-slate-50 border-2 border-slate-200 focus:ring-2 focus:ring-batimove-blue focus:border-batimove-blue outline-none transition-all text-slate-700 font-medium shadow-sm hover:border-slate-300"
+              >
                 <option>Question Générale</option>
                 <option>Devis Déménagement</option>
                 <option>Partenariat B2B</option>
@@ -176,7 +192,15 @@ export const Contact: React.FC = () => {
 
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Message</label>
-              <textarea required name="message" value={formData.message} onChange={handleChange} rows={5} className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-batimove-blue focus:border-batimove-blue outline-none transition-all resize-none font-medium text-slate-700 placeholder:text-slate-400" placeholder="Comment pouvons-nous vous aider ?"></textarea>
+              <textarea
+                required
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                rows={5}
+                className="w-full px-4 py-3.5 rounded-xl bg-slate-50 border-2 border-slate-200 focus:ring-2 focus:ring-batimove-blue focus:border-batimove-blue outline-none transition-all resize-none font-medium text-slate-700 placeholder:text-slate-400 shadow-sm hover:border-slate-300"
+                placeholder="Comment pouvons-nous vous aider ?"
+              ></textarea>
             </div>
 
             <Button
