@@ -161,6 +161,29 @@ const CustomCalendar = ({ selectedDate, onChange }: { selectedDate: string, onCh
   );
 };
 
+// --- LUXURY UI COMPONENTS (Moved outside Quote to prevent re-creation) ---
+const LuxuryInput = ({ label, value, onChange, type = "text", placeholder, icon: Icon }: any) => {
+  return (
+    <div className="group">
+      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">{label}</label>
+      <div className="relative flex items-center">
+        <input
+          type={type}
+          value={value}
+          onChange={onChange}
+          className="w-full bg-white border border-slate-300 text-slate-900 px-5 py-4 rounded-xl outline-none focus:ring-4 focus:ring-batimove-blue/10 focus:border-batimove-blue hover:border-slate-400 transition-all font-medium placeholder:text-slate-400 shadow-sm"
+          placeholder={placeholder}
+        />
+        {Icon && (
+          <div className="absolute right-4 text-slate-400 pointer-events-none">
+            <Icon className="w-5 h-5" />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 export const Quote: React.FC = () => {
   const navigate = useNavigate();
   const { serviceId } = useParams<{ serviceId: string }>();
@@ -286,28 +309,6 @@ export const Quote: React.FC = () => {
   };
 
   // --- LUXURY UI COMPONENTS (Light/Elegant) ---
-
-  const LuxuryInput = ({ label, value, onChange, type = "text", placeholder, icon: Icon }: any) => {
-    return (
-      <div className="group">
-        <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">{label}</label>
-        <div className="relative flex items-center">
-          <input
-            type={type}
-            value={value}
-            onChange={onChange}
-            className="w-full bg-white border border-slate-300 text-slate-900 px-5 py-4 rounded-xl outline-none focus:ring-4 focus:ring-batimove-blue/10 focus:border-batimove-blue hover:border-slate-400 transition-all font-medium placeholder:text-slate-400 shadow-sm"
-            placeholder={placeholder}
-          />
-          {Icon && (
-            <div className="absolute right-4 text-slate-400 pointer-events-none">
-              <Icon className="w-5 h-5" />
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  };
 
   const LuxuryTile = ({ label, subLabel, icon: Icon, selected, onClick }: any) => (
     <motion.button
