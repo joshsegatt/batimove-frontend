@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { QuoteData, ServiceId } from '../types';
 import { Button, Logo } from '../components/UIComponents';
@@ -193,18 +193,26 @@ export const Quote: React.FC = () => {
 
   const [logistics, setLogistics] = useState<string[]>([]);
 
-  // Save to LocalStorage whenever data changes
+  // Save to LocalStorage whenever data changes (debounced to avoid excessive writes)
   useEffect(() => {
-    localStorage.setItem(`batimove_draft_${currentServiceId}`, JSON.stringify(data));
+    const timeoutId = setTimeout(() => {
+      localStorage.setItem(`batimove_draft_${currentServiceId}`, JSON.stringify(data));
+    }, 300);
+    return () => clearTimeout(timeoutId);
   }, [data, currentServiceId]);
 
-  // --- HELPERS ---
-  const updateData = (key: keyof QuoteData, value: any) => setData(prev => ({ ...prev, [key]: value }));
-  const toggleLogistic = (item: string) => setLogistics(prev => prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]);
+  // --- HELPERS (useCallback to prevent re-creation) ---
+  const updateData = useCallback((key: keyof QuoteData, value: any) => {
+    setData(prev => ({ ...prev, [key]: value }));
+  }, []);
 
-  const handleDateChange = (val: string) => {
+  const toggleLogistic = useCallback((item: string) => {
+    setLogistics(prev => prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]);
+  }, []);
+
+  const handleDateChange = useCallback((val: string) => {
     updateData('date', val);
-  };
+  }, [updateData]);
 
   // --- VALIDATION LOGIC ---
   const canProceed = () => {
