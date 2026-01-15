@@ -110,12 +110,9 @@ export const Contact: React.FC = () => {
             >
               <div className="w-24 h-24 mb-2 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 drop-shadow-xl">
                 <img
-                  src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Symbols/Green%20Circle.png"
+                  src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Speech%20Balloon.png"
                   alt="WhatsApp"
                   className="w-full h-full object-contain"
-                  style={{
-                    filter: 'drop-shadow(0 0 20px rgba(37, 211, 102, 0.3))'
-                  }}
                 />
               </div>
               <h3 className="font-bold text-lg mb-2 text-white">WhatsApp</h3>
