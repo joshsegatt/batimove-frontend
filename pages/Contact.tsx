@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Send, ShieldCheck, Globe, CheckCircle2 } from 'lucide-react';
+import { Send, ShieldCheck, Globe, CheckCircle2, MessageCircle } from 'lucide-react';
 import { Button } from '../components/UIComponents';
 
 export const Contact: React.FC = () => {
@@ -72,11 +72,11 @@ export const Contact: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto text-center"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 max-w-5xl mx-auto text-center"
           >
             {/* Location Card */}
             <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col items-center hover:bg-white/10 transition-colors group">
-              <div className="w-24 h-24 mb-2 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 drop-shadow-[0_10px_20px_rgba(0,0,0,0.3)]">
+              <div className="w-24 h-24 mb-2 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 drop-shadow-xl">
                 <img
                   src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Office%20Building.png"
                   alt="Genève Office"
@@ -89,7 +89,7 @@ export const Contact: React.FC = () => {
 
             {/* Phone Card */}
             <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col items-center hover:bg-white/10 transition-colors group">
-              <div className="w-24 h-24 mb-2 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 drop-shadow-[0_10px_20px_rgba(0,0,0,0.3)]">
+              <div className="w-24 h-24 mb-2 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 drop-shadow-xl">
                 <img
                   src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Telephone%20Receiver.png"
                   alt="Phone"
@@ -101,9 +101,27 @@ export const Contact: React.FC = () => {
               <p className="text-xs text-slate-500 mt-1">Lun-Ven: 08h-18h</p>
             </div>
 
+            {/* WhatsApp Card - NEW */}
+            <a
+              href="https://wa.me/41767718687?text=Bonjour%2C%20je%20souhaite%20un%20devis%20pour%20un%20d%C3%A9m%C3%A9nagement"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-gradient-to-br from-green-500/10 to-green-600/10 border border-green-500/30 rounded-2xl p-6 backdrop-blur-sm flex flex-col items-center hover:from-green-500/20 hover:to-green-600/20 hover:border-green-400/50 transition-all group cursor-pointer"
+            >
+              <div className="w-24 h-24 mb-2 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 drop-shadow-xl">
+                <svg viewBox="0 0 48 48" className="w-full h-full">
+                  <path fill="#25D366" d="M24 0C10.745 0 0 10.745 0 24c0 4.233 1.097 8.214 3.018 11.672L0 48l12.628-3.018C16.086 46.903 19.967 48 24 48c13.255 0 24-10.745 24-24S37.255 0 24 0z" />
+                  <path fill="#FFFFFF" d="M35.707 33.707c-.586.586-3.586 1.586-5.586.586-2-.999-5.586-4.586-7.586-6.586s-5.586-5.586-6.586-7.586c-1-2 0-5 .586-5.586.586-.586 1.414-.586 2 0l2.586 2.586c.586.586.586 1.414 0 2l-1 1c-.586.586-.586 1.414 0 2 1 2 3 4 5 6s4 4 6 5c.586.586 1.414.586 2 0l1-1c.586-.586 1.414-.586 2 0l2.586 2.586c.586.586.586 1.414 0 2z" />
+                </svg>
+              </div>
+              <h3 className="font-bold text-lg mb-2 text-white">WhatsApp</h3>
+              <p className="text-green-300 text-sm font-semibold">076 771 86 87</p>
+              <p className="text-slate-400 text-xs mt-1">Réponse rapide</p>
+            </a>
+
             {/* Email Card */}
             <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col items-center hover:bg-white/10 transition-colors group">
-              <div className="w-24 h-24 mb-2 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 drop-shadow-[0_10px_20px_rgba(0,0,0,0.3)]">
+              <div className="w-24 h-24 mb-2 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 drop-shadow-xl">
                 <img
                   src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/E-Mail.png"
                   alt="Email"
@@ -162,15 +180,34 @@ export const Contact: React.FC = () => {
 
             <Button
               type="submit"
-              disabled={formState === 'loading' || formState === 'success'}
-              className={`w-full py-4 rounded-xl shadow-xl font-bold tracking-wide font-display transition-all duration-300 ${formState === 'success'
-                ? 'bg-green-500 text-white shadow-green-500/30'
-                : 'bg-batimove-red text-white hover:bg-[#c00500] shadow-red-500/30 hover:shadow-red-500/50'
-                }`}
+              disabled={formState === 'loading'}
+              className="w-full bg-gradient-to-r from-batimove-red via-red-600 to-batimove-red hover:from-red-600 hover:via-batimove-red hover:to-red-600 text-white rounded-xl py-4 font-bold text-lg shadow-[0_10px_40px_-10px_rgba(225,6,0,0.6)] hover:shadow-[0_15px_50px_-10px_rgba(225,6,0,0.8)] transition-all hover:-translate-y-1 flex items-center justify-center gap-2 relative overflow-hidden group"
             >
-              {formState === 'loading' && 'Envoi en cours...'}
-              {formState === 'success' && <><CheckCircle2 className="w-5 h-5 mr-2" /> Message Envoyé</>}
-              {formState === 'idle' && <><Send className="w-4 h-4 mr-2" /> Envoyer le message</>}
+              {/* Shine effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
+
+              <span className="relative z-10 flex items-center gap-2">
+                {formState === 'loading' ? (
+                  <>
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
+                    />
+                    Envoi en cours...
+                  </>
+                ) : formState === 'success' ? (
+                  <>
+                    <CheckCircle2 className="w-5 h-5" />
+                    Message envoyé !
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-5 h-5" />
+                    Devis Express
+                  </>
+                )}
+              </span>
             </Button>
 
             <p className="text-center text-xs text-slate-400 mt-4 flex items-center justify-center gap-1">
