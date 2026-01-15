@@ -201,9 +201,9 @@ export const Footer: React.FC = () => {
         <div className="pt-6 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] font-medium text-slate-600">
           <p>© {new Date().getFullYear()} Batimove Sarl. Tous droits réservés.</p>
           <div className="flex items-center gap-6">
-            <a href="#" className="hover:text-white transition-colors flex items-center gap-2 group">
+            <a href="https://www.instagram.com/batimove.sarl/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-2 group">
               <Instagram className="w-4 h-4 group-hover:text-batimove-red transition-colors" />
-              <span className="hidden sm:inline">Instagram</span>
+              <span className="hidden sm:inline">@batimove.sarl</span>
             </a>
           </div>
         </div>
