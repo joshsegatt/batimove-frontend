@@ -413,35 +413,11 @@ export const Quote: React.FC = () => {
     }
   };
 
-      <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${selected ? 'bg-batimove-blue text-white' : 'bg-slate-50 text-slate-500 group-hover:bg-slate-100'
-        }`}>
-        {Icon ? <Icon className="w-6 h-6" /> : <Box className="w-6 h-6" />}
-      </div>
-      <div className="flex-1">
-        <h3 className={`font-display font-bold text-lg mb-1 ${selected ? 'text-batimove-blue' : 'text-slate-900'}`}>{label}</h3>
-        <p className="text-sm text-slate-500 font-medium">{subLabel}</p>
-      </div>
-  {
-    selected && (
-      <div className="absolute top-6 right-6 w-6 h-6 rounded-full bg-batimove-blue text-white flex items-center justify-center shadow-lg">
-        <Check className="w-3.5 h-3.5" strokeWidth={3} />
-      </div>
-    )
-  }
-    </motion.button >
-  );
-
-const LuxurySlider = ({ label, value, min, max, unit, onChange, step = 1 }: any) => {
-  const percentage = ((value - min) / (max - min)) * 100;
-  return (
-    <div className="bg-white rounded-2xl border border-slate-300 p-8 shadow-sm">
-      <div className="flex justify-between items-end mb-8">
-        <span className="text-xs font-bold uppercase tracking-widest text-slate-500">{label}</span>
-        <div className="flex items-baseline gap-1 text-slate-900">
-          <span className="font-display text-5xl font-bold tracking-tighter">{value}</span>
-          <span className="text-lg text-slate-400 font-medium">{unit}</span>
-        </div>
-      </div>
+  <div className="flex items-baseline gap-1 text-slate-900">
+    <span className="font-display text-5xl font-bold tracking-tighter">{value}</span>
+    <span className="text-lg text-slate-400 font-medium">{unit}</span>
+  </div>
+      </div >
 
       <div className="relative h-2 bg-slate-100 rounded-full w-full mb-6 cursor-pointer group">
         <div className="absolute top-0 left-0 h-full rounded-full bg-batimove-blue" style={{ width: `${percentage}%` }}></div>
@@ -462,7 +438,7 @@ const LuxurySlider = ({ label, value, min, max, unit, onChange, step = 1 }: any)
         <button onClick={() => onChange(Math.max(min, value - step))} className="p-2 rounded-full hover:bg-slate-50 text-slate-400 hover:text-slate-900 transition-colors"><Minus className="w-5 h-5" /></button>
         <button onClick={() => onChange(Math.min(max, value + step))} className="p-2 rounded-full hover:bg-slate-50 text-slate-400 hover:text-slate-900 transition-colors"><Plus className="w-5 h-5" /></button>
       </div>
-    </div>
+    </div >
   );
 };
 
