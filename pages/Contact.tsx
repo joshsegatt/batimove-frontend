@@ -101,7 +101,7 @@ export const Contact: React.FC = () => {
               <p className="text-xs text-slate-500 mt-1">Lun-Ven: 08h-18h</p>
             </div>
 
-            {/* WhatsApp Card - NEW */}
+            {/* WhatsApp Card */}
             <a
               href="https://wa.me/41767718687?text=Bonjour%2C%20je%20souhaite%20un%20devis%20pour%20un%20d%C3%A9m%C3%A9nagement"
               target="_blank"
@@ -110,9 +110,12 @@ export const Contact: React.FC = () => {
             >
               <div className="w-24 h-24 mb-2 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 drop-shadow-xl">
                 <img
-                  src="/whatsapp-3d.png"
+                  src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Symbols/Green%20Circle.png"
                   alt="WhatsApp"
                   className="w-full h-full object-contain"
+                  style={{
+                    filter: 'drop-shadow(0 0 20px rgba(37, 211, 102, 0.3))'
+                  }}
                 />
               </div>
               <h3 className="font-bold text-lg mb-2 text-white">WhatsApp</h3>
