@@ -206,6 +206,14 @@ export const Quote: React.FC = () => {
     setData(prev => ({ ...prev, [key]: value }));
   }, []);
 
+  // Special handler for contact fields to prevent object recreation
+  const updateContactField = useCallback((field: 'name' | 'email' | 'phone', value: string) => {
+    setData(prev => ({
+      ...prev,
+      contact: { ...prev.contact, [field]: value }
+    }));
+  }, []);
+
   const toggleLogistic = useCallback((item: string) => {
     setLogistics(prev => prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]);
   }, []);
