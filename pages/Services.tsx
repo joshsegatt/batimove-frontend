@@ -46,7 +46,7 @@ const servicesList = [
     title: "Monte-Meubles",
     subtitle: "Accès Difficiles",
     description: "Passage par la fenêtre jusqu'au 12ème étage. Idéal pour les canapés volumineux ou les cages d'escalier étroites des immeubles anciens.",
-    features: ["Jusqu'à 300kg de charge", "Opérateur qualifié inclus", "Sécurisation de la zone", "Permis de voirie géré"],
+    features: ["Jusqu'à 500kg de charge", "Opérateur qualifié inclus", "Sécurisation de la zone", "Permis de voirie géré"],
     image: "/service-lift.png",
     isPopular: false
   },
@@ -57,6 +57,15 @@ const servicesList = [
     description: "Quittez ou rejoignez la Suisse sans tracas administratifs. Nous gérons les formalités douanières et la logistique transfrontalière.",
     features: ["Gestion formalités douanières", "Fret routier, maritime ou aérien", "Emballage export spécifique", "Réseau de partenaires mondiaux"],
     image: "/service-international.png",
+    isPopular: false
+  },
+  {
+    id: 'debarras',
+    title: "Débarras",
+    subtitle: "Vidage & Évacuation",
+    description: "Libérez votre espace rapidement. Nous évacuons caves, greniers et appartements complets avec tri, recyclage et élimination conforme aux normes suisses.",
+    features: ["Évacuation complète", "Tri et recyclage", "Nettoyage après débarras", "Devis gratuit sur place"],
+    image: "/service-debarras.png",
     isPopular: false
   }
 ];
@@ -190,7 +199,7 @@ export const Services: React.FC = () => {
             <div className="relative z-10">
               <h2 className="font-display text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">Un projet spécifique ?</h2>
               <p className="text-slate-200 text-lg md:text-xl mb-10 max-w-2xl mx-auto font-normal leading-relaxed">
-                Nous réalisons également des transports d'objets d'art, de pianos, de coffres-forts et des déménagements VIP avec conciergerie.
+                Nous réalisons également des transports d'objets d'art, de pianos, de coffres-forts et des déménagements VIP sur mesure.
               </p>
 
               <div className="flex flex-col sm:flex-row justify-center gap-5 items-center">
