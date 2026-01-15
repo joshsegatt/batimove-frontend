@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Check, ArrowUpRight, Play, Star, Wifi, Battery, Box, Video } from 'lucide-react';
+import { ArrowRight, Check, ArrowUpRight, Play, Star, Wifi, Battery, Box, Video, Phone } from 'lucide-react';
 import { Button } from '../components/UIComponents';
 import { Link } from 'react-router-dom';
 import { QuoteCalculator } from '../components/QuoteCalculator';
