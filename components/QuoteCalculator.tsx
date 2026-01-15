@@ -56,49 +56,44 @@ export const QuoteCalculator: React.FC<QuoteCalculatorProps> = ({ className = ''
 
     return (
         <motion.div
-            initial={{ opacity: 0, x: 50, rotateY: -15 }}
-            animate={{ opacity: 1, x: 0, rotateY: 0 }}
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             className={`relative ${className}`}
         >
-            {/* 3D Card with Glassmorphism */}
+            {/* 3D Card with Site Colors */}
             <div
-                className="relative bg-white/10 backdrop-blur-2xl rounded-3xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.3),0_2px_8px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] overflow-hidden"
-                style={{
-                    transform: 'perspective(1000px) rotateY(-3deg)',
-                    transformStyle: 'preserve-3d'
-                }}
+                className="relative bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-slate-700/50 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden"
             >
-                {/* Gradient Glow */}
-                <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/30 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
+                {/* Subtle Glow */}
+                <div className="absolute -top-20 -right-20 w-40 h-40 bg-batimove-blue/10 rounded-full blur-2xl pointer-events-none" />
 
-                <div className="relative p-8 lg:p-10">
+                <div className="relative p-6 lg:p-7">
                     {/* Header */}
-                    <div className="mb-8">
-                        <div className="flex items-center gap-2 mb-3">
-                            <Sparkles className="w-5 h-5 text-yellow-400" />
-                            <span className="text-xs font-bold text-blue-200 uppercase tracking-widest">Devis Instantané</span>
+                    <div className="mb-6">
+                        <div className="flex items-center gap-2 mb-2">
+                            <Sparkles className="w-4 h-4 text-batimove-red" />
+                            <span className="text-xs font-bold text-batimove-blue uppercase tracking-widest">Devis Instantané</span>
                         </div>
-                        <h3 className="font-display text-3xl font-bold text-white mb-2">
-                            Calculateur Premium
+                        <h3 className="font-display text-2xl font-bold text-white mb-1">
+                            Calculateur de Prix
                         </h3>
-                        <p className="text-slate-300 text-sm">
-                            Estimation en temps réel • Sans engagement
+                        <p className="text-slate-400 text-xs">
+                            Estimation en temps réel
                         </p>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-4">
                         {/* From */}
-                        <div className="space-y-2">
-                            <label className="flex items-center gap-2 text-sm font-semibold text-white">
-                                <MapPin className="w-4 h-4 text-blue-400" />
+                        <div className="space-y-1.5">
+                            <label className="flex items-center gap-2 text-xs font-semibold text-slate-300">
+                                <MapPin className="w-3.5 h-3.5 text-batimove-blue" />
                                 Point de départ
                             </label>
                             <select
                                 value={from}
                                 onChange={(e) => setFrom(e.target.value)}
-                                className="w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 py-3.5 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all hover:bg-white/15"
+                                className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-batimove-blue focus:border-transparent transition-all hover:bg-slate-800/70"
                             >
                                 {cities.map(city => (
                                     <option key={city} value={city} className="bg-slate-900 text-white">
@@ -109,15 +104,15 @@ export const QuoteCalculator: React.FC<QuoteCalculatorProps> = ({ className = ''
                         </div>
 
                         {/* To */}
-                        <div className="space-y-2">
-                            <label className="flex items-center gap-2 text-sm font-semibold text-white">
-                                <MapPin className="w-4 h-4 text-green-400" />
+                        <div className="space-y-1.5">
+                            <label className="flex items-center gap-2 text-xs font-semibold text-slate-300">
+                                <MapPin className="w-3.5 h-3.5 text-batimove-red" />
                                 Destination
                             </label>
                             <select
                                 value={to}
                                 onChange={(e) => setTo(e.target.value)}
-                                className="w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 py-3.5 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition-all hover:bg-white/15"
+                                className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-batimove-red focus:border-transparent transition-all hover:bg-slate-800/70"
                             >
                                 {cities.map(city => (
                                     <option key={city} value={city} className="bg-slate-900 text-white">
@@ -128,15 +123,15 @@ export const QuoteCalculator: React.FC<QuoteCalculatorProps> = ({ className = ''
                         </div>
 
                         {/* Property Type */}
-                        <div className="space-y-2">
-                            <label className="flex items-center gap-2 text-sm font-semibold text-white">
-                                <Home className="w-4 h-4 text-purple-400" />
+                        <div className="space-y-1.5">
+                            <label className="flex items-center gap-2 text-xs font-semibold text-slate-300">
+                                <Home className="w-3.5 h-3.5 text-slate-400" />
                                 Type de logement
                             </label>
                             <select
                                 value={propertyType}
                                 onChange={(e) => setPropertyType(e.target.value)}
-                                className="w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 py-3.5 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all hover:bg-white/15"
+                                className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-batimove-blue focus:border-transparent transition-all hover:bg-slate-800/70"
                             >
                                 {propertyTypes.map(type => (
                                     <option key={type.value} value={type.value} className="bg-slate-900 text-white">
@@ -147,12 +142,12 @@ export const QuoteCalculator: React.FC<QuoteCalculatorProps> = ({ className = ''
                         </div>
 
                         {/* Volume Display */}
-                        <div className="space-y-2">
-                            <label className="flex items-center gap-2 text-sm font-semibold text-white">
-                                <Package className="w-4 h-4 text-orange-400" />
+                        <div className="space-y-1.5">
+                            <label className="flex items-center gap-2 text-xs font-semibold text-slate-300">
+                                <Package className="w-3.5 h-3.5 text-slate-400" />
                                 Volume estimé
                             </label>
-                            <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white font-mono text-lg">
+                            <div className="bg-slate-800/30 border border-slate-600/30 rounded-lg px-3 py-2 text-white font-mono text-sm">
                                 ~{volume}m³
                             </div>
                         </div>
@@ -161,14 +156,14 @@ export const QuoteCalculator: React.FC<QuoteCalculatorProps> = ({ className = ''
                         <motion.div
                             animate={isCalculating ? { scale: [1, 1.02, 1] } : {}}
                             transition={{ duration: 0.3 }}
-                            className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-blue-400/30 rounded-2xl p-6 backdrop-blur-sm"
+                            className="bg-gradient-to-br from-batimove-blue/10 to-batimove-red/10 border border-batimove-blue/30 rounded-xl p-4 backdrop-blur-sm"
                         >
                             <div className="text-center">
-                                <p className="text-blue-200 text-sm font-semibold mb-2">Estimation</p>
-                                <p className="text-white font-display text-4xl font-bold mb-1">
+                                <p className="text-batimove-blue text-xs font-semibold mb-1">Estimation</p>
+                                <p className="text-white font-display text-3xl font-bold mb-1">
                                     CHF {min.toLocaleString()} - {max.toLocaleString()}
                                 </p>
-                                <p className="text-slate-300 text-xs flex items-center justify-center gap-1">
+                                <p className="text-slate-400 text-xs flex items-center justify-center gap-1">
                                     <Sparkles className="w-3 h-3" />
                                     Devis détaillé gratuit
                                 </p>
@@ -179,7 +174,7 @@ export const QuoteCalculator: React.FC<QuoteCalculatorProps> = ({ className = ''
                         <Button
                             type="submit"
                             disabled={isCalculating}
-                            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-xl py-4 font-bold text-lg shadow-lg shadow-blue-900/50 transition-all hover:shadow-xl hover:shadow-blue-500/50 hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                            className="w-full bg-batimove-red hover:bg-[#c00500] text-white rounded-lg py-3 font-bold text-base shadow-lg shadow-batimove-red/30 transition-all hover:shadow-xl hover:shadow-batimove-red/40 hover:-translate-y-0.5 flex items-center justify-center gap-2"
                         >
                             {isCalculating ? (
                                 <>
@@ -199,7 +194,7 @@ export const QuoteCalculator: React.FC<QuoteCalculatorProps> = ({ className = ''
                         </Button>
 
                         {/* Trust Badges */}
-                        <div className="flex items-center justify-center gap-6 text-xs text-slate-300 pt-2">
+                        <div className="flex items-center justify-center gap-4 text-xs text-slate-400 pt-1">
                             <span className="flex items-center gap-1">
                                 ✓ Réponse en 2h
                             </span>
