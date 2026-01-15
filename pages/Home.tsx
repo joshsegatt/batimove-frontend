@@ -234,12 +234,22 @@ export const Home: React.FC = () => {
                         ))}
                      </div>
 
-                     <div className="mt-12">
+                     <div className="mt-12 flex flex-col sm:flex-row items-center gap-6">
                         <Link to="/quote">
                            <Button className="bg-batimove-red text-white hover:bg-[#c00500] rounded-full px-8 py-4 font-bold font-display tracking-wide shadow-xl shadow-batimove-red/30">
                               Démarrer la Visio-Cotation
                            </Button>
                         </Link>
+                        <div className="flex flex-col gap-2">
+                           <a href="tel:0800123456" className="flex items-center gap-2 text-slate-700 hover:text-batimove-blue transition-colors font-bold">
+                              <Phone className="w-5 h-5" />
+                              <span className="text-xl font-display">0800 123 456</span>
+                           </a>
+                           <div className="flex items-center gap-2 text-sm text-slate-500">
+                              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                              <span className="font-semibold">Disponible 24/7</span>
+                           </div>
+                        </div>
                      </div>
                   </div>
 
@@ -363,8 +373,8 @@ export const Home: React.FC = () => {
 
                      {/* Step 1 */}
                      <div className="bg-white p-12 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 text-center group hover:-translate-y-2 transition-transform duration-500">
-                        <div className="w-24 h-24 mx-auto mb-8 transition-transform duration-300 group-hover:scale-110">
-                           <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Memo.png" alt="Quote" className="w-full h-full object-contain" />
+                        <div className="w-full h-48 mx-auto mb-8 rounded-2xl overflow-hidden shadow-lg">
+                           <img src="/digital-quote.png" alt="Digital Quote Form" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                         </div>
                         <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 block font-display">Étape 01</span>
                         <h3 className="font-display text-2xl font-bold text-slate-900 mb-4">L'Offre Digitale</h3>
@@ -375,8 +385,8 @@ export const Home: React.FC = () => {
 
                      {/* Step 2 */}
                      <div className="bg-white p-12 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 text-center group hover:-translate-y-2 transition-transform duration-500">
-                        <div className="w-24 h-24 mx-auto mb-8 transition-transform duration-300 group-hover:scale-110">
-                           <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Package.png" alt="Prep" className="w-full h-full object-contain" />
+                        <div className="w-full h-48 mx-auto mb-8 rounded-2xl overflow-hidden shadow-lg">
+                           <img src="/boxes-prep.png" alt="Moving Boxes Preparation" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                         </div>
                         <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 block font-display">Étape 02</span>
                         <h3 className="font-display text-2xl font-bold text-slate-900 mb-4">La Préparation</h3>
@@ -387,8 +397,8 @@ export const Home: React.FC = () => {
 
                      {/* Step 3 */}
                      <div className="bg-white p-12 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 text-center group hover:-translate-y-2 transition-transform duration-500">
-                        <div className="w-24 h-24 mx-auto mb-8 transition-transform duration-300 group-hover:scale-110">
-                           <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Delivery%20Truck.png" alt="Move" className="w-full h-full object-contain" />
+                        <div className="w-full h-48 mx-auto mb-8 rounded-2xl overflow-hidden shadow-lg">
+                           <img src="/truck-tracking.png" alt="Moving Truck Tracking" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                         </div>
                         <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 block font-display">Étape 03</span>
                         <h3 className="font-display text-2xl font-bold text-slate-900 mb-4">Le Mouvement</h3>
