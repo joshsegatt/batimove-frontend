@@ -10,6 +10,7 @@ import { Pricing } from './pages/Pricing';
 import { Contact } from './pages/Contact';
 import { Legal } from './pages/Legal';
 import { CookieConsent } from './components/CookieConsent';
+import { EngagementPopup } from './components/EngagementPopup';
 
 // ScrollToTop helper
 const ScrollToTop = () => {
@@ -49,6 +50,7 @@ const App: React.FC = () => {
         </main>
         <Footer />
         <CookieConsent />
+        <EngagementPopup />
       </div>
     </HashRouter>
   );
