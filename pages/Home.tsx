@@ -99,20 +99,20 @@ export const Home: React.FC = () => {
                            transition={{ duration: 0.5, ease: "easeOut" }}
                         >
                            {/* Pre-Title (Category) */}
-                           <h3 className="text-batimove-blue font-bold tracking-[0.2em] text-sm md:text-base mb-4 uppercase font-display flex items-center gap-3">
-                              <span className="w-8 h-[2px] bg-batimove-red"></span>
+                           <h3 className="text-batimove-blue font-bold tracking-[0.15em] sm:tracking-[0.2em] text-xs sm:text-sm md:text-base mb-3 sm:mb-4 uppercase font-display flex items-center gap-2 sm:gap-3">
+                              <span className="w-6 sm:w-8 h-[2px] bg-batimove-red"></span>
                               {slide.pretitle}
                            </h3>
 
                            {/* Main Headline (Marketing Banner Style) */}
-                           <h1 className="font-display text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[0.9] mb-8">
+                           <h1 className="font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-black tracking-tighter leading-[0.9] mb-6 sm:mb-8">
                               <span className={`text-transparent bg-clip-text bg-gradient-to-br ${slide.gradient}`}>
                                  {slide.title}
                               </span>
                            </h1>
 
                            {/* Description */}
-                           <p className="font-sans text-slate-400 text-lg md:text-2xl font-light leading-relaxed max-w-xl mb-12">
+                           <p className="font-sans text-slate-400 text-base sm:text-lg md:text-xl lg:text-2xl font-light leading-relaxed max-w-xl mb-8 sm:mb-12">
                               {slide.description}
                            </p>
                         </motion.div>
@@ -374,7 +374,7 @@ export const Home: React.FC = () => {
                      {/* Step 1 */}
                      <div className="bg-white p-12 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 text-center group hover:-translate-y-2 transition-transform duration-500">
                         <div className="w-full h-48 mx-auto mb-8 rounded-2xl overflow-hidden shadow-lg">
-                           <img src="/digital-quote.png" alt="Digital Quote Form" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                           <img src="/digital-quote.png" loading="lazy" decoding="async" alt="Digital Quote Form" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                         </div>
                         <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 block font-display">Étape 01</span>
                         <h3 className="font-display text-2xl font-bold text-slate-900 mb-4">L'Offre Digitale</h3>
@@ -386,7 +386,7 @@ export const Home: React.FC = () => {
                      {/* Step 2 */}
                      <div className="bg-white p-12 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 text-center group hover:-translate-y-2 transition-transform duration-500">
                         <div className="w-full h-48 mx-auto mb-8 rounded-2xl overflow-hidden shadow-lg">
-                           <img src="/boxes-prep.png" alt="Moving Boxes Preparation" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                           <img src="/boxes-prep.png" loading="lazy" decoding="async" alt="Moving Boxes Preparation" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                         </div>
                         <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 block font-display">Étape 02</span>
                         <h3 className="font-display text-2xl font-bold text-slate-900 mb-4">La Préparation</h3>
@@ -398,7 +398,7 @@ export const Home: React.FC = () => {
                      {/* Step 3 */}
                      <div className="bg-white p-12 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 text-center group hover:-translate-y-2 transition-transform duration-500">
                         <div className="w-full h-48 mx-auto mb-8 rounded-2xl overflow-hidden shadow-lg">
-                           <img src="/truck-tracking.png" alt="Moving Truck Tracking" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                           <img src="/truck-tracking.png" loading="lazy" decoding="async" alt="Moving Truck Tracking" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                         </div>
                         <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 block font-display">Étape 03</span>
                         <h3 className="font-display text-2xl font-bold text-slate-900 mb-4">Le Mouvement</h3>
@@ -428,7 +428,7 @@ export const Home: React.FC = () => {
                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-[600px]">
                   {/* Large Image */}
                   <div className="relative rounded-[2rem] overflow-hidden group shadow-2xl">
-                     <img src="/floor-protection.png" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt="Protection Sols et Murs" />
+                     <img src="/floor-protection.png" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt="Protection Sols et Murs" />
                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                      <div className="absolute bottom-10 left-10 text-white">
                         <h3 className="font-display text-3xl font-bold mb-3">Protection Sols & Murs</h3>
@@ -439,7 +439,7 @@ export const Home: React.FC = () => {
                   <div className="grid grid-rows-2 gap-4">
                      {/* Top Small */}
                      <div className="relative rounded-[2rem] overflow-hidden group shadow-xl">
-                        <img src="/swiss-truck.png" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt="Flotte Moderne" />
+                        <img src="/swiss-truck.png" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt="Flotte Moderne" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                         <div className="absolute bottom-8 left-8 text-white">
                            <h3 className="font-display text-2xl font-bold">Flotte Moderne</h3>
@@ -447,7 +447,7 @@ export const Home: React.FC = () => {
                      </div>
                      {/* Bottom Small - FIXED IMAGE */}
                      <div className="relative rounded-[2rem] overflow-hidden group shadow-xl">
-                        <img src="/packing-materials.png" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt="Emballages Spécifiques" />
+                        <img src="/packing-materials.png" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt="Emballages Spécifiques" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                         <div className="absolute bottom-8 left-8 text-white">
                            <h3 className="font-display text-2xl font-bold">Emballages Spécifiques</h3>

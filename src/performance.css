@@ -23,6 +23,19 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Optimize animations for 60fps */
 @media (prefers-reduced-motion: no-preference) {
   * {
@@ -39,6 +52,14 @@ body {
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
   will-change: transform;
+}
+
+/* Remove will-change after animation completes */
+[class*="transform"]:not(:hover):not(:focus),
+[class*="translate"]:not(:hover):not(:focus),
+[class*="rotate"]:not(:hover):not(:focus),
+[class*="scale"]:not(:hover):not(:focus) {
+  will-change: auto;
 }
 
 /* Optimize video playback */
@@ -71,5 +92,12 @@ img {
 @supports (scrollbar-gutter: stable) {
   html {
     scrollbar-gutter: stable;
+  }
+}
+
+/* Optimize hover states for better performance */
+@media (hover: hover) and (pointer: fine) {
+  .hover\:scale-105:hover {
+    will-change: transform;
   }
 }
