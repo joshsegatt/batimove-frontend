@@ -114,23 +114,23 @@ export const EngagementPopup: React.FC = () => {
         <AnimatePresence>
             {state.isVisible && (
                 <>
-                    {/* Backdrop */}
+                    {/* Subtle Backdrop - NO BLUR */}
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={closePopup}
-                        className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[9998]"
+                        className="fixed inset-0 bg-black/10 z-[9998]"
                         aria-hidden="true"
                     />
 
-                    {/* Popup */}
+                    {/* Popup - CENTERED */}
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                        initial={{ opacity: 0, scale: 0.95, y: -20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                        transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                        className="fixed bottom-8 right-8 z-[9999] max-w-sm w-full mx-4 md:mx-0"
+                        exit={{ opacity: 0, scale: 0.95, y: -20 }}
+                        transition={{ type: 'spring', damping: 30, stiffness: 400 }}
+                        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[9999] max-w-md w-full mx-4"
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby="popup-title"
