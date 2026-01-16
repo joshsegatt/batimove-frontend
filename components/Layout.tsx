@@ -3,7 +3,6 @@ import { Menu, X, Phone, Shield, ExternalLink, Linkedin, Instagram, Facebook } f
 import { Button, Logo } from './UIComponents';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { EngagementPopup } from './EngagementPopup';
 
 export const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
