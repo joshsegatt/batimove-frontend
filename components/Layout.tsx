@@ -41,7 +41,7 @@ export const Navbar: React.FC = () => {
             <Logo className="w-14 h-14" />
             <span className={`text-2xl font-extrabold tracking-tight transition-colors ${isImmersivePage && !isMobileMenuOpen ? 'text-white' : 'text-slate-900'
               }`}>
-              Batimove
+              Batimove Sarl
             </span>
           </Link>
 
@@ -164,7 +164,7 @@ export const Footer: React.FC = () => {
           <div className="space-y-3 max-w-xs">
             <Link to="/" className="flex items-center gap-1.5 text-white text-lg font-bold font-display hover:opacity-80 transition-opacity">
               <Logo className="w-9 h-9" />
-              Batimove
+              Batimove Sarl
             </Link>
             <div className="text-xs leading-relaxed text-slate-500 font-medium">
               <p>Rue de Monthoux 64</p>
