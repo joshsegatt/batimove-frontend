@@ -135,8 +135,8 @@ export const Pricing: React.FC = () => {
                 className={`relative flex flex-col group rounded-[2rem] border transition-all duration-500 snap-center min-w-[280px] md:min-w-0 ${plan.highlight
                   ? 'bg-gradient-to-b from-white/10 to-white/5 border-white/20 shadow-[0_20px_60px_-15px_rgba(0,82,163,0.3)] z-10'
                   : plan.specialStyle
-                    ? 'bg-gradient-to-b from-slate-800/50 to-slate-900/50 border-blue-400/20 shadow-[0_0_30px_-10px_rgba(59,130,246,0.15)] hover:border-blue-400/40'
-                    : 'bg-white/5 border-white/5 hover:bg-white/10 hover:border-white/20 z-0'
+                    ? 'bg-gradient-to-b from-slate-800/50 to-slate-900/50 border-blue-400/20 shadow-[0_0_30px_-10px_rgba(59,130,246,0.15)]'
+                    : 'bg-white/5 border-white/5 z-0'
                   }`}
               >
                 {/* Highlight Badge */}
