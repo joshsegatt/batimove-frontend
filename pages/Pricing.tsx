@@ -175,16 +175,16 @@ export const Pricing: React.FC = () => {
                     {plan.action === 'modal' ? (
                       <Button
                         onClick={() => setIsModalOpen(true)}
-                        className="w-full rounded-xl py-4 text-sm font-bold uppercase tracking-widest bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white shadow-lg shadow-indigo-500/30 transition-all font-display"
+                        className="w-full rounded-xl py-4 text-sm font-bold uppercase tracking-widest bg-gradient-to-r from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-500/30 font-display"
                       >
                         {plan.cta}
                       </Button>
                     ) : (
                       <Link to="/quote">
                         <Button
-                          className={`w-full rounded-xl py-4 text-sm font-bold uppercase tracking-widest transition-all font-display ${plan.highlight
-                            ? 'bg-batimove-red text-white hover:bg-[#c00500] shadow-[0_8px_30px_-5px_rgba(225,6,0,0.5)] hover:shadow-[0_10px_40px_-5px_rgba(225,6,0,0.7)]'
-                            : 'bg-white/5 text-white border border-white/10 hover:bg-white/10 hover:border-white/30'
+                          className={`w-full rounded-xl py-4 text-sm font-bold uppercase tracking-widest font-display ${plan.highlight
+                            ? 'bg-batimove-red text-white shadow-[0_8px_30px_-5px_rgba(225,6,0,0.5)]'
+                            : 'bg-white/5 text-white border border-white/10'
                             }`}
                         >
                           {plan.cta}
