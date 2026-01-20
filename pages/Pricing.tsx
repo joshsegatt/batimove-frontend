@@ -133,10 +133,10 @@ export const Pricing: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.5, type: "spring", stiffness: 50 }}
                 className={`relative flex flex-col group rounded-[2rem] border transition-all duration-500 snap-center min-w-[280px] md:min-w-0 ${plan.highlight
-                  ? 'bg-gradient-to-b from-white/10 to-white/5 border-white/20 shadow-[0_20px_60px_-15px_rgba(0,82,163,0.3)] z-10 scale-[1.02]'
+                  ? 'bg-gradient-to-b from-white/10 to-white/5 border-white/20 shadow-[0_20px_60px_-15px_rgba(0,82,163,0.3)] z-10'
                   : plan.specialStyle
                     ? 'bg-gradient-to-b from-slate-800/50 to-slate-900/50 border-blue-400/20 shadow-[0_0_30px_-10px_rgba(59,130,246,0.15)] hover:border-blue-400/40'
-                    : 'bg-white/5 border-white/5 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02] z-0'
+                    : 'bg-white/5 border-white/5 hover:bg-white/10 hover:border-white/20 z-0'
                   }`}
               >
                 {/* Highlight Badge */}
@@ -175,7 +175,7 @@ export const Pricing: React.FC = () => {
                     {plan.action === 'modal' ? (
                       <Button
                         onClick={() => setIsModalOpen(true)}
-                        className="w-full rounded-xl py-4 text-sm font-bold uppercase tracking-widest bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white shadow-lg shadow-indigo-500/30 transition-all hover:-translate-y-1 font-display"
+                        className="w-full rounded-xl py-4 text-sm font-bold uppercase tracking-widest bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white shadow-lg shadow-indigo-500/30 transition-all font-display"
                       >
                         {plan.cta}
                       </Button>
@@ -183,7 +183,7 @@ export const Pricing: React.FC = () => {
                       <Link to="/quote">
                         <Button
                           className={`w-full rounded-xl py-4 text-sm font-bold uppercase tracking-widest transition-all font-display ${plan.highlight
-                            ? 'bg-batimove-red text-white hover:bg-[#c00500] shadow-[0_8px_30px_-5px_rgba(225,6,0,0.5)] hover:shadow-[0_10px_40px_-5px_rgba(225,6,0,0.7)] transform hover:-translate-y-1'
+                            ? 'bg-batimove-red text-white hover:bg-[#c00500] shadow-[0_8px_30px_-5px_rgba(225,6,0,0.5)] hover:shadow-[0_10px_40px_-5px_rgba(225,6,0,0.7)]'
                             : 'bg-white/5 text-white border border-white/10 hover:bg-white/10 hover:border-white/30'
                             }`}
                         >
