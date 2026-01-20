@@ -109,7 +109,13 @@ export const Navbar: React.FC = () => {
               </button>
             </div>
 
+
             <div className="flex-1 flex flex-col justify-center items-center gap-8">
+              <p style={{ fontSize: '28px', color: 'red', fontWeight: 'bold' }}>TESTE MENU</p>
+              <a href="/services" style={{ fontSize: '24px', color: 'blue', fontWeight: 'bold' }}>Services</a>
+              <a href="/business" style={{ fontSize: '24px', color: 'blue', fontWeight: 'bold' }}>Entreprises</a>
+              <a href="/pricing" style={{ fontSize: '24px', color: 'blue', fontWeight: 'bold' }}>Tarifs</a>
+              <a href="/contact" style={{ fontSize: '24px', color: 'blue', fontWeight: 'bold' }}>Contact</a>
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
