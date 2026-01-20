@@ -56,7 +56,7 @@ const servicesList = [
     subtitle: "Douanes & Logistique",
     description: "Quittez ou rejoignez la Suisse sans tracas administratifs. Nous gérons les formalités douanières et la logistique transfrontalière.",
     features: ["Gestion formalités douanières", "Fret routier, maritime ou aérien", "Emballage export spécifique", "Réseau de partenaires mondiaux"],
-    image: "/service-international.png",
+    image: "/international-move.png",
     isPopular: false
   },
   {
