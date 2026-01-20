@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Phone, Shield, ExternalLink, Linkedin, Instagram, Facebook } from 'lucide-react';
 import { Button, Logo } from './UIComponents';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 export const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isQuotePage = location.pathname === '/quote' || location.pathname.startsWith('/quote/');
   const isImmersivePage = ['/', '/business', '/pricing', '/contact'].some(path => location.pathname === path);
@@ -131,12 +132,12 @@ export const Navbar: React.FC = () => {
               alignItems: 'center',
               gap: '32px'
             }}>
-              <a href="/services" style={{ fontSize: '32px', fontWeight: 'bold', color: '#0f172a', textDecoration: 'none', textAlign: 'center', width: '100%', padding: '12px' }}>Services</a>
-              <a href="/business" style={{ fontSize: '32px', fontWeight: 'bold', color: '#0f172a', textDecoration: 'none', textAlign: 'center', width: '100%', padding: '12px' }}>Entreprises</a>
-              <a href="/pricing" style={{ fontSize: '32px', fontWeight: 'bold', color: '#0f172a', textDecoration: 'none', textAlign: 'center', width: '100%', padding: '12px' }}>Tarifs</a>
-              <a href="/contact" style={{ fontSize: '32px', fontWeight: 'bold', color: '#0f172a', textDecoration: 'none', textAlign: 'center', width: '100%', padding: '12px' }}>Contact</a>
+              <Link to="/services" onClick={() => setIsMobileMenuOpen(false)} style={{ fontSize: '32px', fontWeight: 'bold', color: '#0f172a', textDecoration: 'none', textAlign: 'center', width: '100%', padding: '12px' }}>Services</Link>
+              <Link to="/business" onClick={() => setIsMobileMenuOpen(false)} style={{ fontSize: '32px', fontWeight: 'bold', color: '#0f172a', textDecoration: 'none', textAlign: 'center', width: '100%', padding: '12px' }}>Entreprises</Link>
+              <Link to="/pricing" onClick={() => setIsMobileMenuOpen(false)} style={{ fontSize: '32px', fontWeight: 'bold', color: '#0f172a', textDecoration: 'none', textAlign: 'center', width: '100%', padding: '12px' }}>Tarifs</Link>
+              <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} style={{ fontSize: '32px', fontWeight: 'bold', color: '#0f172a', textDecoration: 'none', textAlign: 'center', width: '100%', padding: '12px' }}>Contact</Link>
               <div style={{ height: '2px', width: '80px', backgroundColor: '#94a3b8', margin: '16px 0' }}></div>
-              <a href="/quote" style={{ fontSize: '20px', fontWeight: 'bold', color: '#ffffff', backgroundColor: '#e10600', textDecoration: 'none', textAlign: 'center', width: '100%', padding: '16px', borderRadius: '12px', display: 'block' }}>Devis Express</a>
+              <Link to="/quote" onClick={() => setIsMobileMenuOpen(false)} style={{ fontSize: '20px', fontWeight: 'bold', color: '#ffffff', backgroundColor: '#e10600', textDecoration: 'none', textAlign: 'center', width: '100%', padding: '16px', borderRadius: '12px', display: 'block' }}>Devis Express</Link>
             </div>
 
             <div style={{ marginTop: 'auto', textAlign: 'center', color: '#94a3b8', fontSize: '14px', paddingTop: '32px', paddingBottom: '32px' }}>
