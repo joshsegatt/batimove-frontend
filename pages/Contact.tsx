@@ -75,7 +75,12 @@ export const Contact: React.FC = () => {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 max-w-5xl mx-auto text-center"
           >
             {/* Location Card */}
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col items-center hover:bg-white/10 transition-colors group">
+            <a
+              href="https://www.google.com/maps/search/?api=1&query=Rue+de+Monthoux+64,+1201+Genève,+Switzerland"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col items-center hover:bg-white/10 transition-colors group cursor-pointer"
+            >
               <div className="w-24 h-24 mb-2 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 drop-shadow-xl">
                 <img
                   src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Office%20Building.png"
@@ -85,10 +90,13 @@ export const Contact: React.FC = () => {
               </div>
               <h3 className="font-bold text-lg mb-2">Genève</h3>
               <p className="text-slate-400 text-sm">Rue de Monthoux 64<br />1201 Genève</p>
-            </div>
+            </a>
 
             {/* Phone Card */}
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col items-center hover:bg-white/10 transition-colors group">
+            <a
+              href="tel:+41800825925"
+              className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col items-center hover:bg-white/10 transition-colors group cursor-pointer"
+            >
               <div className="w-24 h-24 mb-2 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 drop-shadow-xl">
                 <img
                   src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Telephone%20Receiver.png"
@@ -99,7 +107,7 @@ export const Contact: React.FC = () => {
               <h3 className="font-bold text-lg mb-2">Téléphone</h3>
               <p className="text-slate-400 text-sm">0800 825 925</p>
               <p className="text-xs text-slate-500 mt-1">Lun-Ven: 08h-18h</p>
-            </div>
+            </a>
 
             {/* WhatsApp Card */}
             <a
@@ -121,7 +129,10 @@ export const Contact: React.FC = () => {
             </a>
 
             {/* Email Card */}
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col items-center hover:bg-white/10 transition-colors group">
+            <a
+              href="mailto:info@batimove.ch"
+              className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col items-center hover:bg-white/10 transition-colors group cursor-pointer"
+            >
               <div className="w-24 h-24 mb-2 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 drop-shadow-xl">
                 <img
                   src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/E-Mail.png"
@@ -132,7 +143,7 @@ export const Contact: React.FC = () => {
               <h3 className="font-bold text-lg mb-2">Email</h3>
               <p className="text-slate-400 text-sm">info@batimove.ch</p>
               <p className="text-xs text-slate-500 mt-1">Réponse sous 24h</p>
-            </div>
+            </a>
           </motion.div>
         </div>
       </div>
