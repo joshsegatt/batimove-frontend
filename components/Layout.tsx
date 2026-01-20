@@ -95,7 +95,7 @@ export const Navbar: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 md:hidden"
+              className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] md:hidden"
             />
 
             {/* Side Panel */}
@@ -104,7 +104,7 @@ export const Navbar: React.FC = () => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed top-0 right-0 h-full w-[85%] max-w-sm bg-white shadow-2xl z-[60] flex flex-col p-6 md:hidden"
+              className="fixed top-0 right-0 h-full w-[85%] max-w-sm bg-white shadow-2xl z-[80] flex flex-col p-6 md:hidden"
             >
               <div className="flex justify-end mb-8">
                 <button
