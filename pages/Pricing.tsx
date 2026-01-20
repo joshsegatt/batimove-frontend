@@ -94,12 +94,12 @@ export const Pricing: React.FC = () => {
   return (
     <div className="w-full bg-slate-950 overflow-auto flex flex-col font-sans text-slate-900 min-h-screen py-20">
 
-      {/* Background Ambience */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0B1E33] via-[#0d223c] to-slate-950 z-0"></div>
+      {/* Background Ambience - Fixed to cover entire viewport */}
+      <div className="fixed inset-0 bg-gradient-to-b from-[#0B1E33] via-[#0d223c] to-slate-950 -z-10"></div>
 
       {/* Dynamic Glows */}
-      <div className="absolute top-[-20%] left-[20%] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
-      <div className="absolute bottom-[-20%] right-[10%] w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+      <div className="fixed top-[-20%] left-[20%] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none animate-pulse -z-10"></div>
+      <div className="fixed bottom-[-20%] right-[10%] w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none -z-10"></div>
 
 
 
