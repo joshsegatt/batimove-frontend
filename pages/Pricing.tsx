@@ -92,19 +92,19 @@ export const Pricing: React.FC = () => {
   };
 
   return (
-    <div className="w-full bg-slate-950 overflow-auto flex flex-col font-sans text-slate-900 min-h-screen py-20">
+    <div className="fixed inset-0 w-full h-[100dvh] bg-slate-950 overflow-hidden flex flex-col font-sans text-slate-900">
 
-      {/* Background Ambience - Fixed to cover entire viewport */}
-      <div className="fixed inset-0 bg-gradient-to-b from-[#0B1E33] via-[#0d223c] to-slate-950 -z-10"></div>
+      {/* Background Ambience */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0B1E33] via-[#0d223c] to-slate-950 z-0"></div>
 
       {/* Dynamic Glows */}
-      <div className="fixed top-[-20%] left-[20%] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none animate-pulse -z-10"></div>
-      <div className="fixed bottom-[-20%] right-[10%] w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none -z-10"></div>
+      <div className="absolute top-[-20%] left-[20%] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
+      <div className="absolute bottom-[-20%] right-[10%] w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-
-
+      {/* Navbar Spacer */}
+      <div className="h-20 w-full flex-shrink-0"></div>
       {/* Content Container */}
-      <div className="relative z-10 w-full max-w-[1600px] mx-auto px-6">
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-center w-full max-w-[1600px] mx-auto px-6 min-h-0">
 
         {/* Header Section */}
         <motion.div
@@ -122,8 +122,8 @@ export const Pricing: React.FC = () => {
         </motion.div>
 
         {/* Cards Grid - 4 Columns on XL screens */}
-        <div className="w-full flex items-center justify-center pb-8 md:pb-12 mt-8">
-          <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 px-4 md:px-0 max-w-7xl mx-auto">
+        <div className="w-full flex-1 min-h-0 flex items-center justify-center pb-8 md:pb-12">
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 overflow-y-auto md:overflow-visible px-4 md:px-0 py-4 snap-x snap-mandatory scrollbar-hide max-h-full md:h-auto">
 
             {plans.map((plan, index) => (
               <motion.div
