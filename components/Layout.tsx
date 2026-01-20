@@ -120,13 +120,14 @@ export const Navbar: React.FC = () => {
                   <Link
                     key={link.name}
                     to={link.path}
-                    className="text-3xl font-light tracking-tight text-slate-900 hover:text-batimove-blue transition-colors"
+                    className="text-3xl font-bold tracking-tight text-slate-900 hover:text-batimove-blue transition-colors block w-full text-center"
                     onClick={() => setIsMobileMenuOpen(false)}
+                    style={{ display: 'block', visibility: 'visible', opacity: 1 }}
                   >
                     {link.name}
                   </Link>
                 ))}
-                <div className="h-px w-20 bg-slate-100 my-4"></div>
+                <div className="h-1 w-20 bg-slate-400 my-4"></div>
                 <Link to="/quote" onClick={() => setIsMobileMenuOpen(false)} className="w-full">
                   <Button variant="primary" className="w-full justify-center shadow-xl shadow-red-500/20 text-lg py-4">Devis Express</Button>
                 </Link>
