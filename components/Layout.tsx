@@ -85,62 +85,55 @@ export const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Menu Overlay & Slide-over */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <>
-            {/* Dark Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] md:hidden"
-            />
+      {/* Mobile Menu - SIMPLIFIED */}
+      {isMobileMenuOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="fixed inset-0 bg-slate-900/60 z-[70]"
+            style={{ display: 'block', backdropFilter: 'blur(4px)' }}
+          />
 
-            {/* Side Panel */}
-            <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed top-0 right-0 h-full w-[85%] max-w-sm bg-white shadow-2xl z-[80] flex flex-col p-6 md:hidden"
-            >
-              <div className="flex justify-end mb-8">
-                <button
+          {/* Menu Panel */}
+          <div
+            className="fixed top-0 right-0 h-full w-[85%] max-w-sm bg-white shadow-2xl z-[80] flex flex-col p-6"
+            style={{ display: 'flex' }}
+          >
+            <div className="flex justify-end mb-8">
+              <button
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="p-2 rounded-full hover:bg-slate-100"
+              >
+                <X className="w-8 h-8 text-slate-900" />
+              </button>
+            </div>
+
+            <div className="flex-1 flex flex-col justify-center items-center gap-8">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  to={link.path}
+                  className="text-3xl font-bold text-slate-900 block w-full text-center"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="p-2 rounded-full hover:bg-slate-100 transition-colors"
+                  style={{ display: 'block', color: '#0f172a', fontWeight: 700 }}
                 >
-                  <X className="w-8 h-8 text-slate-900" />
-                </button>
-              </div>
-
-              <div className="flex-1 flex flex-col justify-center items-center gap-8">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.name}
-                    to={link.path}
-                    className="text-3xl font-bold tracking-tight text-slate-900 hover:text-batimove-blue transition-colors block w-full text-center"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    style={{ display: 'block', visibility: 'visible', opacity: 1 }}
-                  >
-                    {link.name}
-                  </Link>
-                ))}
-                <div className="h-1 w-20 bg-slate-400 my-4"></div>
-                <Link to="/quote" onClick={() => setIsMobileMenuOpen(false)} className="w-full">
-                  <Button variant="primary" className="w-full justify-center shadow-xl shadow-red-500/20 text-lg py-4">Devis Express</Button>
+                  {link.name}
                 </Link>
-              </div>
+              ))}
+              <div className="h-1 w-20 bg-slate-400 my-4"></div>
+              <Link to="/quote" onClick={() => setIsMobileMenuOpen(false)} className="w-full px-4">
+                <Button variant="primary" className="w-full justify-center text-lg py-4 font-bold">Devis Express</Button>
+              </Link>
+            </div>
 
-              <div className="mt-auto text-center text-slate-400 text-sm py-8">
-                <p>Batimove Sarl</p>
-                <p>Excellence in Motion</p>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+            <div className="mt-auto text-center text-slate-400 text-sm py-8">
+              <p>Batimove Sarl</p>
+              <p>Excellence in Motion</p>
+            </div>
+          </div>
+        </>
+      )}
     </nav>
   );
 };
