@@ -240,7 +240,7 @@ export const Home: React.FC = () => {
                               Démarrer la Visio-Cotation
                            </Button>
                         </Link>
-                        <div className="flex flex-col gap-2">
+                        <div className="flex flex-col gap-2 px-4 sm:px-0">
                            <a href="tel:0800123456" className="flex items-center gap-2 text-slate-700 hover:text-batimove-blue transition-colors font-bold">
                               <Phone className="w-5 h-5" />
                               <span className="text-xl font-display">0800 123 456</span>
@@ -425,7 +425,7 @@ export const Home: React.FC = () => {
                   </Link>
                </div>
 
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-[600px]">
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:h-[600px]">
                   {/* Large Image */}
                   <div className="relative rounded-[2rem] overflow-hidden group shadow-2xl">
                      <img src="/floor-protection.png" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt="Protection Sols et Murs" />

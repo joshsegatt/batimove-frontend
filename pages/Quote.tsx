@@ -171,7 +171,7 @@ const LuxuryInput = ({ label, value, onChange, type = "text", placeholder, icon:
           type={type}
           value={value}
           onChange={onChange}
-          className="w-full bg-white border border-slate-300 text-slate-900 px-5 py-4 rounded-xl outline-none focus:ring-4 focus:ring-batimove-blue/10 focus:border-batimove-blue hover:border-slate-400 transition-all font-medium placeholder:text-slate-400 shadow-sm"
+          className="w-full bg-white border border-slate-300 text-slate-900 px-5 py-4 min-h-[48px] rounded-xl outline-none focus:ring-4 focus:ring-batimove-blue/10 focus:border-batimove-blue hover:border-slate-400 transition-all font-medium placeholder:text-slate-400 shadow-sm"
           placeholder={placeholder}
         />
         {Icon && (
