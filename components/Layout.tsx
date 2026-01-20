@@ -2,20 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, Phone, Shield, ExternalLink, Linkedin, Instagram, Facebook } from 'lucide-react';
 import { Button, Logo } from './UIComponents';
 import { Link, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 
 export const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
 
-  // Quote page acts as a standalone funnel with its own internal navigation.
-  // We hide the global navbar to prevent visual conflicts (white text on white bg) and double headers.
   const isQuotePage = location.pathname === '/quote' || location.pathname.startsWith('/quote/');
-
-  // Pages that have dark/immersive backgrounds where navbar should be transparent or text white
   const isImmersivePage = ['/', '/business', '/pricing', '/contact'].some(path => location.pathname === path);
 
-  // Lock body scroll when menu is open
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden';
@@ -24,7 +18,6 @@ export const Navbar: React.FC = () => {
     }
   }, [isMobileMenuOpen]);
 
-  // If we are in the Quote Funnel, do not render the global navbar
   if (isQuotePage) return null;
 
   const navLinks = [
@@ -44,7 +37,6 @@ export const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <Link to="/" className="flex items-center gap-1.5 z-50">
-            {/* 3D Logo - No background */}
             <Logo className="w-14 h-14" />
             <span className={`text-2xl font-extrabold tracking-tight transition-colors ${isImmersivePage && !isMobileMenuOpen ? 'text-white' : 'text-slate-900'
               }`}>
@@ -77,7 +69,6 @@ export const Navbar: React.FC = () => {
             className="md:hidden z-50 p-2 relative"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
-            {/* Only show menu icon here, X is inside the slide-over */}
             {!isMobileMenuOpen && (
               <Menu className={isImmersivePage ? "text-white" : "text-slate-900"} />
             )}
@@ -85,57 +76,72 @@ export const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Menu - SIMPLIFIED */}
+      {/* MOBILE MENU - PURE HTML WITH INLINE STYLES */}
       {isMobileMenuOpen && (
         <>
-          {/* Backdrop */}
           <div
             onClick={() => setIsMobileMenuOpen(false)}
-            className="fixed inset-0 bg-slate-900/60 z-[70]"
-            style={{ display: 'block', backdropFilter: 'blur(4px)' }}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              zIndex: 70
+            }}
           />
 
-          {/* Menu Panel */}
           <div
-            className="fixed top-0 right-0 h-full w-[85%] max-w-sm bg-white shadow-2xl z-[80] flex flex-col p-6"
-            style={{ display: 'flex' }}
+            style={{
+              position: 'fixed',
+              top: 0,
+              right: 0,
+              width: '85%',
+              maxWidth: '400px',
+              height: '100vh',
+              backgroundColor: '#ffffff',
+              zIndex: 80,
+              display: 'flex',
+              flexDirection: 'column',
+              padding: '24px',
+              overflowY: 'auto'
+            }}
           >
-            <div className="flex justify-end mb-8">
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '32px' }}>
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="p-2 rounded-full hover:bg-slate-100"
+                style={{
+                  padding: '8px',
+                  borderRadius: '50%',
+                  border: 'none',
+                  backgroundColor: 'transparent',
+                  cursor: 'pointer'
+                }}
               >
-                <X className="w-8 h-8 text-slate-900" />
+                <X style={{ width: '32px', height: '32px', color: '#0f172a' }} />
               </button>
             </div>
 
-
-            <div className="flex-1 flex flex-col justify-center items-center gap-8">
-              <p style={{ fontSize: '28px', color: 'red', fontWeight: 'bold' }}>TESTE MENU</p>
-              <a href="/services" style={{ fontSize: '24px', color: 'blue', fontWeight: 'bold' }}>Services</a>
-              <a href="/business" style={{ fontSize: '24px', color: 'blue', fontWeight: 'bold' }}>Entreprises</a>
-              <a href="/pricing" style={{ fontSize: '24px', color: 'blue', fontWeight: 'bold' }}>Tarifs</a>
-              <a href="/contact" style={{ fontSize: '24px', color: 'blue', fontWeight: 'bold' }}>Contact</a>
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.path}
-                  className="text-3xl font-bold text-slate-900 block w-full text-center"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  style={{ display: 'block', color: '#0f172a', fontWeight: 700 }}
-                >
-                  {link.name}
-                </Link>
-              ))}
-              <div className="h-1 w-20 bg-slate-400 my-4"></div>
-              <Link to="/quote" onClick={() => setIsMobileMenuOpen(false)} className="w-full px-4">
-                <Button variant="primary" className="w-full justify-center text-lg py-4 font-bold">Devis Express</Button>
-              </Link>
+            <div style={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '32px'
+            }}>
+              <a href="/services" style={{ fontSize: '32px', fontWeight: 'bold', color: '#0f172a', textDecoration: 'none', textAlign: 'center', width: '100%', padding: '12px' }}>Services</a>
+              <a href="/business" style={{ fontSize: '32px', fontWeight: 'bold', color: '#0f172a', textDecoration: 'none', textAlign: 'center', width: '100%', padding: '12px' }}>Entreprises</a>
+              <a href="/pricing" style={{ fontSize: '32px', fontWeight: 'bold', color: '#0f172a', textDecoration: 'none', textAlign: 'center', width: '100%', padding: '12px' }}>Tarifs</a>
+              <a href="/contact" style={{ fontSize: '32px', fontWeight: 'bold', color: '#0f172a', textDecoration: 'none', textAlign: 'center', width: '100%', padding: '12px' }}>Contact</a>
+              <div style={{ height: '2px', width: '80px', backgroundColor: '#94a3b8', margin: '16px 0' }}></div>
+              <a href="/quote" style={{ fontSize: '20px', fontWeight: 'bold', color: '#ffffff', backgroundColor: '#e10600', textDecoration: 'none', textAlign: 'center', width: '100%', padding: '16px', borderRadius: '12px', display: 'block' }}>Devis Express</a>
             </div>
 
-            <div className="mt-auto text-center text-slate-400 text-sm py-8">
-              <p>Batimove Sarl</p>
-              <p>Excellence in Motion</p>
+            <div style={{ marginTop: 'auto', textAlign: 'center', color: '#94a3b8', fontSize: '14px', paddingTop: '32px', paddingBottom: '32px' }}>
+              <p style={{ margin: 0 }}>Batimove Sarl</p>
+              <p style={{ margin: 0 }}>Excellence in Motion</p>
             </div>
           </div>
         </>
@@ -146,7 +152,6 @@ export const Navbar: React.FC = () => {
 
 export const Footer: React.FC = () => {
   const location = useLocation();
-  // Hide on specific full-screen flows to avoid clutter, but show on main pages
   const isHidden = ['/quote', '/business', '/pricing', '/contact'].some(path => location.pathname === path || location.pathname.startsWith('/quote/'));
 
   if (isHidden) return null;
@@ -155,8 +160,6 @@ export const Footer: React.FC = () => {
     <footer className="bg-[#0B1E33] text-slate-400 py-8 border-t border-white/5 font-sans">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-start gap-8 md:gap-12 mb-8">
-
-          {/* Identity Block - Compact */}
           <div className="space-y-3 max-w-xs">
             <Link to="/" className="flex items-center gap-1.5 text-white text-lg font-bold font-display hover:opacity-80 transition-opacity">
               <Logo className="w-9 h-9" />
@@ -171,7 +174,6 @@ export const Footer: React.FC = () => {
             </a>
           </div>
 
-          {/* Compact Navigation Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-6 text-xs w-full md:w-auto">
             <div className="flex flex-col gap-2">
               <h4 className="text-white font-semibold font-display mb-1">Expertise</h4>
@@ -197,7 +199,6 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
-        {/* Essential Bottom Bar */}
         <div className="pt-6 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] font-medium text-slate-600">
           <p>© {new Date().getFullYear()} Batimove Sarl. Tous droits réservés.</p>
           <div className="flex items-center gap-6">
