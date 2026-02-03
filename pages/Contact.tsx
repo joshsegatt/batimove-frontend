@@ -111,7 +111,7 @@ export const Contact: React.FC = () => {
 
             {/* WhatsApp Card */}
             <a
-              href="https://wa.me/41767718687?text=Bonjour%2C%20je%20souhaite%20un%20devis%20pour%20un%20d%C3%A9m%C3%A9nagement"
+              href="https://wa.me/41798896406?text=Bonjour%2C%20je%20souhaite%20un%20devis%20pour%20un%20d%C3%A9m%C3%A9nagement"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-gradient-to-br from-green-500/10 to-green-600/10 border border-green-500/30 rounded-2xl p-6 backdrop-blur-sm flex flex-col items-center hover:from-green-500/20 hover:to-green-600/20 hover:border-green-400/50 transition-all group cursor-pointer"
@@ -124,7 +124,7 @@ export const Contact: React.FC = () => {
                 />
               </div>
               <h3 className="font-bold text-lg mb-2 text-white">WhatsApp</h3>
-              <p className="text-green-300 text-sm font-semibold">076 771 86 87</p>
+              <p className="text-green-300 text-sm font-semibold">079 889 64 06</p>
               <p className="text-slate-400 text-xs mt-1">Réponse rapide</p>
             </a>
 

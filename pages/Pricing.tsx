@@ -146,7 +146,7 @@ export const Pricing: React.FC = () => {
                   </div>
                 )}
 
-                <div className="p-6 lg:p-8 flex flex-col h-full backdrop-blur-md rounded-[2rem]">
+                <div className="p-6 lg:p-8 flex flex-col h-full max-h-[calc(100vh-250px)] backdrop-blur-md rounded-[2rem] overflow-y-auto scrollbar-hide">
                   {/* Header */}
                   <div className="mb-6 relative">
                     <h3 className="font-display text-2xl font-bold text-white mb-1">{plan.name}</h3>
@@ -160,7 +160,7 @@ export const Pricing: React.FC = () => {
                   </div>
 
                   {/* Features */}
-                  <ul className="space-y-3 mb-8 flex-1">
+                  <ul className="space-y-3 mb-8 flex-1 overflow-y-auto scrollbar-hide">
                     {plan.features.map((feature, i) => (
                       <li key={i} className="flex items-start gap-3 text-sm text-slate-300">
                         <Check className={`w-4 h-4 mt-0.5 flex-shrink-0 ${plan.highlight ? 'text-green-400' : plan.specialStyle ? 'text-indigo-400' : 'text-slate-500'}`} />
