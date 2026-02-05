@@ -432,7 +432,7 @@ export const Home: React.FC = () => {
                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                      <div className="absolute bottom-10 left-10 text-white">
                         <h3 className="font-display text-3xl font-bold mb-3">Protection Sols & Murs</h3>
-                        <p className="font-sans text-white/90 text-base max-w-sm font-medium leading-relaxed">Nous installons des protections "Bullkraft" sur tous les lieux de passage avant même de déplacer le premier carton.</p>
+                        <p className="font-sans text-white/90 text-base max-w-sm font-medium leading-relaxed">Nous installons des protections professionnelles sur tous les lieux de passage avant même de déplacer le premier carton.</p>
                      </div>
                   </div>
 
