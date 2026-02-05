@@ -57,7 +57,7 @@ export const Home: React.FC = () => {
             <div className="absolute inset-0 z-0">
                {/* Geneva 4K Background */}
                <img
-                  src="/hero-geneva-4k.jpg"
+                  src="/hero-geneva-16k.jpg"
                   alt="Geneva Switzerland"
                   className="w-full h-full object-cover"
                />
