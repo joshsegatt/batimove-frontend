@@ -7,7 +7,7 @@ import emailjs from '@emailjs/browser';
 import { QuoteData } from '../types';
 
 // EmailJS Configuration
-const EMAILJS_SERVICE_ID = 'service_akaw9of';
+const EMAILJS_SERVICE_ID = 'service_dasl0mc';
 const EMAILJS_TEMPLATE_QUOTE = 'template_9n214zz'; // Quote/Devis Express template
 const EMAILJS_TEMPLATE_CONTACT = 'template_tnia1q5'; // Contact form template
 const EMAILJS_PUBLIC_KEY = 'yflDdVrcEumOX4Ogs';
