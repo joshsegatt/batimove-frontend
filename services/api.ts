@@ -1,14 +1,16 @@
 /**
  * API Service Layer
- * Handles all backend API calls for Batimove SaaS
+ * Handles email sending for Batimove SaaS using EmailJS
  */
 
+import emailjs from '@emailjs/browser';
 import { QuoteData } from '../types';
 
-// API Base URL - uses Railway in production, proxy in development
-const API_BASE = import.meta.env.PROD
-    ? 'https://web-production-4353a.up.railway.app/api'
-    : '/api';
+// EmailJS Configuration
+const EMAILJS_SERVICE_ID = 'service_korbtmm';
+const EMAILJS_TEMPLATE_QUOTE = 'template_aiz34w8'; // Using Contact Us template for quotes
+const EMAILJS_TEMPLATE_CONTACT = 'template_aiz34w8'; // Using Contact Us template for contact
+const EMAILJS_PUBLIC_KEY = '8Bm3YAOP2zi_m71NB';
 
 // Response types
 interface ApiResponse {
@@ -46,64 +48,141 @@ interface BusinessData {
     serviceNeeds: string;
 }
 
+// Helper function to map service IDs to French names
+const getServiceName = (serviceId: string): string => {
+    const serviceNames: Record<string, string> = {
+        'priv': 'Déménagement Privé',
+        'pro': 'Transfert Pro',
+        'clean': 'Nettoyage',
+        'storage': 'Garde-Meubles',
+        'lift': 'Monte-Meubles',
+        'inter': 'International',
+        'general': 'Sur Mesure'
+    };
+    return serviceNames[serviceId] || serviceId;
+};
+
 /**
- * Submit a quote request
+ * Submit a quote request via EmailJS
  */
 export const submitQuote = async (data: QuoteData): Promise<QuoteResponse> => {
-    const response = await fetch(`${API_BASE}/quote`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    });
+    try {
+        // Prepare email template parameters
+        const templateParams = {
+            service_name: getServiceName(data.serviceId),
+            service_id: data.serviceId,
+            client_name: data.contact.name,
+            client_email: data.contact.email,
+            client_phone: data.contact.phone,
+            date: data.date,
+            from_zip: data.fromZip || 'N/A',
+            to_zip: data.toZip || 'N/A',
+            volume: data.volume || 'N/A',
+            rooms: data.rooms || 'N/A',
+            housing_type: data.housingType || 'N/A',
+            surface: data.surface || 'N/A',
+            duration: data.duration || 'N/A',
+            floor: data.floor !== undefined ? data.floor : 'N/A',
+            to_email: 'info@batimove.ch' // Company email
+        };
 
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to submit quote');
+        // Send email via EmailJS
+        await emailjs.send(
+            EMAILJS_SERVICE_ID,
+            EMAILJS_TEMPLATE_QUOTE,
+            templateParams,
+            EMAILJS_PUBLIC_KEY
+        );
+
+        // Generate unique ID for the quote
+        const quoteId = crypto.randomUUID();
+
+        return {
+            success: true,
+            quoteId: quoteId,
+            message: 'Votre demande de devis a été enregistrée avec succès.'
+        };
+    } catch (error) {
+        console.error('Error sending quote email:', error);
+        throw new Error('Failed to submit quote. Please try again.');
     }
-
-    return response.json();
 };
 
 /**
- * Submit a contact form message
+ * Submit a contact form message via EmailJS
  */
 export const submitContact = async (data: ContactData): Promise<ContactResponse> => {
-    const response = await fetch(`${API_BASE}/contact`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    });
+    try {
+        // Prepare email template parameters
+        const templateParams = {
+            from_name: data.name,
+            from_email: data.email,
+            subject: data.subject,
+            message: data.message,
+            to_email: 'info@batimove.ch' // Company email
+        };
 
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to submit contact message');
+        // Send email via EmailJS
+        await emailjs.send(
+            EMAILJS_SERVICE_ID,
+            EMAILJS_TEMPLATE_CONTACT,
+            templateParams,
+            EMAILJS_PUBLIC_KEY
+        );
+
+        // Generate unique ID for the message
+        const messageId = crypto.randomUUID();
+
+        return {
+            success: true,
+            messageId: messageId,
+            message: 'Votre message a été envoyé avec succès.'
+        };
+    } catch (error) {
+        console.error('Error sending contact email:', error);
+        throw new Error('Failed to submit contact message. Please try again.');
     }
-
-    return response.json();
 };
 
 /**
- * Submit a business lead
+ * Submit a business lead via EmailJS
+ * Note: You can create a third template for this if needed
  */
 export const submitBusiness = async (data: BusinessData): Promise<BusinessResponse> => {
-    const response = await fetch(`${API_BASE}/business`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    });
+    try {
+        // For now, using contact template with business data
+        const templateParams = {
+            from_name: `${data.contactName} (${data.companyName})`,
+            from_email: data.email,
+            subject: 'Business Lead - B2B Partnership',
+            message: `
+Company: ${data.companyName}
+Contact: ${data.contactName}
+Phone: ${data.phone}
+Employee Count: ${data.employeeCount || 'N/A'}
+Service Needs: ${data.serviceNeeds}
+            `.trim(),
+            to_email: 'info@batimove.ch'
+        };
 
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to submit business lead');
+        await emailjs.send(
+            EMAILJS_SERVICE_ID,
+            EMAILJS_TEMPLATE_CONTACT,
+            templateParams,
+            EMAILJS_PUBLIC_KEY
+        );
+
+        const leadId = crypto.randomUUID();
+
+        return {
+            success: true,
+            leadId: leadId,
+            message: 'Merci pour votre intérêt. Notre équipe vous contactera sous 48h.'
+        };
+    } catch (error) {
+        console.error('Error sending business lead:', error);
+        throw new Error('Failed to submit business lead. Please try again.');
     }
-
-    return response.json();
 };
 
 // Export all API functions
