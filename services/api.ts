@@ -12,6 +12,9 @@ const EMAILJS_TEMPLATE_QUOTE = 'template_9n214zz'; // Quote/Devis Express templa
 const EMAILJS_TEMPLATE_CONTACT = 'template_tnia1q5'; // Contact form template
 const EMAILJS_PUBLIC_KEY = 'yflDdVrcEumOX4Ogs';
 
+// Initialize EmailJS
+emailjs.init(EMAILJS_PUBLIC_KEY);
+
 // Response types
 interface ApiResponse {
     success: boolean;
@@ -87,12 +90,13 @@ export const submitQuote = async (data: QuoteData): Promise<QuoteResponse> => {
         };
 
         // Send email via EmailJS
-        await emailjs.send(
+        const response = await emailjs.send(
             EMAILJS_SERVICE_ID,
             EMAILJS_TEMPLATE_QUOTE,
-            templateParams,
-            EMAILJS_PUBLIC_KEY
+            templateParams
         );
+
+        console.log('EmailJS Quote Response:', response);
 
         // Generate unique ID for the quote
         const quoteId = crypto.randomUUID();
@@ -104,6 +108,10 @@ export const submitQuote = async (data: QuoteData): Promise<QuoteResponse> => {
         };
     } catch (error) {
         console.error('Error sending quote email:', error);
+        console.error('Template params:', {
+            service_id: EMAILJS_SERVICE_ID,
+            template_id: EMAILJS_TEMPLATE_QUOTE
+        });
         throw new Error('Failed to submit quote. Please try again.');
     }
 };
@@ -123,12 +131,13 @@ export const submitContact = async (data: ContactData): Promise<ContactResponse>
         };
 
         // Send email via EmailJS
-        await emailjs.send(
+        const response = await emailjs.send(
             EMAILJS_SERVICE_ID,
             EMAILJS_TEMPLATE_CONTACT,
-            templateParams,
-            EMAILJS_PUBLIC_KEY
+            templateParams
         );
+
+        console.log('EmailJS Contact Response:', response);
 
         // Generate unique ID for the message
         const messageId = crypto.randomUUID();
@@ -140,6 +149,10 @@ export const submitContact = async (data: ContactData): Promise<ContactResponse>
         };
     } catch (error) {
         console.error('Error sending contact email:', error);
+        console.error('Template params:', {
+            service_id: EMAILJS_SERVICE_ID,
+            template_id: EMAILJS_TEMPLATE_CONTACT
+        });
         throw new Error('Failed to submit contact message. Please try again.');
     }
 };
