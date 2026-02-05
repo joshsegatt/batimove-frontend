@@ -428,34 +428,33 @@ export const Home: React.FC = () => {
                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:h-[600px]">
                   {/* Large Image */}
                   <div className="relative rounded-[2rem] overflow-hidden group shadow-2xl">
-                     <img src="/floor-protection.png" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt="Protection Sols et Murs" />
+                     <img src="https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?q=80&w=2070&auto=format&fit=crop" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt="Protection Sols et Murs" />
                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                      <div className="absolute bottom-10 left-10 text-white">
                         <h3 className="font-display text-3xl font-bold mb-3">Protection Sols & Murs</h3>
                         <p className="font-sans text-white/90 text-base max-w-sm font-medium leading-relaxed">Nous installons des protections blanches sur tous les sols et murs avant même de déplacer le premier carton. Votre bien immobilier reste impeccable.</p>
                      </div>
-                  </div>
 
-                  <div className="grid grid-rows-2 gap-4">
-                     {/* Top Small */}
-                     <div className="relative rounded-[2rem] overflow-hidden group shadow-xl">
-                        <img src="/swiss-truck.png" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt="Flotte Moderne" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                        <div className="absolute bottom-8 left-8 text-white">
-                           <h3 className="font-display text-2xl font-bold">Flotte Moderne</h3>
+                     <div className="grid grid-rows-2 gap-4">
+                        {/* Top Small */}
+                        <div className="relative rounded-[2rem] overflow-hidden group shadow-xl">
+                           <img src="/swiss-truck.png" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt="Flotte Moderne" />
+                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                           <div className="absolute bottom-8 left-8 text-white">
+                              <h3 className="font-display text-2xl font-bold">Flotte Moderne</h3>
+                           </div>
                         </div>
-                     </div>
-                     {/* Bottom Small - FIXED IMAGE */}
-                     <div className="relative rounded-[2rem] overflow-hidden group shadow-xl">
-                        <img src="/packing-materials.png" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt="Emballages Spécifiques" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                        <div className="absolute bottom-8 left-8 text-white">
-                           <h3 className="font-display text-2xl font-bold">Emballages Spécifiques</h3>
+                        {/* Bottom Small - FIXED IMAGE */}
+                        <div className="relative rounded-[2rem] overflow-hidden group shadow-xl">
+                           <img src="/packing-materials.png" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt="Emballages Spécifiques" />
+                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                           <div className="absolute bottom-8 left-8 text-white">
+                              <h3 className="font-display text-2xl font-bold">Emballages Spécifiques</h3>
+                           </div>
                         </div>
                      </div>
                   </div>
                </div>
-            </div>
          </section>
 
          {/* =========================================================================
