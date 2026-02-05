@@ -56,14 +56,16 @@ export const QuoteCalculator: React.FC<QuoteCalculatorProps> = ({ className = ''
 
     return (
         <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
             className={`relative ${className}`}
+            style={{ willChange: 'transform, opacity' }}
         >
             {/* 3D Card with Site Colors */}
             <div
-                className="relative bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-slate-700/50 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden"
+                className="relative bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-slate-700/50 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden transition-transform duration-300 ease-out hover:scale-[1.01]"
+                style={{ willChange: 'transform' }}
             >
                 {/* Subtle Glow */}
                 <div className="absolute -top-20 -right-20 w-40 h-40 bg-batimove-blue/10 rounded-full blur-2xl pointer-events-none" />
@@ -93,7 +95,7 @@ export const QuoteCalculator: React.FC<QuoteCalculatorProps> = ({ className = ''
                             <select
                                 value={from}
                                 onChange={(e) => setFrom(e.target.value)}
-                                className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-batimove-blue focus:border-transparent transition-all hover:bg-slate-800/70"
+                                className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-batimove-blue focus:border-transparent transition-colors duration-200"
                             >
                                 {cities.map(city => (
                                     <option key={city} value={city} className="bg-slate-900 text-white">
@@ -112,7 +114,7 @@ export const QuoteCalculator: React.FC<QuoteCalculatorProps> = ({ className = ''
                             <select
                                 value={to}
                                 onChange={(e) => setTo(e.target.value)}
-                                className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-batimove-red focus:border-transparent transition-all hover:bg-slate-800/70"
+                                className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-batimove-red focus:border-transparent transition-colors duration-200"
                             >
                                 {cities.map(city => (
                                     <option key={city} value={city} className="bg-slate-900 text-white">
@@ -131,7 +133,7 @@ export const QuoteCalculator: React.FC<QuoteCalculatorProps> = ({ className = ''
                             <select
                                 value={propertyType}
                                 onChange={(e) => setPropertyType(e.target.value)}
-                                className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-batimove-blue focus:border-transparent transition-all hover:bg-slate-800/70"
+                                className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-batimove-blue focus:border-transparent transition-colors duration-200"
                             >
                                 {propertyTypes.map(type => (
                                     <option key={type.value} value={type.value} className="bg-slate-900 text-white">
