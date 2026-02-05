@@ -434,27 +434,28 @@ export const Home: React.FC = () => {
                         <h3 className="font-display text-3xl font-bold mb-3">Protection Sols & Murs</h3>
                         <p className="font-sans text-white/90 text-base max-w-sm font-medium leading-relaxed">Nous installons des protections blanches sur tous les sols et murs avant même de déplacer le premier carton. Votre bien immobilier reste impeccable.</p>
                      </div>
+                  </div>
 
-                     <div className="grid grid-rows-2 gap-4">
-                        {/* Top Small */}
-                        <div className="relative rounded-[2rem] overflow-hidden group shadow-xl">
-                           <img src="/swiss-truck.png" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt="Flotte Moderne" />
-                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                           <div className="absolute bottom-8 left-8 text-white">
-                              <h3 className="font-display text-2xl font-bold">Flotte Moderne</h3>
-                           </div>
+                  <div className="grid grid-rows-2 gap-4">
+                     {/* Top Small */}
+                     <div className="relative rounded-[2rem] overflow-hidden group shadow-xl">
+                        <img src="/swiss-truck.png" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt="Flotte Moderne" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                        <div className="absolute bottom-8 left-8 text-white">
+                           <h3 className="font-display text-2xl font-bold">Flotte Moderne</h3>
                         </div>
-                        {/* Bottom Small - FIXED IMAGE */}
-                        <div className="relative rounded-[2rem] overflow-hidden group shadow-xl">
-                           <img src="/packing-materials.png" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt="Emballages Spécifiques" />
-                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                           <div className="absolute bottom-8 left-8 text-white">
-                              <h3 className="font-display text-2xl font-bold">Emballages Spécifiques</h3>
-                           </div>
+                     </div>
+                     {/* Bottom Small - FIXED IMAGE */}
+                     <div className="relative rounded-[2rem] overflow-hidden group shadow-xl">
+                        <img src="/packing-materials.png" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt="Emballages Spécifiques" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                        <div className="absolute bottom-8 left-8 text-white">
+                           <h3 className="font-display text-2xl font-bold">Emballages Spécifiques</h3>
                         </div>
                      </div>
                   </div>
                </div>
+            </div>
          </section>
 
          {/* =========================================================================
