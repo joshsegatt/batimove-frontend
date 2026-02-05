@@ -57,12 +57,12 @@ export const Home: React.FC = () => {
             <div className="absolute inset-0 z-0">
                {/* Geneva 4K Background */}
                <img
-                  src="/hero-geneva-4k.jpg"
+                  src="https://images.unsplash.com/photo-1559564484-e48eadc29e41?q=95&w=3840&auto=format&fit=crop"
                   alt="Geneva Switzerland"
                   className="w-full h-full object-cover"
                />
-               {/* Dark Gradient Overlay for Text Contrast */}
-               <div className="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/80 to-slate-900/60" />
+               {/* Dark Gradient Overlay for Text Contrast - Enhanced for better readability */}
+               <div className="absolute inset-0 bg-gradient-to-r from-slate-900/98 via-slate-900/85 to-slate-900/65" />
                {/* Subtle Grid Texture */}
                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:100px_100px] opacity-20"></div>
             </div>
