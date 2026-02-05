@@ -7,10 +7,10 @@ import emailjs from '@emailjs/browser';
 import { QuoteData } from '../types';
 
 // EmailJS Configuration
-const EMAILJS_SERVICE_ID = 'service_korbtmm';
-const EMAILJS_TEMPLATE_QUOTE = 'template_aiz34w8'; // Using Contact Us template for quotes
-const EMAILJS_TEMPLATE_CONTACT = 'template_aiz34w8'; // Using Contact Us template for contact
-const EMAILJS_PUBLIC_KEY = '8Bm3YAOP2zi_m71NB';
+const EMAILJS_SERVICE_ID = 'service_akaw9of';
+const EMAILJS_TEMPLATE_QUOTE = 'template_tnia1q5'; // Using Contact Us template for quotes
+const EMAILJS_TEMPLATE_CONTACT = 'template_tnia1q5'; // Using Contact Us template for contact
+const EMAILJS_PUBLIC_KEY = 'yflDdVrcEumOX4Ogs';
 
 // Response types
 interface ApiResponse {
