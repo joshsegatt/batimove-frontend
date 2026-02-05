@@ -241,9 +241,9 @@ export const Home: React.FC = () => {
                            </Button>
                         </Link>
                         <div className="flex flex-col gap-2 px-4 sm:px-0">
-                           <a href="tel:0800123456" className="flex items-center gap-2 text-slate-700 hover:text-batimove-blue transition-colors font-bold">
+                           <a href="tel:0800825925" className="flex items-center gap-2 text-slate-700 hover:text-batimove-blue transition-colors font-bold">
                               <Phone className="w-5 h-5" />
-                              <span className="text-xl font-display">0800 123 456</span>
+                              <span className="text-xl font-display">0800 825 925</span>
                            </a>
                            <div className="flex items-center gap-2 text-sm text-slate-500">
                               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
