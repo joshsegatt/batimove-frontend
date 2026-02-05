@@ -53,16 +53,22 @@ export const Home: React.FC = () => {
           ========================================================================= */}
          <section className="relative min-h-[92vh] flex items-center overflow-hidden pt-24 lg:pt-0">
 
-            {/* 1. BACKGROUND: 4K GENEVA IMAGE */}
+            {/* 1. BACKGROUND: 16K GENEVA IMAGE */}
             <div className="absolute inset-0 z-0">
-               {/* Geneva 4K Background */}
+               {/* Geneva 16K Background - Adjusted for better city view */}
                <img
                   src="/hero-geneva-16k.jpg"
                   alt="Geneva Switzerland"
                   className="w-full h-full object-cover"
+                  style={{
+                     objectPosition: 'center center',
+                     transform: 'scale(0.85)',
+                     transformOrigin: 'center center',
+                     filter: 'contrast(1.1) brightness(1.05) saturate(1.1)'
+                  }}
                />
-               {/* Dark Gradient Overlay for Text Contrast */}
-               <div className="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/80 to-slate-900/60" />
+               {/* Dark Gradient Overlay - Reduced for better image visibility while maintaining text contrast */}
+               <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/70 to-slate-900/50" />
                {/* Subtle Grid Texture */}
                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:100px_100px] opacity-20"></div>
             </div>
