@@ -31,6 +31,8 @@ export default function Calculator() {
         name: '',
         email: '',
         phone: '',
+        fromZip: '',
+        toZip: '',
         message: '',
     });
 
@@ -57,6 +59,8 @@ export default function Calculator() {
                 name: formData.name,
                 email: formData.email,
                 phone: formData.phone,
+                fromZip: formData.fromZip,
+                toZip: formData.toZip,
                 message: formData.message,
                 volume: summary.totalVolume.toString(),
                 estimatedPrice: summary.estimatedPrice.toString(),
@@ -69,7 +73,7 @@ export default function Calculator() {
             alert('Devis envoyé avec succès! Nous vous contacterons sous peu.');
             resetCalculator();
             setShowContactForm(false);
-            setFormData({ name: '', email: '', phone: '', message: '' });
+            setFormData({ name: '', email: '', phone: '', fromZip: '', toZip: '', message: '' });
         } catch (error) {
             console.error('Error sending quote:', error);
             alert('Erreur lors de l\'envoi du devis. Veuillez réessayer.');
@@ -281,13 +285,42 @@ export default function Calculator() {
 
                             <div>
                                 <label className="block text-sm font-medium text-slate-300 mb-2">
+                                    NPA Départ *
+                                </label>
+                                <input
+                                    type="text"
+                                    required
+                                    placeholder="ex: 1201"
+                                    value={formData.fromZip}
+                                    onChange={(e) => setFormData({ ...formData, fromZip: e.target.value })}
+                                    className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-batimove-blue"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-slate-300 mb-2">
+                                    NPA Arrivée *
+                                </label>
+                                <input
+                                    type="text"
+                                    required
+                                    placeholder="ex: 1003"
+                                    value={formData.toZip}
+                                    onChange={(e) => setFormData({ ...formData, toZip: e.target.value })}
+                                    className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-batimove-blue"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-slate-300 mb-2">
                                     Message (optionnel)
                                 </label>
                                 <textarea
                                     rows={3}
+                                    placeholder="Informations complémentaires..."
                                     value={formData.message}
                                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                                    className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-batimove-blue resize-none"
+                                    className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-batimove-blue resize-none"
                                 />
                             </div>
 

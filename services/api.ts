@@ -205,6 +205,8 @@ export const sendQuoteEmail = async (data: {
     name: string;
     email: string;
     phone: string;
+    fromZip?: string;
+    toZip?: string;
     message?: string;
     volume: string;
     estimatedPrice: string;
@@ -227,6 +229,10 @@ export const sendQuoteEmail = async (data: {
             client_phone: data.phone,
             phone: data.phone,
             telephone: data.phone,
+
+            // Address Information
+            from_zip: data.fromZip || 'Non spécifié',
+            to_zip: data.toZip || 'Non spécifié',
 
             // Calculator Data
             volume: `${data.volume} m³`,
