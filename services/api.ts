@@ -213,15 +213,41 @@ export const sendQuoteEmail = async (data: {
 }): Promise<ApiResponse> => {
     try {
         const templateParams = {
+            // Client Information
             from_name: data.name,
+            client_name: data.name,
+            name: data.name,
+
             from_email: data.email,
+            client_email: data.email,
+            email: data.email,
+            reply_to: data.email,
+
             from_phone: data.phone,
-            message: data.message || 'Demande de devis via calculateur de volume',
-            volume: data.volume,
-            estimated_price: data.estimatedPrice,
+            client_phone: data.phone,
+            phone: data.phone,
+            telephone: data.phone,
+
+            // Calculator Data
+            volume: `${data.volume} m³`,
+            volume_total: `${data.volume} m³`,
+
+            estimated_price: `CHF ${data.estimatedPrice}`,
+            prix_estime: `CHF ${data.estimatedPrice}`,
+
             item_count: data.itemCount,
+            nombre_items: data.itemCount,
+
             disassemble_count: data.disassembleCount,
-            to_email: 'info@batimove.ch'
+            items_demontage: data.disassembleCount,
+
+            // Message
+            message: data.message || 'Demande de devis via calculateur de volume',
+            client_message: data.message || 'Demande de devis via calculateur de volume',
+
+            // Destination
+            to_email: 'info@batimove.ch',
+            to_name: 'Batimove Sarl'
         };
 
         await emailjs.send(
