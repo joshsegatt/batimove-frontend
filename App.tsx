@@ -9,6 +9,7 @@ import { Business } from './pages/Business';
 import { Pricing } from './pages/Pricing';
 import { Contact } from './pages/Contact';
 import { Legal } from './pages/Legal';
+import Calculator from './pages/Calculator';
 import { CookieConsent } from './components/CookieConsent';
 
 // ScrollToTop helper
@@ -33,6 +34,7 @@ const App: React.FC = () => {
             <Route path="/business" element={<Business />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/calculator" element={<Calculator />} />
 
             {/* Legal Routes */}
             <Route path="/privacy" element={<Legal type="privacy" />} />

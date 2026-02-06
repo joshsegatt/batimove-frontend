@@ -23,6 +23,7 @@ export const Navbar: React.FC = () => {
 
   const navLinks = [
     { name: 'Services', path: '/services' },
+    { name: 'Calculateur', path: '/calculator' },
     { name: 'Entreprises', path: '/business' },
     { name: 'Tarifs', path: '/pricing' },
     { name: 'Contact', path: '/contact' },
@@ -133,6 +134,7 @@ export const Navbar: React.FC = () => {
               gap: '32px'
             }}>
               <Link to="/services" onClick={() => setIsMobileMenuOpen(false)} style={{ fontSize: '32px', fontWeight: 'bold', color: '#0f172a', textDecoration: 'none', textAlign: 'center', width: '100%', padding: '12px' }}>Services</Link>
+              <Link to="/calculator" onClick={() => setIsMobileMenuOpen(false)} style={{ fontSize: '32px', fontWeight: 'bold', color: '#0f172a', textDecoration: 'none', textAlign: 'center', width: '100%', padding: '12px' }}>Calculateur</Link>
               <Link to="/business" onClick={() => setIsMobileMenuOpen(false)} style={{ fontSize: '32px', fontWeight: 'bold', color: '#0f172a', textDecoration: 'none', textAlign: 'center', width: '100%', padding: '12px' }}>Entreprises</Link>
               <Link to="/pricing" onClick={() => setIsMobileMenuOpen(false)} style={{ fontSize: '32px', fontWeight: 'bold', color: '#0f172a', textDecoration: 'none', textAlign: 'center', width: '100%', padding: '12px' }}>Tarifs</Link>
               <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} style={{ fontSize: '32px', fontWeight: 'bold', color: '#0f172a', textDecoration: 'none', textAlign: 'center', width: '100%', padding: '12px' }}>Contact</Link>

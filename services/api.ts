@@ -198,9 +198,52 @@ Service Needs: ${data.serviceNeeds}
     }
 };
 
+/**
+ * Send volume calculator quote via EmailJS
+ */
+export const sendQuoteEmail = async (data: {
+    name: string;
+    email: string;
+    phone: string;
+    message?: string;
+    volume: string;
+    estimatedPrice: string;
+    itemCount: string;
+    disassembleCount: string;
+}): Promise<ApiResponse> => {
+    try {
+        const templateParams = {
+            from_name: data.name,
+            from_email: data.email,
+            from_phone: data.phone,
+            message: data.message || 'Demande de devis via calculateur de volume',
+            volume: data.volume,
+            estimated_price: data.estimatedPrice,
+            item_count: data.itemCount,
+            disassemble_count: data.disassembleCount,
+            to_email: 'info@batimove.ch'
+        };
+
+        await emailjs.send(
+            EMAILJS_SERVICE_ID,
+            EMAILJS_TEMPLATE_QUOTE,
+            templateParams
+        );
+
+        return {
+            success: true,
+            message: 'Devis envoyé avec succès!'
+        };
+    } catch (error) {
+        console.error('Error sending calculator quote:', error);
+        throw new Error('Failed to send quote. Please try again.');
+    }
+};
+
 // Export all API functions
 export const api = {
     submitQuote,
     submitContact,
     submitBusiness,
+    sendQuoteEmail,
 };
