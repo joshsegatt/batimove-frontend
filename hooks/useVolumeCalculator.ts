@@ -80,6 +80,10 @@ export function useVolumeCalculator() {
         return items.filter(item => item.category === category);
     }, [items]);
 
+    const getAllItems = useCallback(() => {
+        return items;
+    }, [items]);
+
     return {
         items,
         summary,
@@ -87,5 +91,6 @@ export function useVolumeCalculator() {
         toggleDisassemble,
         resetCalculator,
         getItemsByCategory,
+        getAllItems,
     };
 }

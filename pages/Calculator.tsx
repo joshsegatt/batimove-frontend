@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { Calculator as CalculatorIcon, Package2, Send, RotateCcw, ChevronDown, ChevronUp } from 'lucide-react';
 import { useVolumeCalculator } from '../hooks/useVolumeCalculator';
 import { VolumeCalculatorItem } from '../components/VolumeCalculatorItem';
 import { Button } from '../components/UIComponents';
-import { sendQuoteEmail } from '../services/api';
 
 const CATEGORIES = [
     { id: 'salon', label: 'Salon & Salle à Manger', icon: '🛋️' },
@@ -14,27 +14,17 @@ const CATEGORIES = [
 ];
 
 export default function Calculator() {
+    const navigate = useNavigate();
     const {
         summary,
         updateQuantity,
         toggleDisassemble,
         resetCalculator,
         getItemsByCategory,
+        getAllItems,
     } = useVolumeCalculator();
 
     const [expandedCategories, setExpandedCategories] = useState<string[]>(['salon']);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [showContactForm, setShowContactForm] = useState(false);
-
-    // Contact form state
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        phone: '',
-        fromZip: '',
-        toZip: '',
-        message: '',
-    });
 
     const toggleCategory = (categoryId: string) => {
         setExpandedCategories(prev =>
@@ -44,42 +34,36 @@ export default function Calculator() {
         );
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleProceedToCheckout = () => {
         if (summary.totalVolume === 0) {
             alert('Veuillez sélectionner au moins un item');
             return;
         }
 
-        setIsSubmitting(true);
+        // Get all items with their current state
+        const allItems = getAllItems();
 
-        try {
-            // Prepare email data
-            const emailData = {
-                name: formData.name,
-                email: formData.email,
-                phone: formData.phone,
-                fromZip: formData.fromZip,
-                toZip: formData.toZip,
-                message: formData.message,
-                volume: summary.totalVolume.toString(),
-                estimatedPrice: summary.estimatedPrice.toString(),
-                itemCount: summary.totalItems.toString(),
-                disassembleCount: summary.disassembleCount.toString(),
-            };
+        // Prepare calculator data for localStorage
+        const calculatorData = {
+            items: allItems.map(item => ({
+                id: item.id,
+                name: item.name,
+                quantity: item.quantity,
+                volume: item.volume,
+                needsDisassembly: item.needsDisassembly,
+            })),
+            totalVolume: summary.totalVolume,
+            estimatedPrice: summary.estimatedPrice,
+            totalItems: summary.totalItems,
+            disassembleCount: summary.disassembleCount,
+            timestamp: new Date().toISOString(),
+        };
 
-            await sendQuoteEmail(emailData);
+        // Save to localStorage
+        localStorage.setItem('calculatorData', JSON.stringify(calculatorData));
 
-            alert('Devis envoyé avec succès! Nous vous contacterons sous peu.');
-            resetCalculator();
-            setShowContactForm(false);
-            setFormData({ name: '', email: '', phone: '', fromZip: '', toZip: '', message: '' });
-        } catch (error) {
-            console.error('Error sending quote:', error);
-            alert('Erreur lors de l\'envoi du devis. Veuillez réessayer.');
-        } finally {
-            setIsSubmitting(false);
-        }
+        // Navigate to checkout page
+        navigate('/calculator/checkout');
     };
 
     return (
@@ -160,7 +144,7 @@ export default function Calculator() {
                             </button>
 
                             <Button
-                                onClick={() => setShowContactForm(true)}
+                                onClick={handleProceedToCheckout}
                                 disabled={summary.totalVolume === 0}
                                 className="flex items-center gap-2"
                             >
@@ -233,117 +217,6 @@ export default function Calculator() {
                 </div>
             </section>
 
-            {/* CONTACT FORM MODAL */}
-            {showContactForm && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="bg-slate-900 rounded-2xl border border-slate-700 p-8 max-w-md w-full"
-                    >
-                        <h3 className="text-2xl font-bold text-white mb-6">Envoyer le Devis</h3>
-
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-slate-300 mb-2">
-                                    Nom complet *
-                                </label>
-                                <input
-                                    type="text"
-                                    required
-                                    value={formData.name}
-                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-batimove-blue"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-slate-300 mb-2">
-                                    Email *
-                                </label>
-                                <input
-                                    type="email"
-                                    required
-                                    value={formData.email}
-                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-batimove-blue"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-slate-300 mb-2">
-                                    Téléphone *
-                                </label>
-                                <input
-                                    type="tel"
-                                    required
-                                    value={formData.phone}
-                                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                    className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-batimove-blue"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-slate-300 mb-2">
-                                    NPA Départ *
-                                </label>
-                                <input
-                                    type="text"
-                                    required
-                                    placeholder="ex: 1201"
-                                    value={formData.fromZip}
-                                    onChange={(e) => setFormData({ ...formData, fromZip: e.target.value })}
-                                    className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-batimove-blue"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-slate-300 mb-2">
-                                    NPA Arrivée *
-                                </label>
-                                <input
-                                    type="text"
-                                    required
-                                    placeholder="ex: 1003"
-                                    value={formData.toZip}
-                                    onChange={(e) => setFormData({ ...formData, toZip: e.target.value })}
-                                    className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-batimove-blue"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-slate-300 mb-2">
-                                    Message (optionnel)
-                                </label>
-                                <textarea
-                                    rows={3}
-                                    placeholder="Informations complémentaires..."
-                                    value={formData.message}
-                                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                                    className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-batimove-blue resize-none"
-                                />
-                            </div>
-
-                            <div className="flex gap-3 pt-4">
-                                <button
-                                    type="button"
-                                    onClick={() => setShowContactForm(false)}
-                                    className="flex-1 px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-white hover:bg-slate-700 transition-colors font-medium"
-                                >
-                                    Annuler
-                                </button>
-                                <Button
-                                    type="submit"
-                                    disabled={isSubmitting}
-                                    className="flex-1"
-                                >
-                                    {isSubmitting ? 'Envoi...' : 'Envoyer'}
-                                </Button>
-                            </div>
-                        </form>
-                    </motion.div>
-                </div>
-            )}
         </div>
     );
 }
