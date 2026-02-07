@@ -61,11 +61,18 @@ const servicesList = [
   },
   {
     id: 'debarras',
-    title: "Débarras",
-    subtitle: "Vidage & Évacuation",
-    description: "Libérez votre espace rapidement. Nous évacuons caves, greniers et appartements complets avec tri, recyclage et élimination conforme aux normes suisses.",
-    features: ["Évacuation complète", "Tri et recyclage", "Nettoyage après débarras", "Devis gratuit sur place"],
-    image: "/service-debarras.png",
+    title: "Débarras Professionnel",
+    subtitle: "Vidage & Évacuation Écologique",
+    description: "Libérez votre espace en toute sérénité. Notre équipe spécialisée évacue caves, greniers, garages et appartements complets avec un tri méticuleux, recyclage responsable et élimination conforme aux normes environnementales suisses. Service rapide, discret et respectueux de l'environnement.",
+    features: [
+      "Évacuation complète et tri sélectif professionnel",
+      "Recyclage écologique certifié (80% valorisé)",
+      "Nettoyage approfondi après débarras inclus",
+      "Devis gratuit sur place sous 24h",
+      "Don aux associations caritatives locales",
+      "Intervention rapide (48h) et tarifs transparents"
+    ],
+    image: "/batimove-debarras-service.jpg",
     isPopular: false
   }
 ];
