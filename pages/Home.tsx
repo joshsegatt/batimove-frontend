@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, ArrowUpRight, Play, Star, Wifi, Battery, Box, Video, Phone } from 'lucide-react';
 import { Button } from '../components/UIComponents';
 import { Link } from 'react-router-dom';
-import { QuoteCalculator } from '../components/QuoteCalculator';
+import { HeroQuoteCard } from '../components/HeroQuoteCard';
 
 // Marketing Slides Data
 const HERO_SLIDES = [
@@ -143,9 +143,9 @@ export const Home: React.FC = () => {
 
                   </div>
 
-                  {/* 3. RIGHT COLUMN: ELITE 3D CALCULATOR */}
+                  {/* 3. RIGHT COLUMN: COMPACT HERO CARD */}
                   <div className="relative hidden lg:flex items-center justify-end">
-                     <QuoteCalculator className="w-full max-w-[280px] max-h-[280px] xl:max-w-[300px] xl:max-h-[300px] 2xl:max-w-[320px] 2xl:max-h-[320px]" />
+                     <HeroQuoteCard className="w-full max-w-[300px] xl:max-w-[320px] 2xl:max-w-[340px]" />
                   </div>
 
                </div>
