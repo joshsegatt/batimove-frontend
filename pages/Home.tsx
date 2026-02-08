@@ -68,7 +68,7 @@ export const Home: React.FC = () => {
             </div>
 
             <div className="max-w-[1600px] mx-auto px-6 lg:px-12 relative z-10 w-full h-full">
-               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-end">
 
                   {/* 2. LEFT COLUMN: THE MARKETING ROTOR */}
                   <div className="flex flex-col justify-center relative min-h-[400px]">
