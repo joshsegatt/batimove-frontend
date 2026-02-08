@@ -49,9 +49,9 @@ export const HeroQuoteCard: React.FC<HeroQuoteCardProps> = ({ className = '' }) 
             className={`relative ${className}`}
             style={{ willChange: 'transform, opacity' }}
         >
-            {/* 3D Card with Site Colors - SQUARE FORMAT */}
+            {/* 3D Card with Site Colors - FIXED HEIGHT */}
             <div
-                className="relative bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-slate-700/50 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden transition-transform duration-300 ease-out hover:scale-[1.01] aspect-square flex flex-col"
+                className="relative bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-slate-700/50 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden transition-transform duration-300 ease-out hover:scale-[1.01] h-[580px] xl:h-[600px] 2xl:h-[620px] flex flex-col"
                 style={{ willChange: 'transform' }}
             >
                 {/* Subtle Glow */}
