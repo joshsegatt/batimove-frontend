@@ -111,18 +111,18 @@ export const Pricing: React.FC = () => {
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
-          className="text-center mb-6 md:mb-10 pt-4 md:pt-0 flex-shrink-0"
+          className="text-center mb-4 md:mb-6 pt-2 md:pt-0 flex-shrink-0"
         >
-          <h1 className="font-display text-4xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-tight mb-4 leading-tight">
+          <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tight mb-3 leading-tight">
             Investissez dans <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-white to-blue-200">votre sérénité.</span>
           </h1>
-          <p className="font-sans text-slate-300 text-lg md:text-xl max-w-2xl mx-auto font-normal leading-relaxed">
+          <p className="font-sans text-slate-300 text-base md:text-lg max-w-2xl mx-auto font-normal leading-relaxed">
             Des solutions adaptées à chaque étape de votre vie. Transparence suisse garantie.
           </p>
         </motion.div>
 
         {/* Cards Grid - 4 Columns on XL screens */}
-        <div className="w-full flex-1 min-h-0 flex items-center justify-center pb-8 md:pb-12">
+        <div className="w-full flex-1 min-h-0 flex items-center justify-center pb-4 md:pb-6">
           <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 overflow-y-auto md:overflow-visible px-4 md:px-0 py-4 snap-x snap-mandatory scrollbar-hide max-h-full md:h-auto">
 
             {plans.map((plan, index) => (
@@ -146,7 +146,7 @@ export const Pricing: React.FC = () => {
                   </div>
                 )}
 
-                <div className="p-6 lg:p-8 flex flex-col h-full max-h-[calc(100vh-250px)] backdrop-blur-md rounded-[2rem] overflow-y-auto scrollbar-hide">
+                <div className="p-6 lg:p-8 flex flex-col h-full max-h-[500px] lg:max-h-[520px] xl:max-h-[540px] backdrop-blur-md rounded-[2rem] overflow-y-auto scrollbar-hide">
                   {/* Header */}
                   <div className="mb-6 relative">
                     <h3 className="font-display text-2xl font-bold text-white mb-1">{plan.name}</h3>
