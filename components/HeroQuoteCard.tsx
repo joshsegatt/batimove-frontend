@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, ArrowRight, Home, MapPin } from 'lucide-react';
+import { Sparkles, ArrowRight, Home, MapPin, Package } from 'lucide-react';
 import { Button } from './UIComponents';
 import { Link } from 'react-router-dom';
 
@@ -18,17 +18,18 @@ const propertyTypes = [
 ];
 
 const cities = [
-    'Genève', 'Lausanne', 'Zurich', 'Vaud', 'Neuchâtel', 'Fribourg'
+    'Genève', 'Lausanne', 'Zurich', 'Vaud', 'Neuchâtel', 'Fribourg', 'Montreux', 'Nyon'
 ];
 
 export const HeroQuoteCard: React.FC<HeroQuoteCardProps> = ({ className = '' }) => {
+    const [from, setFrom] = useState('Genève');
+    const [to, setTo] = useState('Lausanne');
     const [propertyType, setPropertyType] = useState('3p');
-    const [city, setCity] = useState('Lausanne');
 
     const calculatePrice = () => {
         const basePrice = 500;
         const property = propertyTypes.find(p => p.value === propertyType);
-        const distancePrice = 200;
+        const distancePrice = from !== to ? 200 : 0;
         const volumePrice = (property?.volume || 30) * 15;
         const total = (basePrice + distancePrice + volumePrice) * (property?.multiplier || 1);
 
@@ -50,39 +51,77 @@ export const HeroQuoteCard: React.FC<HeroQuoteCardProps> = ({ className = '' }) 
         >
             {/* 3D Card with Site Colors - SQUARE FORMAT */}
             <div
-                className="relative bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-slate-700/50 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden transition-transform duration-300 ease-out hover:scale-[1.02] aspect-square flex flex-col"
+                className="relative bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-slate-700/50 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden transition-transform duration-300 ease-out hover:scale-[1.01] aspect-square flex flex-col"
                 style={{ willChange: 'transform' }}
             >
                 {/* Subtle Glow */}
                 <div className="absolute -top-20 -right-20 w-40 h-40 bg-batimove-blue/10 rounded-full blur-2xl pointer-events-none" />
 
-                <div className="relative p-5 flex flex-col justify-between h-full">
+                <div className="relative p-6 flex flex-col justify-between h-full">
                     {/* Header */}
-                    <div className="mb-3">
-                        <div className="flex items-center gap-2 mb-1">
-                            <Sparkles className="w-3.5 h-3.5 text-batimove-red" />
-                            <span className="text-[10px] font-bold text-batimove-blue uppercase tracking-widest">Devis Instantané</span>
+                    <div className="mb-4">
+                        <div className="flex items-center gap-2 mb-2">
+                            <Sparkles className="w-4 h-4 text-batimove-red" />
+                            <span className="text-xs font-bold text-batimove-blue uppercase tracking-widest">Devis Instantané</span>
                         </div>
-                        <h3 className="font-display text-lg font-bold text-white mb-0.5">
+                        <h3 className="font-display text-xl font-bold text-white mb-1">
                             Calculateur de Prix
                         </h3>
-                        <p className="text-slate-400 text-[10px]">
+                        <p className="text-slate-400 text-xs">
                             Estimation en temps réel
                         </p>
                     </div>
 
-                    {/* Interactive Fields - COMPACT */}
-                    <div className="space-y-2 mb-3">
+                    {/* Interactive Fields */}
+                    <div className="space-y-3 mb-4 flex-1">
+                        {/* From */}
+                        <div className="space-y-1.5">
+                            <label className="flex items-center gap-2 text-xs font-semibold text-slate-300">
+                                <MapPin className="w-3.5 h-3.5 text-batimove-blue" />
+                                Point de départ
+                            </label>
+                            <select
+                                value={from}
+                                onChange={(e) => setFrom(e.target.value)}
+                                className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-batimove-blue focus:border-transparent transition-colors duration-200"
+                            >
+                                {cities.map(city => (
+                                    <option key={city} value={city} className="bg-slate-900 text-white">
+                                        {city}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        {/* To */}
+                        <div className="space-y-1.5">
+                            <label className="flex items-center gap-2 text-xs font-semibold text-slate-300">
+                                <MapPin className="w-3.5 h-3.5 text-batimove-red" />
+                                Destination
+                            </label>
+                            <select
+                                value={to}
+                                onChange={(e) => setTo(e.target.value)}
+                                className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-batimove-red focus:border-transparent transition-colors duration-200"
+                            >
+                                {cities.map(city => (
+                                    <option key={city} value={city} className="bg-slate-900 text-white">
+                                        {city}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
                         {/* Property Type */}
-                        <div className="space-y-1">
-                            <label className="flex items-center gap-1.5 text-[10px] font-semibold text-slate-300">
-                                <Home className="w-3 h-3 text-batimove-blue" />
+                        <div className="space-y-1.5">
+                            <label className="flex items-center gap-2 text-xs font-semibold text-slate-300">
+                                <Home className="w-3.5 h-3.5 text-slate-400" />
                                 Type de logement
                             </label>
                             <select
                                 value={propertyType}
                                 onChange={(e) => setPropertyType(e.target.value)}
-                                className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-2.5 py-2 text-white text-xs focus:outline-none focus:ring-2 focus:ring-batimove-blue focus:border-transparent transition-colors duration-200"
+                                className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-batimove-blue focus:border-transparent transition-colors duration-200"
                             >
                                 {propertyTypes.map(type => (
                                     <option key={type.value} value={type.value} className="bg-slate-900 text-white">
@@ -92,59 +131,45 @@ export const HeroQuoteCard: React.FC<HeroQuoteCardProps> = ({ className = '' }) 
                             </select>
                         </div>
 
-                        {/* City */}
-                        <div className="space-y-1">
-                            <label className="flex items-center gap-1.5 text-[10px] font-semibold text-slate-300">
-                                <MapPin className="w-3 h-3 text-batimove-red" />
-                                Destination
+                        {/* Volume Display */}
+                        <div className="space-y-1.5">
+                            <label className="flex items-center gap-2 text-xs font-semibold text-slate-300">
+                                <Package className="w-3.5 h-3.5 text-slate-400" />
+                                Volume estimé
                             </label>
-                            <select
-                                value={city}
-                                onChange={(e) => setCity(e.target.value)}
-                                className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-2.5 py-2 text-white text-xs focus:outline-none focus:ring-2 focus:ring-batimove-red focus:border-transparent transition-colors duration-200"
-                            >
-                                {cities.map(c => (
-                                    <option key={c} value={c} className="bg-slate-900 text-white">
-                                        {c}
-                                    </option>
-                                ))}
-                            </select>
+                            <div className="bg-slate-800/30 border border-slate-600/30 rounded-lg px-3 py-2 text-white font-mono text-sm">
+                                ~{volume}m³
+                            </div>
                         </div>
                     </div>
 
-                    {/* Volume Display - COMPACT */}
-                    <div className="bg-slate-800/30 border border-slate-600/30 rounded-lg px-2.5 py-1.5 mb-3">
-                        <p className="text-slate-400 text-[10px]">Volume estimé</p>
-                        <p className="text-white font-mono text-xs">~{volume}m³</p>
-                    </div>
-
-                    {/* Price Estimate - COMPACT */}
+                    {/* Price Estimate */}
                     <motion.div
-                        key={`${propertyType}-${city}`}
+                        key={`${from}-${to}-${propertyType}`}
                         animate={{ scale: [1, 1.02, 1] }}
                         transition={{ duration: 0.3 }}
-                        className="bg-gradient-to-br from-batimove-blue/10 to-batimove-red/10 border border-batimove-blue/30 rounded-xl p-2.5 backdrop-blur-sm mb-3"
+                        className="bg-gradient-to-br from-batimove-blue/10 to-batimove-red/10 border border-batimove-blue/30 rounded-xl p-3 backdrop-blur-sm mb-4"
                     >
                         <div className="text-center">
-                            <p className="text-batimove-blue text-[10px] font-semibold mb-0.5">Estimation</p>
-                            <p className="text-white font-display text-xl font-bold mb-0.5">
+                            <p className="text-batimove-blue text-xs font-semibold mb-1">Estimation</p>
+                            <p className="text-white font-display text-2xl font-bold mb-1">
                                 CHF {min.toLocaleString()} - {max.toLocaleString()}
                             </p>
-                            <p className="text-slate-400 text-[10px] flex items-center justify-center gap-1">
-                                <Sparkles className="w-2.5 h-2.5" />
-                                Prix indicatif
+                            <p className="text-slate-400 text-xs flex items-center justify-center gap-1">
+                                <Sparkles className="w-3 h-3" />
+                                Devis détaillé gratuit
                             </p>
                         </div>
                     </motion.div>
 
-                    {/* CTA Button - COMPACT */}
+                    {/* CTA Button */}
                     <Link to="/quote" className="w-full">
                         <Button
                             type="button"
-                            className="w-full bg-batimove-red hover:bg-[#c00500] text-white rounded-lg py-2.5 font-bold text-xs shadow-lg shadow-batimove-red/30 transition-all hover:shadow-xl hover:shadow-batimove-red/40 hover:-translate-y-0.5 flex items-center justify-center gap-1.5"
+                            className="w-full bg-batimove-red hover:bg-[#c00500] text-white rounded-lg py-3 font-bold text-sm shadow-lg shadow-batimove-red/30 transition-all hover:shadow-xl hover:shadow-batimove-red/40 hover:-translate-y-0.5 flex items-center justify-center gap-2"
                         >
-                            Obtenir mon devis
-                            <ArrowRight className="w-3.5 h-3.5" />
+                            Obtenir mon devis détaillé
+                            <ArrowRight className="w-4 h-4" />
                         </Button>
                     </Link>
                 </div>

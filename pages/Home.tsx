@@ -145,7 +145,7 @@ export const Home: React.FC = () => {
 
                   {/* 3. RIGHT COLUMN: COMPACT HERO CARD */}
                   <div className="relative hidden lg:flex items-center justify-end">
-                     <HeroQuoteCard className="w-full max-w-[300px] xl:max-w-[320px] 2xl:max-w-[340px]" />
+                     <HeroQuoteCard className="w-full max-w-[360px] xl:max-w-[380px] 2xl:max-w-[400px]" />
                   </div>
 
                </div>
