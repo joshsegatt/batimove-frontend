@@ -51,7 +51,7 @@ export const Home: React.FC = () => {
          {/* =========================================================================
           HERO: MARKETING BANNER STYLE (Dynamic Rotor)
           ========================================================================= */}
-         <section className="relative min-h-screen lg:min-h-[90vh] flex items-center overflow-hidden pt-32 pb-16 lg:pt-0 lg:pb-0">
+         <section className="relative min-h-screen lg:min-h-screen flex items-center overflow-hidden pt-32 pb-16 lg:pt-0 lg:pb-0">
 
             {/* 1. BACKGROUND: 4K GENEVA IMAGE */}
             <div className="absolute inset-0 z-0">
@@ -68,7 +68,7 @@ export const Home: React.FC = () => {
             </div>
 
             <div className="max-w-[1600px] mx-auto px-6 lg:px-12 relative z-10 w-full h-full">
-               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-end">
+               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
 
                   {/* 2. LEFT COLUMN: THE MARKETING ROTOR */}
                   <div className="flex flex-col justify-center relative min-h-[400px]">
