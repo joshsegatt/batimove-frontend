@@ -51,7 +51,7 @@ export const Home: React.FC = () => {
          {/* =========================================================================
           HERO: MARKETING BANNER STYLE (Dynamic Rotor)
           ========================================================================= */}
-         <section className="relative min-h-[92vh] flex items-center overflow-hidden pt-24 lg:pt-0">
+         <section className="relative min-h-screen lg:min-h-[90vh] flex items-center overflow-hidden pt-32 pb-16 lg:pt-0 lg:pb-0">
 
             {/* 1. BACKGROUND: 4K GENEVA IMAGE */}
             <div className="absolute inset-0 z-0">
@@ -105,14 +105,14 @@ export const Home: React.FC = () => {
                            </h3>
 
                            {/* Main Headline (Marketing Banner Style) */}
-                           <h1 className="font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-black tracking-tighter leading-[0.9] mb-6 sm:mb-8">
+                           <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-[0.95] mb-6 sm:mb-8">
                               <span className={`text-transparent bg-clip-text bg-gradient-to-br ${slide.gradient}`}>
                                  {slide.title}
                               </span>
                            </h1>
 
                            {/* Description */}
-                           <p className="font-sans text-slate-400 text-base sm:text-lg md:text-xl lg:text-2xl font-light leading-relaxed max-w-xl mb-8 sm:mb-12">
+                           <p className="font-sans text-slate-400 text-base sm:text-lg md:text-xl font-light leading-relaxed max-w-xl mb-8 sm:mb-12">
                               {slide.description}
                            </p>
                         </motion.div>
@@ -467,7 +467,7 @@ export const Home: React.FC = () => {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-batimove-blue/20 rounded-full blur-[100px] pointer-events-none"></div>
 
             <div className="relative z-10 max-w-4xl mx-auto px-6">
-               <h2 className="font-display text-5xl md:text-8xl font-bold text-white tracking-tighter mb-8 leading-[0.9]">
+               <h2 className="font-display text-5xl md:text-6xl font-bold text-white tracking-tighter mb-8 leading-[0.95]">
                   Prêt à changer <br /> <span className="text-batimove-red">de vie ?</span>
                </h2>
                <p className="font-sans text-slate-400 text-xl mb-12 font-normal">
