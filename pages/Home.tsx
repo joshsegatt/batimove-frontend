@@ -145,7 +145,7 @@ export const Home: React.FC = () => {
 
                   {/* 3. RIGHT COLUMN: ELITE 3D CALCULATOR */}
                   <div className="relative hidden lg:flex items-center justify-end">
-                     <QuoteCalculator className="w-full max-w-[280px] max-h-[350px] xl:max-w-[300px] xl:max-h-[380px] 2xl:max-w-[320px] 2xl:max-h-[420px]" />
+                     <QuoteCalculator className="w-full max-w-[280px] max-h-[280px] xl:max-w-[300px] xl:max-h-[300px] 2xl:max-w-[320px] 2xl:max-h-[320px]" />
                   </div>
 
                </div>
