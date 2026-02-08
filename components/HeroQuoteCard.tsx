@@ -51,39 +51,39 @@ export const HeroQuoteCard: React.FC<HeroQuoteCardProps> = ({ className = '' }) 
         >
             {/* 3D Card with Site Colors - FIXED HEIGHT */}
             <div
-                className="relative bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-slate-700/50 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden transition-transform duration-300 ease-out hover:scale-[1.01] h-[580px] xl:h-[600px] 2xl:h-[620px] flex flex-col"
+                className="relative bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-slate-700/50 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden transition-transform duration-300 ease-out hover:scale-[1.01] h-[520px] xl:h-[540px] 2xl:h-[560px] flex flex-col"
                 style={{ willChange: 'transform' }}
             >
                 {/* Subtle Glow */}
                 <div className="absolute -top-20 -right-20 w-40 h-40 bg-batimove-blue/10 rounded-full blur-2xl pointer-events-none" />
 
-                <div className="relative p-6 flex flex-col justify-between h-full">
+                <div className="relative p-5 flex flex-col justify-between h-full">
                     {/* Header */}
-                    <div className="mb-4">
-                        <div className="flex items-center gap-2 mb-2">
-                            <Sparkles className="w-4 h-4 text-batimove-red" />
-                            <span className="text-xs font-bold text-batimove-blue uppercase tracking-widest">Devis Instantané</span>
+                    <div className="mb-3">
+                        <div className="flex items-center gap-2 mb-1.5">
+                            <Sparkles className="w-3.5 h-3.5 text-batimove-red" />
+                            <span className="text-[10px] font-bold text-batimove-blue uppercase tracking-widest">Devis Instantané</span>
                         </div>
-                        <h3 className="font-display text-xl font-bold text-white mb-1">
+                        <h3 className="font-display text-lg font-bold text-white mb-0.5">
                             Calculateur de Prix
                         </h3>
-                        <p className="text-slate-400 text-xs">
+                        <p className="text-slate-400 text-[10px]">
                             Estimation en temps réel
                         </p>
                     </div>
 
                     {/* Interactive Fields */}
-                    <div className="space-y-3 mb-4 flex-1">
+                    <div className="space-y-2.5 mb-3 flex-1">
                         {/* From */}
-                        <div className="space-y-1.5">
-                            <label className="flex items-center gap-2 text-xs font-semibold text-slate-300">
-                                <MapPin className="w-3.5 h-3.5 text-batimove-blue" />
+                        <div className="space-y-1">
+                            <label className="flex items-center gap-1.5 text-[10px] font-semibold text-slate-300">
+                                <MapPin className="w-3 h-3 text-batimove-blue" />
                                 Point de départ
                             </label>
                             <select
                                 value={from}
                                 onChange={(e) => setFrom(e.target.value)}
-                                className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-batimove-blue focus:border-transparent transition-colors duration-200"
+                                className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-2.5 py-1.5 text-white text-xs focus:outline-none focus:ring-2 focus:ring-batimove-blue focus:border-transparent transition-colors duration-200"
                             >
                                 {cities.map(city => (
                                     <option key={city} value={city} className="bg-slate-900 text-white">
@@ -94,15 +94,15 @@ export const HeroQuoteCard: React.FC<HeroQuoteCardProps> = ({ className = '' }) 
                         </div>
 
                         {/* To */}
-                        <div className="space-y-1.5">
-                            <label className="flex items-center gap-2 text-xs font-semibold text-slate-300">
-                                <MapPin className="w-3.5 h-3.5 text-batimove-red" />
+                        <div className="space-y-1">
+                            <label className="flex items-center gap-1.5 text-[10px] font-semibold text-slate-300">
+                                <MapPin className="w-3 h-3 text-batimove-red" />
                                 Destination
                             </label>
                             <select
                                 value={to}
                                 onChange={(e) => setTo(e.target.value)}
-                                className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-batimove-red focus:border-transparent transition-colors duration-200"
+                                className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-2.5 py-1.5 text-white text-xs focus:outline-none focus:ring-2 focus:ring-batimove-red focus:border-transparent transition-colors duration-200"
                             >
                                 {cities.map(city => (
                                     <option key={city} value={city} className="bg-slate-900 text-white">
@@ -113,15 +113,15 @@ export const HeroQuoteCard: React.FC<HeroQuoteCardProps> = ({ className = '' }) 
                         </div>
 
                         {/* Property Type */}
-                        <div className="space-y-1.5">
-                            <label className="flex items-center gap-2 text-xs font-semibold text-slate-300">
-                                <Home className="w-3.5 h-3.5 text-slate-400" />
+                        <div className="space-y-1">
+                            <label className="flex items-center gap-1.5 text-[10px] font-semibold text-slate-300">
+                                <Home className="w-3 h-3 text-slate-400" />
                                 Type de logement
                             </label>
                             <select
                                 value={propertyType}
                                 onChange={(e) => setPropertyType(e.target.value)}
-                                className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-batimove-blue focus:border-transparent transition-colors duration-200"
+                                className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-2.5 py-1.5 text-white text-xs focus:outline-none focus:ring-2 focus:ring-batimove-blue focus:border-transparent transition-colors duration-200"
                             >
                                 {propertyTypes.map(type => (
                                     <option key={type.value} value={type.value} className="bg-slate-900 text-white">
@@ -132,12 +132,12 @@ export const HeroQuoteCard: React.FC<HeroQuoteCardProps> = ({ className = '' }) 
                         </div>
 
                         {/* Volume Display */}
-                        <div className="space-y-1.5">
-                            <label className="flex items-center gap-2 text-xs font-semibold text-slate-300">
-                                <Package className="w-3.5 h-3.5 text-slate-400" />
+                        <div className="space-y-1">
+                            <label className="flex items-center gap-1.5 text-[10px] font-semibold text-slate-300">
+                                <Package className="w-3 h-3 text-slate-400" />
                                 Volume estimé
                             </label>
-                            <div className="bg-slate-800/30 border border-slate-600/30 rounded-lg px-3 py-2 text-white font-mono text-sm">
+                            <div className="bg-slate-800/30 border border-slate-600/30 rounded-lg px-2.5 py-1.5 text-white font-mono text-xs">
                                 ~{volume}m³
                             </div>
                         </div>
@@ -148,15 +148,15 @@ export const HeroQuoteCard: React.FC<HeroQuoteCardProps> = ({ className = '' }) 
                         key={`${from}-${to}-${propertyType}`}
                         animate={{ scale: [1, 1.02, 1] }}
                         transition={{ duration: 0.3 }}
-                        className="bg-gradient-to-br from-batimove-blue/10 to-batimove-red/10 border border-batimove-blue/30 rounded-xl p-3 backdrop-blur-sm mb-4"
+                        className="bg-gradient-to-br from-batimove-blue/10 to-batimove-red/10 border border-batimove-blue/30 rounded-xl p-2.5 backdrop-blur-sm mb-3"
                     >
                         <div className="text-center">
-                            <p className="text-batimove-blue text-xs font-semibold mb-1">Estimation</p>
-                            <p className="text-white font-display text-2xl font-bold mb-1">
+                            <p className="text-batimove-blue text-[10px] font-semibold mb-0.5">Estimation</p>
+                            <p className="text-white font-display text-xl font-bold mb-0.5">
                                 CHF {min.toLocaleString()} - {max.toLocaleString()}
                             </p>
-                            <p className="text-slate-400 text-xs flex items-center justify-center gap-1">
-                                <Sparkles className="w-3 h-3" />
+                            <p className="text-slate-400 text-[10px] flex items-center justify-center gap-1">
+                                <Sparkles className="w-2.5 h-2.5" />
                                 Devis détaillé gratuit
                             </p>
                         </div>
@@ -166,10 +166,10 @@ export const HeroQuoteCard: React.FC<HeroQuoteCardProps> = ({ className = '' }) 
                     <Link to="/quote" className="w-full">
                         <Button
                             type="button"
-                            className="w-full bg-batimove-red hover:bg-[#c00500] text-white rounded-lg py-3 font-bold text-sm shadow-lg shadow-batimove-red/30 transition-all hover:shadow-xl hover:shadow-batimove-red/40 hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                            className="w-full bg-batimove-red hover:bg-[#c00500] text-white rounded-lg py-2.5 font-bold text-xs shadow-lg shadow-batimove-red/30 transition-all hover:shadow-xl hover:shadow-batimove-red/40 hover:-translate-y-0.5 flex items-center justify-center gap-1.5"
                         >
                             Obtenir mon devis détaillé
-                            <ArrowRight className="w-4 h-4" />
+                            <ArrowRight className="w-3.5 h-3.5" />
                         </Button>
                     </Link>
                 </div>
