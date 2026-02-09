@@ -111,19 +111,19 @@ export const Pricing: React.FC = () => {
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
-          className="text-center mb-4 md:mb-6 pt-2 md:pt-0 flex-shrink-0"
+          className="text-center mb-3 md:mb-4 pt-1 md:pt-0 flex-shrink-0"
         >
-          <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tight mb-3 leading-tight">
+          <h1 className="font-display text-2xl md:text-4xl lg:text-5xl font-extrabold text-white tracking-tight mb-2 leading-tight">
             Investissez dans <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-white to-blue-200">votre sérénité.</span>
           </h1>
-          <p className="font-sans text-slate-300 text-base md:text-lg max-w-2xl mx-auto font-normal leading-relaxed">
+          <p className="font-sans text-slate-300 text-sm md:text-base max-w-2xl mx-auto font-normal leading-relaxed">
             Des solutions adaptées à chaque étape de votre vie. Transparence suisse garantie.
           </p>
         </motion.div>
 
         {/* Cards Grid - 4 Columns on XL screens */}
-        <div className="w-full flex-1 min-h-0 flex items-center justify-center pb-4 md:pb-6">
-          <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 overflow-y-auto md:overflow-visible px-4 md:px-0 py-4 snap-x snap-mandatory scrollbar-hide max-h-full md:h-auto">
+        <div className="w-full flex-1 min-h-0 flex items-center justify-center pb-2 md:pb-4">
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 overflow-y-auto md:overflow-visible px-4 md:px-0 py-2 snap-x snap-mandatory scrollbar-hide max-h-full md:h-auto">
 
             {plans.map((plan, index) => (
               <motion.div
@@ -146,24 +146,24 @@ export const Pricing: React.FC = () => {
                   </div>
                 )}
 
-                <div className="p-6 lg:p-8 flex flex-col h-full max-h-[500px] lg:max-h-[520px] xl:max-h-[540px] backdrop-blur-md rounded-[2rem] overflow-y-auto scrollbar-hide">
+                <div className="p-4 lg:p-6 flex flex-col h-full max-h-[420px] lg:max-h-[460px] xl:max-h-[500px] backdrop-blur-md rounded-[2rem] overflow-y-auto scrollbar-hide">
                   {/* Header */}
-                  <div className="mb-6 relative">
-                    <h3 className="font-display text-2xl font-bold text-white mb-1">{plan.name}</h3>
-                    <p className={`text-xs uppercase tracking-widest font-bold ${plan.specialStyle ? 'text-indigo-300' : 'text-blue-200/60'}`}>{plan.tagline}</p>
+                  <div className="mb-4 relative">
+                    <h3 className="font-display text-xl font-bold text-white mb-0.5">{plan.name}</h3>
+                    <p className={`text-[10px] uppercase tracking-widest font-bold ${plan.specialStyle ? 'text-indigo-300' : 'text-blue-200/60'}`}>{plan.tagline}</p>
                   </div>
 
                   {/* Price */}
-                  <div className="mb-6 pb-6 border-b border-white/10">
-                    <p className="font-display text-3xl font-medium text-white tracking-tight">{plan.price}</p>
-                    <p className="font-sans text-sm text-slate-300 mt-2 line-clamp-2 leading-relaxed opacity-90">{plan.description}</p>
+                  <div className="mb-4 pb-4 border-b border-white/10">
+                    <p className="font-display text-2xl font-medium text-white tracking-tight">{plan.price}</p>
+                    <p className="font-sans text-xs text-slate-300 mt-1.5 line-clamp-2 leading-relaxed opacity-90">{plan.description}</p>
                   </div>
 
                   {/* Features */}
-                  <ul className="space-y-3 mb-8 flex-1 overflow-y-auto scrollbar-hide">
+                  <ul className="space-y-2 mb-4 flex-1 overflow-y-auto scrollbar-hide">
                     {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-start gap-3 text-sm text-slate-300">
-                        <Check className={`w-4 h-4 mt-0.5 flex-shrink-0 ${plan.highlight ? 'text-green-400' : plan.specialStyle ? 'text-indigo-400' : 'text-slate-500'}`} />
+                      <li key={i} className="flex items-start gap-2 text-xs text-slate-300">
+                        <Check className={`w-3.5 h-3.5 mt-0.5 flex-shrink-0 ${plan.highlight ? 'text-green-400' : plan.specialStyle ? 'text-indigo-400' : 'text-slate-500'}`} />
                         <span className={`${plan.highlight ? 'text-white' : 'text-slate-200'} font-medium`}>{feature}</span>
                       </li>
                     ))}
@@ -181,7 +181,7 @@ export const Pricing: React.FC = () => {
                     ) : (
                       <Link to="/quote">
                         <Button
-                          className={`w-full rounded-xl py-4 text-sm font-bold uppercase tracking-widest font-display ${plan.highlight
+                          className={`w-full rounded-xl py-3 text-xs font-bold uppercase tracking-widest font-display ${plan.highlight
                             ? 'bg-batimove-red text-white shadow-[0_8px_30px_-5px_rgba(225,6,0,0.5)]'
                             : 'bg-white/5 text-white border border-white/10'
                             }`}
