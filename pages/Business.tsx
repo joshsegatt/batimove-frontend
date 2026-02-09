@@ -58,10 +58,10 @@ export const Business: React.FC = () => {
       <div className="h-20 flex-shrink-0"></div>
 
       {/* Main Layout */}
-      <div className="flex-1 flex w-full max-w-[1600px] mx-auto px-6 lg:px-12 py-6 lg:py-10 z-10 gap-12 relative">
+      <div className="flex-1 flex w-full max-w-[1600px] mx-auto px-6 lg:px-12 py-4 lg:py-6 z-10 gap-8 relative">
 
         {/* LEFT COLUMN: Navigation & Strategy */}
-        <div className="w-full lg:w-5/12 flex flex-col justify-center space-y-8">
+        <div className="w-full lg:w-5/12 flex flex-col justify-center space-y-6">
 
           {/* Header */}
           <motion.div
@@ -69,30 +69,30 @@ export const Business: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="font-display text-4xl lg:text-7xl font-extrabold text-white tracking-tight leading-[1] mb-6">
+            <h1 className="font-display text-3xl lg:text-5xl font-extrabold text-white tracking-tight leading-[1] mb-4">
               L'Art du Transfert <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-white">Stratégique.</span>
             </h1>
-            <p className="font-sans text-slate-300 text-lg lg:text-xl font-normal leading-relaxed max-w-lg">
+            <p className="font-sans text-slate-300 text-base lg:text-lg font-normal leading-relaxed max-w-lg">
               Minimisez l'impact. Maximisez la productivité. <br />
               Une logistique de précision pour les sociétés exigeantes.
             </p>
           </motion.div>
 
           {/* Interactive Pillars (Tabs) */}
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {businessPillars.map((pillar, idx) => (
               <button
                 key={pillar.id}
                 onClick={() => setActiveTab(idx)}
-                className={`w-full text-left p-4 rounded-2xl transition-all duration-200 group flex items-center justify-between border backdrop-blur-sm ${activeTab === idx
-                    ? 'bg-white text-batimove-dark border-white shadow-xl scale-[1.02] z-10'
-                    : 'bg-white/5 text-slate-400 border-white/5 hover:bg-white/10 hover:border-white/20 hover:text-white'
+                className={`w-full text-left p-3 rounded-2xl transition-all duration-200 group flex items-center justify-between border backdrop-blur-sm ${activeTab === idx
+                  ? 'bg-white text-batimove-dark border-white shadow-xl scale-[1.02] z-10'
+                  : 'bg-white/5 text-slate-400 border-white/5 hover:bg-white/10 hover:border-white/20 hover:text-white'
                   }`}
               >
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
                   {/* 3D Icon Container - Floating, No Background */}
-                  <div className={`w-12 h-12 flex-shrink-0 flex items-center justify-center transition-transform duration-200 ${activeTab === idx ? 'scale-110' : 'scale-100 opacity-80 group-hover:opacity-100 group-hover:scale-105'
+                  <div className={`w-10 h-10 flex-shrink-0 flex items-center justify-center transition-transform duration-200 ${activeTab === idx ? 'scale-110' : 'scale-100 opacity-80 group-hover:opacity-100 group-hover:scale-105'
                     }`}>
                     <img
                       src={pillar.icon3d}
@@ -102,8 +102,8 @@ export const Business: React.FC = () => {
                   </div>
 
                   <div>
-                    <h3 className={`font-display font-bold text-lg ${activeTab === idx ? 'text-slate-900' : 'text-inherit'}`}>{pillar.title}</h3>
-                    <p className={`text-xs uppercase tracking-widest font-bold ${activeTab === idx ? 'text-batimove-blue' : 'opacity-60'}`}>{pillar.subtitle}</p>
+                    <h3 className={`font-display font-bold text-base ${activeTab === idx ? 'text-slate-900' : 'text-inherit'}`}>{pillar.title}</h3>
+                    <p className={`text-[10px] uppercase tracking-widest font-bold ${activeTab === idx ? 'text-batimove-blue' : 'opacity-60'}`}>{pillar.subtitle}</p>
                   </div>
                 </div>
 
@@ -122,7 +122,7 @@ export const Business: React.FC = () => {
             className="pt-4"
           >
             <Link to="/quote/pro">
-              <Button size="lg" className="w-full bg-batimove-red hover:bg-[#c00500] text-white rounded-full py-5 text-lg font-bold shadow-2xl shadow-red-900/50 hover:shadow-red-500/50 tracking-wide font-display uppercase">
+              <Button size="lg" className="w-full bg-batimove-red hover:bg-[#c00500] text-white rounded-full py-4 text-base font-bold shadow-2xl shadow-red-900/50 hover:shadow-red-500/50 tracking-wide font-display uppercase">
                 Demander une Offre Corporate
               </Button>
             </Link>
@@ -155,7 +155,7 @@ export const Business: React.FC = () => {
             </AnimatePresence>
 
             {/* Dynamic Content Overlay - Snappy Transition */}
-            <div className="absolute bottom-0 left-0 w-full p-12 z-10">
+            <div className="absolute bottom-0 left-0 w-full p-8 z-10">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeTab}
@@ -164,19 +164,19 @@ export const Business: React.FC = () => {
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.25, ease: "easeOut" }}
                 >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="bg-batimove-red text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-widest shadow-lg font-display">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="bg-batimove-red text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest shadow-lg font-display">
                       Avantage Stratégique
                     </div>
                   </div>
 
-                  <h2 className="font-display text-4xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
+                  <h2 className="font-display text-2xl font-bold text-white mb-4 leading-tight drop-shadow-lg">
                     {businessPillars[activeTab].description}
                   </h2>
 
-                  <div className="flex gap-4 mt-8">
+                  <div className="flex gap-3 mt-6">
                     {['Disponibilité 24/7', 'Équipe Dédiée'].map((tag, i) => (
-                      <span key={i} className="text-xs font-bold text-blue-100 border border-white/20 px-4 py-2 rounded-lg bg-white/10 backdrop-blur-md uppercase tracking-wider">
+                      <span key={i} className="text-[10px] font-bold text-blue-100 border border-white/20 px-3 py-1.5 rounded-lg bg-white/10 backdrop-blur-md uppercase tracking-wider">
                         {tag}
                       </span>
                     ))}
