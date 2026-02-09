@@ -69,7 +69,7 @@ export default function Calculator() {
     return (
         <div className="min-h-screen bg-slate-950">
             {/* HERO SECTION */}
-            <section className="relative pt-32 pb-16 overflow-hidden">
+            <section className="relative pt-24 pb-12 overflow-hidden">
                 {/* Background Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950" />
                 <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:100px_100px] opacity-20" />
@@ -81,7 +81,7 @@ export default function Calculator() {
                         transition={{ duration: 0.6 }}
                     >
                         {/* Title */}
-                        <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-black text-white mb-6 tracking-tight">
+                        <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-black text-white mb-4 tracking-tight">
                             Calculez Votre{' '}
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-batimove-blue to-blue-400">
                                 Volume
@@ -89,7 +89,7 @@ export default function Calculator() {
                         </h1>
 
                         {/* Subtitle */}
-                        <p className="text-xl text-slate-400 max-w-2xl mx-auto mb-8 leading-relaxed">
+                        <p className="text-base md:text-lg text-slate-400 max-w-2xl mx-auto mb-6 leading-relaxed">
                             Estimez précisément le volume de votre déménagement et obtenez un devis instantané
                         </p>
                     </motion.div>
@@ -109,8 +109,8 @@ export default function Calculator() {
                             <div className="flex items-center gap-2">
                                 <Package2 className="w-5 h-5 text-batimove-blue" />
                                 <div>
-                                    <p className="text-xs text-slate-400">Volume Total</p>
-                                    <p className="text-lg font-bold text-white">
+                                    <p className="text-[10px] text-slate-400">Volume Total</p>
+                                    <p className="text-base font-bold text-white">
                                         {summary.totalVolume} m³
                                     </p>
                                 </div>
@@ -119,8 +119,8 @@ export default function Calculator() {
                             <div className="h-8 w-px bg-slate-700" />
 
                             <div>
-                                <p className="text-xs text-slate-400">Prix Estimé</p>
-                                <p className="text-lg font-bold text-batimove-blue">
+                                <p className="text-[10px] text-slate-400">Prix Estimé</p>
+                                <p className="text-base font-bold text-batimove-blue">
                                     {summary.estimatedPrice > 0 ? `CHF ${summary.estimatedPrice}` : 'CHF 0'}
                                 </p>
                             </div>
@@ -128,8 +128,8 @@ export default function Calculator() {
                             <div className="h-8 w-px bg-slate-700" />
 
                             <div>
-                                <p className="text-xs text-slate-400">Items</p>
-                                <p className="text-lg font-bold text-white">{summary.totalItems}</p>
+                                <p className="text-[10px] text-slate-400">Items</p>
+                                <p className="text-base font-bold text-white">{summary.totalItems}</p>
                             </div>
                         </div>
 
@@ -181,8 +181,8 @@ export default function Calculator() {
                                         <div className="flex items-center gap-4">
                                             <span className="text-3xl">{category.icon}</span>
                                             <div className="text-left">
-                                                <h3 className="text-xl font-bold text-white">{category.label}</h3>
-                                                <p className="text-sm text-slate-400">
+                                                <h3 className="text-lg font-bold text-white">{category.label}</h3>
+                                                <p className="text-xs text-slate-400">
                                                     {items.filter(i => i.quantity > 0).length} items sélectionnés
                                                     {categoryTotal > 0 && ` • ${categoryTotal.toFixed(1)} m³`}
                                                 </p>

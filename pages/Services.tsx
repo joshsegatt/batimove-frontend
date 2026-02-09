@@ -94,19 +94,19 @@ const item = {
 
 export const Services: React.FC = () => {
   return (
-    <div className="min-h-screen bg-slate-50 pt-28 pb-20 font-sans">
+    <div className="min-h-screen bg-slate-50 pt-24 pb-16 font-sans">
 
       {/* Header Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 text-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <h1 className="font-display text-4xl md:text-6xl font-extrabold text-slate-900 mb-6 tracking-tight">
+          <h1 className="font-display text-3xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">
             Nos Services <span className="text-batimove-red">Premium</span>
           </h1>
-          <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto font-normal leading-relaxed">
+          <p className="text-base md:text-lg text-slate-600 max-w-3xl mx-auto font-normal leading-relaxed">
             Une gamme complète de prestations conçue pour répondre aux exigences les plus élevées.
             Précision, ponctualité et savoir-faire suisse à chaque étape.
           </p>
@@ -119,7 +119,7 @@ export const Services: React.FC = () => {
           variants={container}
           initial="hidden"
           animate="show"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           {servicesList.map((service) => (
             <motion.div
@@ -137,7 +137,7 @@ export const Services: React.FC = () => {
               )}
 
               {/* Image Container with Zoom Effect */}
-              <div className="h-64 overflow-hidden relative">
+              <div className="h-48 overflow-hidden relative">
                 <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-transparent transition-colors z-10" />
                 <img
                   src={service.image}
