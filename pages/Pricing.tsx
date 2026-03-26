@@ -155,8 +155,12 @@ export const Pricing: React.FC = () => {
 
                   {/* Price */}
                   <div className="mb-4 pb-4 border-b border-white/10">
-                    <p className="font-display text-2xl font-medium text-white tracking-tight">{plan.price}</p>
-                    <p className="font-sans text-xs text-slate-300 mt-1.5 line-clamp-2 leading-relaxed opacity-90">{plan.description}</p>
+                    <div className="flex flex-col mb-1.5">
+                      <span className="text-[10px] text-slate-400 uppercase tracking-widest font-semibold mb-1">À partir de</span>
+                      <p className="font-display text-3xl font-bold text-white tracking-tight">{plan.price}</p>
+                    </div>
+                    <p className="text-[10px] text-slate-400 mb-3 italic">*Prix indicatif, sous réserve de modification après visite.</p>
+                    <p className="font-sans text-xs text-slate-300 line-clamp-2 leading-relaxed opacity-90">{plan.description}</p>
                   </div>
 
                   {/* Features */}

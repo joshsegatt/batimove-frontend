@@ -12,22 +12,21 @@ const HERO_SLIDES = [
       pretitle: "EXCELLENCE SUISSE",
       title: "Précision Horlogère.",
       gradient: "from-white via-white to-slate-400",
-      description: "La seule plateforme de déménagement qui combine la rigueur d'une banque privée avec la logistique de pointe.",
+      description: "La seule plateforme de déménagement qui combine la rigueur d'une banque privée avec la logistique de pointe."
    },
    {
       id: 2,
       pretitle: "TECHNOLOGIE 2025",
       title: "Visio-Cotation AI.",
       gradient: "from-blue-300 via-blue-100 to-white",
-      description: "Oubliez les visites intrusives. Filmez votre logement, notre IA calcule le volume exact et fige le prix instantanément.",
+      description: "Oubliez les visites intrusives. Filmez votre logement, notre IA calcule le volume exact et fige le prix instantanément."
    },
    {
       id: 3,
       pretitle: "SÉRÉNITÉ TOTALE",
       title: "Service Gants Blancs.",
-      // FIXED: Changed from red gradient to white/slate to match the first slides' aesthetic.
       gradient: "from-white via-white to-slate-400",
-      description: "Emballage, démontage, nettoyage. Nous gérons 100% de la charge mentale. Vous ne portez que vos clés.",
+      description: "Emballage, démontage, nettoyage. Nous gérons 100% de la charge mentale. Vous ne portez que vos clés."
    }
 ];
 
@@ -35,11 +34,11 @@ export const Home: React.FC = () => {
    // Marketing Rotor State
    const [currentSlide, setCurrentSlide] = useState(0);
 
-   // Auto-rotate slides every 3.5 seconds (Marketing Rhythm)
+   // Auto-rotate slides every 4.5 seconds
    useEffect(() => {
       const timer = setInterval(() => {
          setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
-      }, 3500);
+      }, 4500);
       return () => clearInterval(timer);
    }, []);
 
@@ -53,7 +52,7 @@ export const Home: React.FC = () => {
           ========================================================================= */}
          <section className="relative min-h-screen lg:min-h-screen flex items-center overflow-hidden pt-32 pb-16 lg:pt-0 lg:pb-0">
 
-            {/* 1. BACKGROUND: 4K GENEVA IMAGE */}
+            {/* 1. BACKGROUND: STATIC 4K IMAGE */}
             <div className="absolute inset-0 z-0">
                {/* Geneva 4K Background */}
                <img
@@ -62,9 +61,9 @@ export const Home: React.FC = () => {
                   className="w-full h-full object-cover"
                />
                {/* Dark Gradient Overlay for Text Contrast */}
-               <div className="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/80 to-slate-900/60" />
+               <div className="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/80 to-slate-900/60 z-20 pointer-events-none" />
                {/* Subtle Grid Texture */}
-               <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:100px_100px] opacity-20"></div>
+               <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:100px_100px] opacity-20 z-20 pointer-events-none"></div>
             </div>
 
             <div className="max-w-[1600px] mx-auto px-6 lg:px-12 relative z-10 w-full h-full">

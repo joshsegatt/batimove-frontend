@@ -203,8 +203,24 @@ export const Footer: React.FC = () => {
         </div>
 
         <div className="pt-6 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] font-medium text-slate-600">
-          <p>© {new Date().getFullYear()} Batimove Sarl. Tous droits réservés.</p>
-          <div className="flex items-center gap-6">
+          <p className="flex-1 text-center sm:text-left">© {new Date().getFullYear()} Batimove Sarl. Tous droits réservés.</p>
+          
+          <div className="flex-1 flex justify-center items-center gap-1.5 text-slate-500">
+            <span>Made with</span>
+            <span className="animate-pulse text-red-500 text-xs">❤️</span>
+            <span>by</span>
+            <a 
+              href="https://joshsegatt.netlify.app/" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="font-bold text-slate-300 hover:text-white transition-colors flex items-center gap-1 group"
+            >
+              joshsegatt
+              <ExternalLink className="w-3 h-3 opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 text-batimove-blue" />
+            </a>
+          </div>
+
+          <div className="flex-1 flex justify-center sm:justify-end items-center gap-6">
             <a href="https://www.instagram.com/batimove.sarl/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-2 group">
               <Instagram className="w-4 h-4 group-hover:text-batimove-red transition-colors" />
               <span className="hidden sm:inline">@batimove.sarl</span>
