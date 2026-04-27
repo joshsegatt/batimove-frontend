@@ -5,45 +5,9 @@ import { Button } from '../components/UIComponents';
 import { Link } from 'react-router-dom';
 import { HeroQuoteCard } from '../components/HeroQuoteCard';
 
-// Marketing Slides Data
-const HERO_SLIDES = [
-   {
-      id: 1,
-      pretitle: "EXCELLENCE SUISSE",
-      title: "Précision Horlogère.",
-      gradient: "from-white via-white to-slate-400",
-      description: "La seule plateforme de déménagement qui combine la rigueur d'une banque privée avec la logistique de pointe."
-   },
-   {
-      id: 2,
-      pretitle: "TECHNOLOGIE 2025",
-      title: "Visio-Cotation AI.",
-      gradient: "from-blue-300 via-blue-100 to-white",
-      description: "Oubliez les visites intrusives. Filmez votre logement, notre IA calcule le volume exact et fige le prix instantanément."
-   },
-   {
-      id: 3,
-      pretitle: "SÉRÉNITÉ TOTALE",
-      title: "Service Gants Blancs.",
-      gradient: "from-white via-white to-slate-400",
-      description: "Emballage, démontage, nettoyage. Nous gérons 100% de la charge mentale. Vous ne portez que vos clés."
-   }
-];
+
 
 export const Home: React.FC = () => {
-   // Marketing Rotor State
-   const [currentSlide, setCurrentSlide] = useState(0);
-
-   // Auto-rotate slides every 4.5 seconds
-   useEffect(() => {
-      const timer = setInterval(() => {
-         setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
-      }, 4500);
-      return () => clearInterval(timer);
-   }, []);
-
-   const slide = HERO_SLIDES[currentSlide];
-
    return (
       <div className="min-h-screen bg-white selection:bg-batimove-blue selection:text-white font-sans text-slate-900">
 
@@ -55,11 +19,11 @@ export const Home: React.FC = () => {
             {/* 1. BACKGROUND: STATIC 4K IMAGE */}
             <div className="absolute inset-0 z-0">
                {/* Geneva 4K Background */}
-               <img
-                  src="/hero-geneva-16k.jpg"
-                  alt="Geneva Switzerland"
-                  className="w-full h-full object-cover"
-               />
+                <img
+                   src="/imageheronova.png"
+                   alt="Déménagement Genève"
+                   className="w-full h-full object-cover"
+                />
                {/* Dark Gradient Overlay for Text Contrast */}
                <div className="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/80 to-slate-900/60 z-20 pointer-events-none" />
                {/* Subtle Grid Texture */}
@@ -69,83 +33,37 @@ export const Home: React.FC = () => {
             <div className="max-w-[1600px] mx-auto px-6 lg:px-12 relative z-10 w-full h-full">
                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
 
-                  {/* 2. LEFT COLUMN: THE MARKETING ROTOR */}
-                  <div className="flex flex-col justify-center relative min-h-[400px]">
+                   {/* 2. LEFT COLUMN: THE CORE MESSAGE */}
+                   <div className="flex flex-col justify-center relative py-12">
+                      
+                      <motion.div
+                         initial={{ opacity: 0, y: 20 }}
+                         animate={{ opacity: 1, y: 0 }}
+                         transition={{ duration: 0.8, ease: "easeOut" }}
+                      >
+                         {/* Pre-Title */}
+                         <h3 className="text-batimove-blue font-bold tracking-[0.2em] text-sm sm:text-base mb-6 uppercase font-display flex items-center gap-3">
+                            <span className="w-8 h-[2px] bg-batimove-red"></span>
+                            DÉMÉNAGEMENT PREMIUM
+                         </h3>
 
-                     {/* Progress Bars (Indicators) */}
-                     <div className="flex gap-2 mb-10 w-full max-w-sm">
-                        {HERO_SLIDES.map((_, idx) => (
-                           <div key={idx} className="h-1 flex-1 bg-white/10 rounded-full overflow-hidden">
-                              {idx === currentSlide && (
-                                 <motion.div
-                                    initial={{ width: "0%" }}
-                                    animate={{ width: "100%" }}
-                                    transition={{ duration: 3.5, ease: "linear" }}
-                                    className="h-full bg-white"
-                                 />
-                              )}
-                              {idx < currentSlide && <div className="h-full bg-white w-full" />}
-                           </div>
-                        ))}
-                     </div>
+                         {/* Main Headline */}
+                         <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-[0.95] mb-8 text-white">
+                            Déménagement Sécurisé <br /> et Rapide à Genève
+                         </h1>
 
-                     <AnimatePresence mode="wait">
-                        <motion.div
-                           key={currentSlide}
-                           initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
-                           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                           exit={{ opacity: 0, y: -20, filter: "blur(10px)" }}
-                           transition={{ duration: 0.5, ease: "easeOut" }}
-                        >
-                           {/* Pre-Title (Category) */}
-                           <h3 className="text-batimove-blue font-bold tracking-[0.15em] sm:tracking-[0.2em] text-xs sm:text-sm md:text-base mb-3 sm:mb-4 uppercase font-display flex items-center gap-2 sm:gap-3">
-                              <span className="w-6 sm:w-8 h-[2px] bg-batimove-red"></span>
-                              {slide.pretitle}
-                           </h3>
+                         {/* Subtitle / Description */}
+                         <p className="font-sans text-slate-300 text-lg sm:text-xl md:text-2xl font-light leading-relaxed max-w-xl mb-0">
+                            Équipe professionnelle, assurance incluse et devis transparent
+                         </p>
+                      </motion.div>
 
-                           {/* Main Headline (Marketing Banner Style) */}
-                           <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-[0.95] mb-6 sm:mb-8">
-                              <span className={`text-transparent bg-clip-text bg-gradient-to-br ${slide.gradient}`}>
-                                 {slide.title}
-                              </span>
-                           </h1>
+                   </div>
 
-                           {/* Description */}
-                           <p className="font-sans text-slate-400 text-base sm:text-lg md:text-xl font-light leading-relaxed max-w-xl mb-8 sm:mb-12">
-                              {slide.description}
-                           </p>
-                        </motion.div>
-                     </AnimatePresence>
-
-                     {/* Static CTAs */}
-                     <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center">
-                        <Link to="/quote" className="w-full sm:w-auto">
-                           <Button className="w-full sm:w-auto h-16 rounded-full px-10 bg-batimove-red text-white hover:bg-[#c00500] font-bold font-display tracking-wide shadow-[0_0_40px_-10px_rgba(225,6,0,0.6)] transition-all hover:scale-105 text-lg flex items-center justify-center gap-2 group">
-                              Démarrer le Devis
-                              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                           </Button>
-                        </Link>
-
-                        <div className="flex items-center gap-4 px-6">
-                           <div className="flex -space-x-3">
-                              {[1, 2, 3].map((i) => (
-                                 <div key={i} className="w-10 h-10 rounded-full border-2 border-[#0B1E33] bg-slate-700 overflow-hidden">
-                                    <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="Client" className="w-full h-full object-cover" />
-                                 </div>
-                              ))}
-                           </div>
-                           <div className="text-white text-sm font-bold">
-                              4.9/5 <span className="text-slate-500 font-normal">Trustpilot</span>
-                           </div>
-                        </div>
-                     </div>
-
-                  </div>
-
-                  {/* 3. RIGHT COLUMN: COMPACT HERO CARD */}
-                  <div className="relative hidden lg:flex items-center justify-end">
-                     <HeroQuoteCard className="w-full max-w-[360px] xl:max-w-[380px] 2xl:max-w-[400px]" />
-                  </div>
+                   {/* 3. RIGHT COLUMN: COMPACT HERO CARD */}
+                   <div className="relative flex items-center justify-center lg:justify-end">
+                      <HeroQuoteCard className="w-full max-w-[380px] xl:max-w-[400px] 2xl:max-w-[420px]" />
+                   </div>
 
                </div>
             </div>
@@ -159,12 +77,12 @@ export const Home: React.FC = () => {
                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-24 items-end">
                   <div>
                      <h2 className="font-display text-4xl md:text-6xl font-bold tracking-tighter leading-[1.1] mb-6 text-slate-900">
-                        Redéfinir <br /> les standards.
+                        Garde-meubles <br /> à Genève.
                      </h2>
                      <div className="h-1 w-24 bg-batimove-red"></div>
                   </div>
                   <p className="font-sans text-xl text-slate-600 font-normal leading-relaxed max-w-md">
-                     Nous traitons chaque déménagement comme une opération de haute précision. Votre patrimoine mérite l'exigence d'une banque privée et la délicatesse d'une galerie d'art.
+                     Protégez votre patrimoine dans notre garde-meubles sécurisé à Genève. Du transfert de bureaux à la résidence de luxe, nous garantissons une mission de haute précision.
                   </p>
                </div>
 
@@ -212,10 +130,10 @@ export const Home: React.FC = () => {
                   {/* Text Side - HONEST & TRANSPARENT */}
                   <div>
                      <h2 className="font-display text-5xl md:text-7xl font-bold text-white tracking-tight leading-[1] mb-8">
-                        La Visio-Cotation <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-white">Intelligente.</span>
+                        Visio-Cotation & <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-white">Monte-charge.</span>
                      </h2>
                      <p className="font-sans text-slate-300 text-xl font-normal leading-relaxed mb-10 max-w-xl">
-                        Plus besoin de rendez-vous intrusifs. Filmez simplement vos pièces avec votre smartphone. Nos experts analysent la vidéo à distance pour valider le volume et vous garantir un prix ferme.
+                        Plus besoin de rendez-vous intrusifs. Filmez vos accès et vos pièces : notre technologie détermine si une location de monte-charge est requise et calcule votre volume instantanément.
                      </p>
 
                      <div className="space-y-6">
@@ -236,7 +154,7 @@ export const Home: React.FC = () => {
                      <div className="mt-12 flex flex-col sm:flex-row items-center gap-6">
                         <Link to="/quote">
                            <Button className="bg-batimove-red text-white hover:bg-[#c00500] rounded-full px-8 py-4 font-bold font-display tracking-wide shadow-xl shadow-batimove-red/30">
-                              Démarrer la Visio-Cotation
+                              Réservez votre créneau en 2 min
                            </Button>
                         </Link>
                         <div className="flex flex-col gap-2 px-4 sm:px-0">
@@ -360,8 +278,8 @@ export const Home: React.FC = () => {
          <section className="py-32 bg-slate-50">
             <div className="max-w-7xl mx-auto px-6 lg:px-8">
                <div className="text-center mb-24">
-                  <h2 className="font-display text-4xl md:text-5xl font-bold text-slate-900 mb-6">Simple comme bonjour.</h2>
-                  <p className="font-sans text-slate-600 text-lg max-w-2xl mx-auto font-medium">Un processus optimisé pour éliminer 100% des frictions habituelles.</p>
+                  <h2 className="font-display text-4xl md:text-5xl font-bold text-slate-900 mb-6">Nettoyage fin de bail avec garantie.</h2>
+                  <p className="font-sans text-slate-600 text-lg max-w-2xl mx-auto font-medium">Libérez-vous de l'état des lieux. Nous assurons un nettoyage avec garantie de réception, éliminant 100% des frictions avec votre régie.</p>
                </div>
 
                <div className="relative">
@@ -378,7 +296,7 @@ export const Home: React.FC = () => {
                         <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 block font-display">Étape 01</span>
                         <h3 className="font-display text-2xl font-bold text-slate-900 mb-4">L'Offre Digitale</h3>
                         <p className="font-sans text-slate-600 leading-relaxed font-medium">
-                           Remplissez le formulaire ou envoyez une vidéo. Notre équipe valide l'inventaire et vous envoie un prix ferme.
+                           Remplissez le formulário ou envoyez une vidéo pour votre déménagement de piano. Notre équipe valide l'inventaire et vous envoie un prix ferme.
                         </p>
                      </div>
 
@@ -431,7 +349,7 @@ export const Home: React.FC = () => {
                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                      <div className="absolute bottom-10 left-10 text-white">
                         <h3 className="font-display text-3xl font-bold mb-3">Protection Sols & Murs</h3>
-                        <p className="font-sans text-white/90 text-base max-w-sm font-medium leading-relaxed">Nous installons des protections blanches sur tous les sols et murs avant même de déplacer le premier carton. Votre bien immobilier reste impeccable.</p>
+                        <p className="font-sans text-white/90 text-base max-w-sm font-medium leading-relaxed">Nous installons des protections blanches sur tous les sols et murs avant même de déplacer le premier carton. Votre bien immobilier reste impecable.</p>
                      </div>
                   </div>
 
@@ -474,7 +392,7 @@ export const Home: React.FC = () => {
                </p>
                <Link to="/quote">
                   <Button className="h-20 px-16 rounded-full text-xl bg-batimove-red text-white hover:bg-[#c00500] shadow-[0_0_50px_-10px_rgba(225,6,0,0.5)] font-bold tracking-wide font-display hover:-translate-y-1 transition-all">
-                     Obtenir mon devis gratuit
+                     Réservez votre créneau en 2 min
                   </Button>
                </Link>
             </div>

@@ -210,7 +210,7 @@ export const Footer: React.FC = () => {
             <span className="animate-pulse text-red-500 text-xs">❤️</span>
             <span>by</span>
             <a 
-              href="https://joshsegatt.netlify.app/" 
+              href="https://joshsegatt.com" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="font-bold text-slate-300 hover:text-white transition-colors flex items-center gap-1 group"

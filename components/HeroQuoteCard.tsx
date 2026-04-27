@@ -91,7 +91,7 @@ export const HeroQuoteCard: React.FC<HeroQuoteCardProps> = ({ className = '' }) 
         >
             {/* 3D Card with Site Colors - FIXED HEIGHT */}
             <div
-                className="relative bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-slate-700/50 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden transition-transform duration-300 ease-out hover:scale-[1.01] h-[520px] xl:h-[540px] flex flex-col"
+                className="relative bg-slate-900/75 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)] overflow-hidden transition-transform duration-300 ease-out hover:scale-[1.01] h-[520px] xl:h-[540px] flex flex-col"
                 style={{ willChange: 'transform' }}
             >
                 {/* Subtle Glow */}
@@ -102,7 +102,7 @@ export const HeroQuoteCard: React.FC<HeroQuoteCardProps> = ({ className = '' }) 
                     <div className="mb-4">
                         <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-2">
-                                <Sparkles className="w-3.5 h-3.5 text-batimove-red" />
+                                <Sparkles className="w-3.5 h-3.5 text-white/70" />
                                 <span className="text-[10px] font-bold text-batimove-blue uppercase tracking-widest">
                                     Devis Instantané
                                 </span>
@@ -151,11 +151,11 @@ export const HeroQuoteCard: React.FC<HeroQuoteCardProps> = ({ className = '' }) 
                                                 <button
                                                     key={type.value}
                                                     onClick={() => handlePropertySelect(type.value)}
-                                                    className="flex flex-col items-center justify-center p-3 rounded-xl border border-slate-700/50 hover:border-batimove-blue hover:bg-batimove-blue/10 bg-slate-800/40 transition-all group"
+                                                    className="flex flex-col items-center justify-center p-3 rounded-xl border border-white/20 hover:border-batimove-blue hover:bg-batimove-blue/10 bg-slate-800/60 transition-all group"
                                                 >
                                                     <Icon className="w-6 h-6 text-slate-400 group-hover:text-batimove-blue mb-2 transition-colors" />
                                                     <span className="text-white text-sm font-semibold">{type.label}</span>
-                                                    <span className="text-slate-500 text-[10px]">~{type.volume}m³</span>
+                                                    <span className="text-slate-300 text-[10px]">~{type.volume}m³</span>
                                                 </button>
                                             );
                                         })}
@@ -232,9 +232,21 @@ export const HeroQuoteCard: React.FC<HeroQuoteCardProps> = ({ className = '' }) 
                                     <Button
                                         type="button"
                                         onClick={handleCalculate}
-                                        className="w-full bg-batimove-blue hover:bg-[#002f5e] text-white rounded-xl py-3.5 font-bold text-sm shadow-lg shadow-batimove-blue/30 transition-all mt-auto"
+                                        className="w-full bg-batimove-blue hover:bg-[#002f5e] text-white rounded-xl py-3.5 font-bold text-sm mt-auto relative"
+                                        animate={{ 
+                                            boxShadow: [
+                                                "0 0 0 0px rgba(34, 211, 238, 0)", 
+                                                "0 0 20px 4px rgba(34, 211, 238, 0.4)", 
+                                                "0 0 0 0px rgba(34, 211, 238, 0)"
+                                            ] 
+                                        }}
+                                        transition={{ 
+                                            repeat: Infinity, 
+                                            duration: 2.5, 
+                                            ease: "easeInOut" 
+                                        }}
                                     >
-                                        Calculer mon devis
+                                        Calculer mon volume instantanément
                                     </Button>
                                 </motion.div>
                             )}
@@ -305,7 +317,7 @@ export const HeroQuoteCard: React.FC<HeroQuoteCardProps> = ({ className = '' }) 
                                                 type="button"
                                                 className="w-full bg-batimove-red hover:bg-[#c00500] text-white rounded-xl py-3.5 font-bold text-sm shadow-lg shadow-batimove-red/30 transition-all hover:shadow-xl hover:shadow-batimove-red/40 hover:-translate-y-0.5 flex items-center justify-center gap-2"
                                             >
-                                                Obtenir mon devis détaillé
+                                                Réservez votre créneau en 2 min
                                                 <ArrowRight className="w-4 h-4" />
                                             </Button>
                                         </Link>
