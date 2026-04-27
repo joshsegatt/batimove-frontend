@@ -72,14 +72,25 @@ video {
   -webkit-backface-visibility: hidden;
 }
 
-/* Optimize images */
+/* Image Sharpness & Rendering Optimization */
 img {
-  /* Force GPU rendering */
+  /* Prevent blurring on high-density screens */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: high-quality;
+  
+  /* Hardware Acceleration to prevent flickering/jitter */
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
-  /* Improve image quality */
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+
+  /* Scaling & Proportion Preservation */
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  
+  /* Disable aggressive smoothing */
+  shape-rendering: geometricPrecision;
 }
 
 /* Smooth scroll container */
