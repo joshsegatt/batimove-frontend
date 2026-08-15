@@ -11,7 +11,7 @@ const servicesList = [
     subtitle: "Confort & Sérénité",
     description: "Une prise en charge complète de votre foyer. De l'emballage de vos objets fragiles au remontage de vos meubles, nous traitons vos biens avec une délicatesse absolue.",
     features: ["Emballage 'Art & Vaisselle'", "Démontage/Remontage inclus", "Protection des sols et murs", "Assurance tous risques incluse"],
-    image: "/service-demenagement.png",
+    image: "/service_demenagement_prive.jpg",
     isPopular: true
   },
   {
@@ -20,7 +20,7 @@ const servicesList = [
     subtitle: "Business Solutions",
     description: "Minimisez l'impact sur votre productivité. Nos équipes opèrent le soir ou le week-end pour garantir une reprise d'activité immédiate dès le lundi matin.",
     features: ["Intervention hors horaires", "Gestion de parc informatique", "Archives et confidentialité", "Coordinateur de projet dédié"],
-    image: "/service-business.png",
+    image: "/service_transfert_entreprise.jpg",
     isPopular: false
   },
   {
@@ -29,7 +29,7 @@ const servicesList = [
     subtitle: "Garantie de Bails",
     description: "Ne craignez plus l'état des lieux de sortie. Nous assurons un nettoyage conforme aux normes des régies suisses avec garantie de reprise.",
     features: ["Garantie d'acceptation", "Présence lors de l'état des lieux", "Nettoyage vitres & stores", "Shampouinage moquettes"],
-    image: "/service-cleaning.png",
+    image: "/service_nettoyage_remise.jpg",
     isPopular: false
   },
   {
@@ -38,7 +38,7 @@ const servicesList = [
     subtitle: "Sécurité Maximale",
     description: "Vos biens stockés dans des containers individuels plombés, au sein d'entrepôts tempérés et sécurisés 24/7 sous vidéo-surveillance.",
     features: ["Accès sur rendez-vous", "Containers ventilés", "Courte ou longue durée", "Inventaire photo détaillé"],
-    image: "/service-storage.png",
+    image: "/service_garde_meubles.jpg",
     isPopular: false
   },
   {
@@ -47,7 +47,7 @@ const servicesList = [
     subtitle: "Accès Difficiles",
     description: "Passage par la fenêtre jusqu'au 12ème étage. Idéal pour les canapés volumineux ou les cages d'escalier étroites des immeubles anciens.",
     features: ["Jusqu'à 500kg de charge", "Opérateur qualifié inclus", "Sécurisation de la zone", "Permis de voirie géré"],
-    image: "/service-lift.png",
+    image: "/service_monte_meubles.jpg",
     isPopular: false
   },
   {
@@ -56,7 +56,7 @@ const servicesList = [
     subtitle: "Douanes & Logistique",
     description: "Quittez ou rejoignez la Suisse sans tracas administratifs. Nous gérons les formalités douanières et la logistique transfrontalière.",
     features: ["Gestion formalités douanières", "Fret routier, maritime ou aérien", "Emballage export spécifique", "Réseau de partenaires mondiaux"],
-    image: "/international-move.png",
+    image: "/service_international_douane.jpg",
     isPopular: false
   },
   {
@@ -72,7 +72,7 @@ const servicesList = [
       "Don aux associations caritatives locales",
       "Intervention rapide (48h) et tarifs transparents"
     ],
-    image: "/batimove-debarras-service.jpg",
+    image: "/service_debarras_ecologique.jpg",
     isPopular: false
   }
 ];
@@ -142,7 +142,10 @@ export const Services: React.FC = () => {
                 <img
                   src={service.image}
                   alt={service.title}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
+                  style={{ imageRendering: 'high-quality' }}
                 />
               </div>
 

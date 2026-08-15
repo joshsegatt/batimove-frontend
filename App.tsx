@@ -12,6 +12,7 @@ import { Legal } from './pages/Legal';
 import Calculator from './pages/Calculator';
 import CalculatorCheckout from './pages/CalculatorCheckout';
 import { CookieConsent } from './components/CookieConsent';
+import { WhatsAppButton } from './components/WhatsAppButton';
 
 // ScrollToTop helper
 const ScrollToTop = () => {
@@ -53,6 +54,7 @@ const App: React.FC = () => {
         </main>
         <Footer />
         <CookieConsent />
+        <WhatsAppButton />
       </div>
     </HashRouter>
   );

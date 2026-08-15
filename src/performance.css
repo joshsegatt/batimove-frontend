@@ -1,65 +1,9 @@
-/* 60fps Smooth Scrolling & Performance Optimizations */
-
-* {
-  /* Enable hardware acceleration for all elements */
+/* Crisp High-DPI Typography & Font Rendering */
+html, body, button, input, select, textarea {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-html {
-  /* Smooth scrolling with 60fps target */
-  scroll-behavior: smooth;
-  /* Optimize for 60fps rendering */
-  -webkit-overflow-scrolling: touch;
-}
-
-body {
-  /* Prevent layout shifts */
-  overflow-x: hidden;
-  /* Force GPU acceleration */
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  /* Optimize text rendering */
   text-rendering: optimizeLegibility;
-}
-
-/* Respect user's motion preferences */
-@media (prefers-reduced-motion: reduce) {
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* Optimize animations for 60fps */
-@media (prefers-reduced-motion: no-preference) {
-  * {
-    /* Use will-change sparingly for animated elements */
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  }
-}
-
-/* Force hardware acceleration for transforms */
-[class*="transform"],
-[class*="translate"],
-[class*="rotate"],
-[class*="scale"] {
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  will-change: transform;
-}
-
-/* Remove will-change after animation completes */
-[class*="transform"]:not(:hover):not(:focus),
-[class*="translate"]:not(:hover):not(:focus),
-[class*="rotate"]:not(:hover):not(:focus),
-[class*="scale"]:not(:hover):not(:focus) {
-  will-change: auto;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
 /* Optimize video playback */

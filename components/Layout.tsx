@@ -160,73 +160,92 @@ export const Footer: React.FC = () => {
   if (isHidden) return null;
 
   return (
-    <footer className="bg-[#0B1E33] text-slate-400 py-8 border-t border-white/5 font-sans">
+    <footer className="bg-[#0B1E33] text-slate-400 py-6 border-t border-white/5 font-sans">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row justify-between items-start gap-8 md:gap-12 mb-8">
-          <div className="space-y-3 max-w-xs">
-            <Link to="/" className="flex items-center gap-1.5 text-white text-lg font-bold font-display hover:opacity-80 transition-opacity">
-              <Logo className="w-9 h-9" />
-              Batimove Sarl
+        
+        {/* Main Grid: Compact 5-Column Architecture */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6 md:gap-8 items-start pb-6 border-b border-white/5 text-xs">
+          
+          {/* Brand Info (2 cols wide on desktop) */}
+          <div className="md:col-span-2 space-y-2.5">
+            <Link to="/" className="flex items-center gap-2 text-white text-base font-bold font-display hover:opacity-80 transition-opacity">
+              <Logo className="w-7 h-7" />
+              <span>Batimove Sarl</span>
             </Link>
-            <div className="text-xs leading-relaxed text-slate-500 font-medium">
-              <p>Rue de Monthoux 64</p>
-              <p>1201 Genève, Suisse</p>
-            </div>
-            <a href="tel:+41800825925" className="inline-block text-sm font-bold text-white hover:text-batimove-blue transition-colors">
-              0800 825 925
+            <p className="text-slate-400 text-xs leading-tight font-medium">
+              Rue de Monthoux 64, 1201 Genève, Suisse
+            </p>
+            <a href="tel:+41800825925" className="inline-flex items-center gap-1.5 text-xs font-bold text-white hover:text-batimove-blue transition-colors">
+              <Phone className="w-3.5 h-3.5 text-batimove-red" />
+              <span>0800 825 925</span>
             </a>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-6 text-xs w-full md:w-auto">
-            <div className="flex flex-col gap-2">
-              <h4 className="text-white font-semibold font-display mb-1">Expertise</h4>
-              <Link to="/services" className="hover:text-white transition-colors">Déménagement</Link>
-              <Link to="/business" className="hover:text-white transition-colors">Transfert Pro</Link>
-              <Link to="/services" className="hover:text-white transition-colors">Garde-Meubles</Link>
-              <Link to="/services" className="hover:text-white transition-colors">Nettoyage</Link>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <h4 className="text-white font-semibold font-display mb-1">Société</h4>
-              <Link to="/contact" className="hover:text-white transition-colors">Contact</Link>
-              <Link to="/pricing" className="hover:text-white transition-colors">Nos Tarifs</Link>
-              <Link to="/contact" className="hover:text-white transition-colors">Carrières</Link>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <h4 className="text-white font-semibold font-display mb-1">Légal</h4>
-              <Link to="/privacy" className="hover:text-white transition-colors">Protection des données</Link>
-              <Link to="/terms" className="hover:text-white transition-colors">CGV</Link>
-              <Link to="/legal" className="hover:text-white transition-colors">Mentions Légales</Link>
-            </div>
+          {/* Column 1: Expertise */}
+          <div className="space-y-1.5">
+            <h4 className="text-white font-semibold font-display text-xs tracking-wider uppercase mb-2">Expertise</h4>
+            <ul className="space-y-1 text-slate-400 font-medium">
+              <li><Link to="/services" className="hover:text-white transition-colors">Déménagement</Link></li>
+              <li><Link to="/business" className="hover:text-white transition-colors">Transfert Pro</Link></li>
+              <li><Link to="/services" className="hover:text-white transition-colors">Garde-Meubles</Link></li>
+              <li><Link to="/services" className="hover:text-white transition-colors">Nettoyage</Link></li>
+            </ul>
           </div>
+
+          {/* Column 2: Société */}
+          <div className="space-y-1.5">
+            <h4 className="text-white font-semibold font-display text-xs tracking-wider uppercase mb-2">Société</h4>
+            <ul className="space-y-1 text-slate-400 font-medium">
+              <li><Link to="/contact" className="hover:text-white transition-colors">Contact</Link></li>
+              <li><Link to="/pricing" className="hover:text-white transition-colors">Nos Tarifs</Link></li>
+              <li><Link to="/contact" className="hover:text-white transition-colors">Carrières</Link></li>
+            </ul>
+          </div>
+
+          {/* Column 3: Légal */}
+          <div className="space-y-1.5">
+            <h4 className="text-white font-semibold font-display text-xs tracking-wider uppercase mb-2">Légal</h4>
+            <ul className="space-y-1 text-slate-400 font-medium">
+              <li><Link to="/privacy" className="hover:text-white transition-colors">Protection des données</Link></li>
+              <li><Link to="/terms" className="hover:text-white transition-colors">CGV</Link></li>
+              <li><Link to="/legal" className="hover:text-white transition-colors">Mentions Légales</Link></li>
+            </ul>
+          </div>
+
         </div>
 
-        <div className="pt-6 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] font-medium text-slate-600">
-          <p className="flex-1 text-center sm:text-left">© {new Date().getFullYear()} Batimove Sarl. Tous droits réservés.</p>
+        {/* Micro Bottom Bar: Clean Single Line */}
+        <div className="pt-4 flex flex-col sm:flex-row justify-between items-center gap-3 text-[11px] font-medium text-slate-500">
+          <p>© {new Date().getFullYear()} Batimove Sarl. Tous droits réservés.</p>
           
-          <div className="flex-1 flex justify-center items-center gap-1.5 text-slate-500">
-            <span>Made with</span>
-            <span className="animate-pulse text-red-500 text-xs">❤️</span>
-            <span>by</span>
+          <div className="flex items-center gap-6">
             <a 
-              href="https://joshsegatt.com" 
+              href="https://www.instagram.com/batimove.sarl/" 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="font-bold text-slate-300 hover:text-white transition-colors flex items-center gap-1 group"
+              className="hover:text-white transition-colors flex items-center gap-1.5 group"
             >
-              joshsegatt
-              <ExternalLink className="w-3 h-3 opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 text-batimove-blue" />
+              <Instagram className="w-3.5 h-3.5 group-hover:text-batimove-red transition-colors" />
+              <span>@batimove.sarl</span>
             </a>
-          </div>
 
-          <div className="flex-1 flex justify-center sm:justify-end items-center gap-6">
-            <a href="https://www.instagram.com/batimove.sarl/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-2 group">
-              <Instagram className="w-4 h-4 group-hover:text-batimove-red transition-colors" />
-              <span className="hidden sm:inline">@batimove.sarl</span>
-            </a>
+            <div className="flex items-center gap-1 text-slate-400">
+              <span>Made with</span>
+              <span className="text-red-500 text-xs">❤️</span>
+              <span>by</span>
+              <a 
+                href="https://joshsegatt.com" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="font-bold text-slate-200 hover:text-white transition-colors flex items-center gap-0.5 group"
+              >
+                joshsegatt
+                <ExternalLink className="w-3 h-3 text-batimove-blue opacity-80 group-hover:opacity-100 transition-opacity" />
+              </a>
+            </div>
           </div>
         </div>
+
       </div>
     </footer>
   );
