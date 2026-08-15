@@ -4,11 +4,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Favicon - Multiple formats for better compatibility -->
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=2" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png?v=2" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png?v=2" />
-  <link rel="shortcut icon" href="/favicon.png?v=2" />
+  <!-- Google Search Favicon Guidelines & Multi-Resolution Icons -->
+  <link rel="icon" href="https://batimove.ch/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="48x48" href="https://batimove.ch/favicon-48x48.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="https://batimove.ch/favicon-192x192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="https://batimove.ch/favicon-512x512.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="https://batimove.ch/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+
+  <!-- Preload LCP Hero Image -->
+  <link rel="preload" href="/novaherobati.png" as="image" />
 
   <!-- SEO Meta Tags -->
   <title>Batimove | Déménagement Premium en Suisse | Genève, Lausanne, Zurich</title>
@@ -17,7 +22,7 @@
   <meta name="keywords"
     content="déménagement genève, déménagement suisse, déménagement lausanne, garde-meubles, nettoyage fin de bail, déménagement international" />
   <meta name="author" content="Batimove Sarl" />
-  <meta name="robots" content="index, follow" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <link rel="canonical" href="https://batimove.ch" />
 
   <!-- Geo-targeting for Switzerland -->
@@ -44,56 +49,68 @@
     content="Expert en déménagement en Suisse. Services premium à Genève, Lausanne et Zurich." />
   <meta name="twitter:image" content="https://batimove.ch/batimove-logo.png" />
 
+  <!-- Google Search Structured Data (WebSite, Organization, LocalBusiness) -->
   <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "MovingCompany",
-      "name": "Batimove Sarl",
-      "image": "https://batimove.ch/batimove-logo.png",
-      "description": "Expert en déménagement premium en Suisse. Services de déménagement privé, entreprise, garde-meubles et nettoyage.",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "Rue de Monthoux 64",
-        "addressLocality": "Genève",
-        "postalCode": "1201",
-        "addressCountry": "CH"
-      },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": 46.2044,
-        "longitude": 6.1432
-      },
-      "url": "https://batimove.ch",
-      "telephone": "+41-800-825-925",
-      "priceRange": "CHF",
-      "areaServed": [
-        {
-          "@type": "City",
-          "name": "Genève"
-        },
-        {
-          "@type": "City",
-          "name": "Lausanne"
-        },
-        {
-          "@type": "City",
-          "name": "Zurich"
-        },
-        {
-          "@type": "City",
-          "name": "Vaud"
+    [
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "@id": "https://batimove.ch/#website",
+        "url": "https://batimove.ch/",
+        "name": "Batimove",
+        "alternateName": ["Batimove Sarl", "Batimove Suisse", "Batimove Déménagement"],
+        "publisher": {
+          "@type": "Organization",
+          "name": "Batimove Sarl",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://batimove.ch/favicon-512x512.png",
+            "width": 512,
+            "height": 512
+          }
         }
-      ],
-      "openingHoursSpecification": {
-        "@type": "OpeningHoursSpecification",
-        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-        "opens": "00:00",
-        "closes": "23:59"
       },
-      "sameAs": [
-        "https://www.instagram.com/batimove"
-      ]
-    }
+      {
+        "@context": "https://schema.org",
+        "@type": "MovingCompany",
+        "@id": "https://batimove.ch/#organization",
+        "name": "Batimove Sarl",
+        "legalName": "Batimove Sarl",
+        "image": "https://batimove.ch/batimove-logo-3d.png",
+        "logo": "https://batimove.ch/favicon-512x512.png",
+        "description": "Expert en déménagement premium en Suisse. Services de déménagement privé, entreprise, garde-meubles et nettoyage.",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Rue de Monthoux 64",
+          "addressLocality": "Genève",
+          "postalCode": "1201",
+          "addressCountry": "CH"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 46.2044,
+          "longitude": 6.1432
+        },
+        "url": "https://batimove.ch",
+        "telephone": "+41-800-825-925",
+        "priceRange": "CHF",
+        "areaServed": [
+          { "@type": "City", "name": "Genève" },
+          { "@type": "City", "name": "Lausanne" },
+          { "@type": "City", "name": "Zurich" },
+          { "@type": "City", "name": "Vaud" }
+        ],
+        "openingHoursSpecification": {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+          "opens": "00:00",
+          "closes": "23:59"
+        },
+        "sameAs": [
+          "https://www.instagram.com/batimove"
+        ]
+      }
+    ]
     </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
