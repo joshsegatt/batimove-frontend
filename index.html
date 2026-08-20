@@ -2,13 +2,23 @@
 <html lang="fr-CH">
 
 <head>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18400207296"></script>
+  <!-- Google tag (gtag.js) & Consent Mode v2 for Google Tag Assistant & Ads -->
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
 
+    // Google Consent Mode v2 Default (Exigido pelo Google Tag Assistant e Google Ads)
+    gtag('consent', 'default', {
+      'ad_storage': 'granted',
+      'ad_user_data': 'granted',
+      'ad_personalization': 'granted',
+      'analytics_storage': 'granted',
+      'wait_for_update': 500
+    });
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18400207296"></script>
+  <script>
+    gtag('js', new Date());
     gtag('config', 'AW-18400207296');
   </script>
   <meta charset="UTF-8" />
