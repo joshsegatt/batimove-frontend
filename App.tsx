@@ -14,19 +14,31 @@ import CalculatorCheckout from './pages/CalculatorCheckout';
 import { CookieConsent } from './components/CookieConsent';
 import { WhatsAppButton } from './components/WhatsAppButton';
 
-// ScrollToTop helper
-const ScrollToTop = () => {
-  const { pathname } = useLocation();
+declare global {
+  interface Window {
+    gtag?: (...args: any[]) => void;
+    dataLayer?: any[];
+  }
+}
+
+// ScrollToTop and Google Tag (gtag.js) SPA Route Tracker helper
+const RouteTracker = () => {
+  const { pathname, search } = useLocation();
   React.useEffect(() => {
     window.scrollTo(0, 0);
-  }, [pathname]);
+    if (typeof window.gtag === 'function') {
+      window.gtag('config', 'AW-18400207296', {
+        page_path: pathname + search,
+      });
+    }
+  }, [pathname, search]);
   return null;
 };
 
 const App: React.FC = () => {
   return (
     <HashRouter>
-      <ScrollToTop />
+      <RouteTracker />
       <div className="flex flex-col min-h-screen font-sans text-slate-900 bg-slate-50 antialiased selection:bg-batimove-blue/20 selection:text-batimove-blue">
         <Navbar />
         <main className="flex-grow">
