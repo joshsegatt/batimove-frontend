@@ -127,3 +127,18 @@ export const trackGoogleAdsLeadConversion = (options: LeadConversionOptions = {}
 
   return true;
 };
+
+/**
+ * Google Ads Phone Call Tracking (Google Forwarding Number)
+ * Snippet: gtag('config', 'AW-18400207296/WzxDCM6v_OYcEMDD88VE', { 'phone_conversion_number': '079 889 64 06' })
+ */
+export const trackPhoneConversionNumber = (phone: string = '079 889 64 06'): void => {
+  gtag('config', 'AW-18400207296/WzxDCM6v_OYcEMDD88VE', {
+    phone_conversion_number: phone,
+  });
+
+  if (import.meta.env.DEV) {
+    console.log('[GoogleAds] Phone call conversion config registered for:', phone);
+  }
+};
+

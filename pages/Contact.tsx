@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Send, ShieldCheck, Globe, CheckCircle2, MessageCircle } from 'lucide-react';
 import { Button } from '../components/UIComponents';
+import { trackPhoneConversionNumber } from '../utils/analytics';
 
 export const Contact: React.FC = () => {
   const [formState, setFormState] = useState<'idle' | 'loading' | 'success'>('idle');
   const [formData, setFormData] = useState({ name: '', email: '', subject: 'Question Générale', message: '' });
+
+  useEffect(() => {
+    trackPhoneConversionNumber('079 889 64 06');
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
