@@ -16,7 +16,7 @@ export const GOOGLE_ADS_ID: string =
 
 // Google Ads Conversion Label for "Lead - Formulaire Devis"
 export const GOOGLE_ADS_LEAD_CONVERSION_LABEL: string =
-  (import.meta.env.VITE_GOOGLE_ADS_LEAD_CONVERSION_LABEL as string) || '';
+  (import.meta.env.VITE_GOOGLE_ADS_LEAD_CONVERSION_LABEL as string) || '7iQmCIrW8uQcEMDD88VE';
 
 // Deduplication cache to prevent double firing (e.g. re-renders, strict mode, retry)
 const processedLeadConversions = new Set<string>();
@@ -77,6 +77,7 @@ export interface LeadConversionOptions {
 /**
  * Track "Lead - Formulaire Devis" Conversion
  * Primary conversion: SUBMIT_LEAD_FORM (Count: ONE)
+ * send_to: AW-18400207296/7iQmCIrW8uQcEMDD88VE
  * 
  * Rules:
  * - Only fires on successful API response
@@ -84,20 +85,25 @@ export interface LeadConversionOptions {
  * - No PII (personally identifiable information) is logged
  */
 export const trackGoogleAdsLeadConversion = (options: LeadConversionOptions = {}): boolean => {
+  if (typeof window === 'undefined') return false;
+
   const { leadId, value, currency = 'CHF' } = options;
 
   // Deduplication check
-  if (leadId && processedLeadConversions.has(leadId)) {
-    if (import.meta.env.DEV) {
-      console.warn('[GoogleAds] Lead conversion already sent for ID:', leadId);
+  if (leadId) {
+    if (processedLeadConversions.has(leadId)) {
+      if (import.meta.env.DEV) {
+        console.warn('[GoogleAds] Lead conversion already sent for ID:', leadId);
+      }
+      return false;
     }
-    return false;
+    processedLeadConversions.add(leadId);
   }
 
-  // Determine send_to target
+  // Exact send_to target format: AW-18400207296/7iQmCIrW8uQcEMDD88VE
   const sendTo = GOOGLE_ADS_LEAD_CONVERSION_LABEL
     ? `${GOOGLE_ADS_ID}/${GOOGLE_ADS_LEAD_CONVERSION_LABEL}`
-    : GOOGLE_ADS_ID;
+    : `${GOOGLE_ADS_ID}/7iQmCIrW8uQcEMDD88VE`;
 
   const conversionPayload: Record<string, any> = {
     send_to: sendTo,
@@ -105,7 +111,6 @@ export const trackGoogleAdsLeadConversion = (options: LeadConversionOptions = {}
 
   if (leadId) {
     conversionPayload.transaction_id = leadId;
-    processedLeadConversions.add(leadId);
   }
 
   if (typeof value === 'number' && !isNaN(value)) {
@@ -113,6 +118,7 @@ export const trackGoogleAdsLeadConversion = (options: LeadConversionOptions = {}
     conversionPayload.currency = currency;
   }
 
+  // Call gtag event conversion
   gtag('event', 'conversion', conversionPayload);
 
   if (import.meta.env.DEV) {

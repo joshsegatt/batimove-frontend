@@ -55,6 +55,8 @@ export default function CalculatorCheckout() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        if (isSubmitting) return;
+
         if (!calculatorData) {
             alert('Données de calculateur manquantes');
             navigate('/calculator');

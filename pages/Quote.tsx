@@ -285,7 +285,7 @@ export const Quote: React.FC = () => {
   const prevStep = () => currentStep === 0 ? navigate('/services') : setCurrentStep(prev => Math.max(prev - 1, 0));
 
   const handleFinish = async () => {
-    if (!canProceed()) return;
+    if (!canProceed() || isSubmitting) return;
     setIsSubmitting(true);
 
     try {
