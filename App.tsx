@@ -14,23 +14,14 @@ import CalculatorCheckout from './pages/CalculatorCheckout';
 import { CookieConsent } from './components/CookieConsent';
 import { WhatsAppButton } from './components/WhatsAppButton';
 
-declare global {
-  interface Window {
-    gtag?: (...args: any[]) => void;
-    dataLayer?: any[];
-  }
-}
+import { trackPageView } from './utils/analytics';
 
 // ScrollToTop and Google Tag (gtag.js) SPA Route Tracker helper
 const RouteTracker = () => {
   const { pathname, search } = useLocation();
   React.useEffect(() => {
     window.scrollTo(0, 0);
-    if (typeof window.gtag === 'function') {
-      window.gtag('config', 'AW-18400207296', {
-        page_path: pathname + search,
-      });
-    }
+    trackPageView(pathname + search);
   }, [pathname, search]);
   return null;
 };

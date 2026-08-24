@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Send, Package2, MapPin, Euro } from 'lucide-react';
 import { Button } from '../components/UIComponents';
 import { sendQuoteEmail } from '../services/api';
+import { trackGoogleAdsLeadConversion } from '../utils/analytics';
 
 interface CalculatorData {
     items: Array<{
@@ -78,6 +79,12 @@ export default function CalculatorCheckout() {
             };
 
             await sendQuoteEmail(emailData);
+
+            // Track Google Ads Lead Conversion ONLY on confirmed API success
+            trackGoogleAdsLeadConversion({
+                value: calculatorData.estimatedPrice,
+                currency: 'CHF'
+            });
 
             // Clear localStorage after successful submission
             localStorage.removeItem('calculatorData');

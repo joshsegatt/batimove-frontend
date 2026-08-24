@@ -10,6 +10,7 @@ import {
   CalendarClock, CalendarDays, CheckCircle2
 } from 'lucide-react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
+import { trackGoogleAdsLeadConversion } from '../utils/analytics';
 
 // --- CONFIGURATION ---
 const SERVICE_CONFIG: Record<string, {
@@ -292,7 +293,12 @@ export const Quote: React.FC = () => {
       const { submitQuote } = await import('../services/api');
 
       // Submit to backend
-      await submitQuote(data);
+      const response = await submitQuote(data);
+
+      // Track Google Ads Lead Conversion ONLY on confirmed API success
+      trackGoogleAdsLeadConversion({
+        leadId: response?.quoteId,
+      });
 
       // Clear storage on success
       localStorage.removeItem(`batimove_draft_${currentServiceId}`);

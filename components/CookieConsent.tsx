@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './UIComponents';
+import { updateGoogleConsent } from '../utils/analytics';
 
 export const CookieConsent: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -16,6 +17,7 @@ export const CookieConsent: React.FC = () => {
 
   const handleAccept = () => {
     localStorage.setItem('batimove_cookie_consent', 'true');
+    updateGoogleConsent(true);
     setIsVisible(false);
   };
 

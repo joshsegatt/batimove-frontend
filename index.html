@@ -7,14 +7,26 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
 
-    // Google Consent Mode v2 Default (Exigido pelo Google Tag Assistant e Google Ads)
+    // Google Consent Mode v2 Default - Denied by default before user consent
     gtag('consent', 'default', {
-      'ad_storage': 'granted',
-      'ad_user_data': 'granted',
-      'ad_personalization': 'granted',
-      'analytics_storage': 'granted',
+      'ad_storage': 'denied',
+      'ad_user_data': 'denied',
+      'ad_personalization': 'denied',
+      'analytics_storage': 'denied',
       'wait_for_update': 500
     });
+
+    // Restore consent if user previously accepted
+    try {
+      if (localStorage.getItem('batimove_cookie_consent') === 'true') {
+        gtag('consent', 'update', {
+          'ad_storage': 'granted',
+          'ad_user_data': 'granted',
+          'ad_personalization': 'granted',
+          'analytics_storage': 'granted'
+        });
+      }
+    } catch (e) {}
   </script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18400207296"></script>
   <script>
@@ -42,7 +54,7 @@
     content="déménagement genève, déménagement suisse, déménagement lausanne, garde-meubles, nettoyage fin de bail, déménagement international" />
   <meta name="author" content="Batimove Sarl" />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-  <link rel="canonical" href="https://batimove.ch" />
+  <link rel="canonical" href="https://www.batimove.ch/" />
 
   <!-- Geo-targeting for Switzerland -->
   <meta name="geo.region" content="CH-GE" />
@@ -52,21 +64,21 @@
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://batimove.ch" />
+  <meta property="og:url" content="https://www.batimove.ch/" />
   <meta property="og:title" content="Batimove | Déménagement Premium Suisse" />
   <meta property="og:description"
     content="Expert en déménagement en Suisse. Services premium à Genève, Lausanne et Zurich. Devis gratuit 24/7." />
-  <meta property="og:image" content="https://batimove.ch/batimove-logo.png" />
+  <meta property="og:image" content="https://www.batimove.ch/batimove-logo.png" />
   <meta property="og:locale" content="fr_CH" />
   <meta property="og:site_name" content="Batimove" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:url" content="https://batimove.ch" />
+  <meta name="twitter:url" content="https://www.batimove.ch/" />
   <meta name="twitter:title" content="Batimove | Déménagement Premium Suisse" />
   <meta name="twitter:description"
     content="Expert en déménagement en Suisse. Services premium à Genève, Lausanne et Zurich." />
-  <meta name="twitter:image" content="https://batimove.ch/batimove-logo.png" />
+  <meta name="twitter:image" content="https://www.batimove.ch/batimove-logo.png" />
 
   <!-- Google Search Structured Data (WebSite, Organization, LocalBusiness) -->
   <script type="application/ld+json">
