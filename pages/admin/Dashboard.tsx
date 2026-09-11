@@ -54,6 +54,7 @@ import {
   FleetVehicle
 } from '../../services/supabaseClient';
 import { InvoiceDocument } from '../../components/InvoiceDocument';
+import { FinancialAppView } from '../../components/admin/FinancialAppView';
 import { exportInvoiceToPdf } from '../../utils/pdfExport';
 import { 
   adminLogout, 
@@ -133,6 +134,7 @@ const DEFAULT_KPI_ORDER = ['revenue', 'tax', 'pipeline', 'fleet'];
 export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   const [currentView, setCurrentView] = useState<MainView>('operations');
   const [boardViewMode, setBoardViewMode] = useState<BoardViewMode>('table');
+  const [fiduciarySubView, setFiduciarySubView] = useState<'app' | 'statement'>('app');
   const [leads, setLeads] = useState<LeadItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -1379,14 +1381,29 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
               <button
                 onClick={() => setCurrentView('fiduciary')}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                  currentView === 'fiduciary'
+                  currentView === 'fiduciary' && fiduciarySubView === 'statement'
                     ? 'bg-[#0073ea] text-white shadow-xs'
                     : 'text-slate-600 hover:bg-slate-100'
                 }`}
               >
                 <Receipt className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Comptabilité Bexio</span>
-                <span className="sm:hidden">Compta</span>
+                <span className="hidden sm:inline">Extrait TVA</span>
+                <span className="sm:hidden">TVA</span>
+              </button>
+
+              <button
+                onClick={() => { setCurrentView('fiduciary'); setFiduciarySubView('app'); }}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  currentView === 'fiduciary' && fiduciarySubView === 'app'
+                    ? 'bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-md shadow-sky-500/30'
+                    : 'bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200'
+                }`}
+                title="Afficher la Dashboard FinTech Mobile & Contrôle Financier"
+              >
+                <Smartphone className="w-3.5 h-3.5 text-sky-500" />
+                <span className="hidden sm:inline">Mode App FinTech</span>
+                <span className="sm:hidden">FinTech</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
               </button>
             </div>
 
@@ -1417,42 +1434,44 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
         <main className="p-4 sm:p-6 lg:p-8 space-y-6 flex-1 max-w-[1700px] w-full mx-auto">
           
           {/* =========================================================================
-              3. DRAGGABLE LUXURY KPI CARDS (REORDERABLE, ZERO INLINE STYLES)
+              3. DRAGGABLE LUXURY KPI CARDS (OPERATIONS & CRM ONLY)
               ========================================================================= */}
-          <div className="space-y-2 no-print">
-            <div className="flex items-center justify-between px-1 text-[11px] text-slate-400">
-              <span className="flex items-center gap-1.5">
-                <GripVertical className="w-3.5 h-3.5 text-slate-400" />
-                <span>Widgets interactifs : <strong>Glissez et déposez</strong> les cartes pour agencer votre tableau de bord.</span>
-              </span>
-              <button
-                onClick={handleResetKpiOrder}
-                className="hover:text-slate-700 flex items-center gap-1 text-[10px] transition-colors cursor-pointer"
-                title="Rétablir l'ordre d'origine"
-              >
-                <RotateCcw className="w-3 h-3" />
-                <span>Rétablir l'ordre</span>
-              </button>
-            </div>
-
-            <Reorder.Group
-              axis="x"
-              values={kpiOrder}
-              onReorder={handleReorderKpis}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 list-none p-0 m-0"
-            >
-              {kpiOrder.map((key) => (
-                <Reorder.Item
-                  key={key}
-                  value={key}
-                  className="list-none focus:outline-none"
-                  whileDrag={{ scale: 1.03, zIndex: 40, cursor: 'grabbing' }}
+          {currentView !== 'fiduciary' && (
+            <div className="space-y-2 no-print">
+              <div className="flex items-center justify-between px-1 text-[11px] text-slate-400">
+                <span className="flex items-center gap-1.5">
+                  <GripVertical className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Widgets interactifs : <strong>Glissez et déposez</strong> les cartes pour agencer votre tableau de bord.</span>
+                </span>
+                <button
+                  onClick={handleResetKpiOrder}
+                  className="hover:text-slate-700 flex items-center gap-1 text-[10px] transition-colors cursor-pointer"
+                  title="Rétablir l'ordre d'origine"
                 >
-                  {renderKpiCard(key)}
-                </Reorder.Item>
-              ))}
-            </Reorder.Group>
-          </div>
+                  <RotateCcw className="w-3 h-3" />
+                  <span>Rétablir l'ordre</span>
+                </button>
+              </div>
+
+              <Reorder.Group
+                axis="x"
+                values={kpiOrder}
+                onReorder={handleReorderKpis}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 list-none p-0 m-0"
+              >
+                {kpiOrder.map((key) => (
+                  <Reorder.Item
+                    key={key}
+                    value={key}
+                    className="list-none focus:outline-none"
+                    whileDrag={{ scale: 1.03, zIndex: 40, cursor: 'grabbing' }}
+                  >
+                    {renderKpiCard(key)}
+                  </Reorder.Item>
+                ))}
+              </Reorder.Group>
+            </div>
+          )}
 
           {/* =========================================================================
               4. MONDAY.COM BOARD VIEW (OPERATIONS: TABLE OR KANBAN)
@@ -1802,7 +1821,52 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
           )}
 
           {currentView === 'fiduciary' && currentUser.permissions.canViewFinancials && (
-            <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6 print-area">
+            <div className="space-y-4">
+              {/* Mode Subview Switcher */}
+              <div className="flex flex-wrap items-center justify-between gap-3 no-print bg-[#081525] border border-sky-500/30 p-2.5 rounded-2xl shadow-lg">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setFiduciarySubView('app')}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                      fiduciarySubView === 'app'
+                        ? 'bg-sky-500 text-white shadow-md shadow-sky-500/30'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <Smartphone className="w-3.5 h-3.5" />
+                    <span>Tableau de Bord FinTech (App Mobile)</span>
+                    <span className="text-[9px] px-1.5 py-0.2 rounded bg-white/20 text-white font-mono">
+                      FIGMA HIGH-END
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => setFiduciarySubView('statement')}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                      fiduciarySubView === 'statement'
+                        ? 'bg-white/20 text-white shadow-sm'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <Receipt className="w-3.5 h-3.5" />
+                    <span>Extrait Déclaration Papier A4 (AFC)</span>
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-2 pr-2 text-xs font-mono text-slate-300">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                  <span className="hidden sm:inline">BCGE Genève • TVA 8.1% AFC</span>
+                </div>
+              </div>
+
+              {fiduciarySubView === 'app' ? (
+                <FinancialAppView
+                  leads={leads}
+                  currentUser={currentUser}
+                  onRefreshLeads={loadData}
+                />
+              ) : (
+                <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6 print-area">
               
               {/* Header Bar */}
               <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-slate-200">
@@ -1929,6 +1993,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                 </div>
               </div>
 
+                </div>
+              )}
             </div>
           )}
 
@@ -2446,57 +2512,59 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       {/* =========================================================================
           10. MONDAY.COM MOBILE BOTTOM NAVIGATION BAR (< 1024px)
           ========================================================================= */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0B1E33] border-t border-white/10 px-2 py-2 flex items-center justify-around text-[10px] text-slate-300 backdrop-blur-lg shadow-2xl no-print">
-        <button
-          onClick={() => setCurrentView('operations')}
-          className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-xl transition-all ${
-            currentView === 'operations' ? 'text-sky-400 font-bold bg-white/10' : 'text-slate-400 hover:text-white'
-          }`}
-        >
-          <Layers className="w-4 h-4" />
-          <span>Devis</span>
-        </button>
+      {!(currentView === 'fiduciary' && fiduciarySubView === 'app') && (
+        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0B1E33] border-t border-white/10 px-2 py-2 flex items-center justify-around text-[10px] text-slate-300 backdrop-blur-lg shadow-2xl no-print">
+          <button
+            onClick={() => setCurrentView('operations')}
+            className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-xl transition-all ${
+              currentView === 'operations' ? 'text-sky-400 font-bold bg-white/10' : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Layers className="w-4 h-4" />
+            <span>Devis</span>
+          </button>
 
-        <button
-          onClick={() => setCurrentView('fiduciary')}
-          className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-xl transition-all ${
-            currentView === 'fiduciary' ? 'text-emerald-400 font-bold bg-white/10' : 'text-slate-400 hover:text-white'
-          }`}
-        >
-          <Receipt className="w-4 h-4" />
-          <span>Compta</span>
-        </button>
+          <button
+            onClick={() => setCurrentView('fiduciary')}
+            className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-xl transition-all ${
+              currentView === 'fiduciary' ? 'text-emerald-400 font-bold bg-white/10' : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Receipt className="w-4 h-4" />
+            <span>Compta</span>
+          </button>
 
-        <button
-          onClick={() => setCurrentView('fleet')}
-          className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-xl transition-all ${
-            currentView === 'fleet' ? 'text-amber-400 font-bold bg-white/10' : 'text-slate-400 hover:text-white'
-          }`}
-        >
-          <Truck className="w-4 h-4" />
-          <span>Flotte</span>
-        </button>
+          <button
+            onClick={() => setCurrentView('fleet')}
+            className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-xl transition-all ${
+              currentView === 'fleet' ? 'text-amber-400 font-bold bg-white/10' : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Truck className="w-4 h-4" />
+            <span>Flotte</span>
+          </button>
 
-        <button
-          onClick={() => setCurrentView('crm')}
-          className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-xl transition-all ${
-            currentView === 'crm' ? 'text-purple-400 font-bold bg-white/10' : 'text-slate-400 hover:text-white'
-          }`}
-        >
-          <Users className="w-4 h-4" />
-          <span>CRM</span>
-        </button>
+          <button
+            onClick={() => setCurrentView('crm')}
+            className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-xl transition-all ${
+              currentView === 'crm' ? 'text-purple-400 font-bold bg-white/10' : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Users className="w-4 h-4" />
+            <span>CRM</span>
+          </button>
 
-        <button
-          onClick={() => setIsAccountModalOpen(true)}
-          className="flex flex-col items-center gap-1 py-1 px-2.5 rounded-xl text-slate-400 hover:text-white transition-all cursor-pointer"
-        >
-          <div className={`w-4 h-4 rounded-full ${currentUser.avatarBg} text-white flex items-center justify-center font-bold text-[8px]`}>
-            {currentUser.initials}
-          </div>
-          <span>Compte</span>
-        </button>
-      </nav>
+          <button
+            onClick={() => setIsAccountModalOpen(true)}
+            className="flex flex-col items-center gap-1 py-1 px-2.5 rounded-xl text-slate-400 hover:text-white transition-all cursor-pointer"
+          >
+            <div className={`w-4 h-4 rounded-full ${currentUser.avatarBg} text-white flex items-center justify-center font-bold text-[8px]`}>
+              {currentUser.initials}
+            </div>
+            <span>Compte</span>
+          </button>
+        </nav>
+      )}
 
       {/* Mobile Menu Slide-Out Drawer */}
       <AnimatePresence>
