@@ -105,10 +105,11 @@ export const Login: React.FC<LoginProps> = ({ onSuccess }) => {
       >
         {/* Brand Header with Official Batimove Logo */}
         <div className="text-center mb-5">
-          <div className="w-20 h-20 mx-auto mb-3 rounded-2xl bg-white/10 border border-white/20 p-2 flex items-center justify-center shadow-lg shadow-sky-500/10 backdrop-blur-sm">
+          <div style={{ width: 80, height: 80 }} className="w-20 h-20 mx-auto mb-3 rounded-2xl bg-white/10 border border-white/20 p-2 flex items-center justify-center shadow-lg shadow-sky-500/10 backdrop-blur-sm">
             <img 
               src="/batimove-logo.png" 
               alt="Batimove Suisse Logo" 
+              style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
               className="w-full h-full object-contain"
             />
           </div>

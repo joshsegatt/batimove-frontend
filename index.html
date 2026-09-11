@@ -51,11 +51,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- Google Search Favicon Guidelines & Multi-Resolution Icons -->
-  <link rel="icon" href="https://batimove.ch/favicon.ico" sizes="any" />
-  <link rel="icon" type="image/png" sizes="48x48" href="https://batimove.ch/favicon-48x48.png" />
-  <link rel="icon" type="image/png" sizes="192x192" href="https://batimove.ch/favicon-192x192.png" />
-  <link rel="icon" type="image/png" sizes="512x512" href="https://batimove.ch/favicon-512x512.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="https://batimove.ch/apple-touch-icon.png" />
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
   <link rel="manifest" href="/site.webmanifest" />
 
   <!-- Apple iOS PWA Capabilities -->
@@ -169,46 +169,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
     rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    window.tailwind = window.tailwind || {};
-    window.tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            'batimove-blue': '#0052A3',
-            'batimove-red': '#E10600',
-            'batimove-dark': '#0B1E33',
-            'slate-50': '#F8FAFC',
-            'slate-100': '#F1F5F9',
-            'slate-200': '#E2E8F0',
-            'slate-300': '#CBD5E1',
-            'slate-600': '#475569',
-            'slate-800': '#1E293B',
-            'slate-900': '#0F172A',
-          },
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            display: ['Plus Jakarta Sans', 'sans-serif'], // New Display Font
-          },
-          animation: {
-            'fade-in': 'fadeIn 0.5s ease-out',
-            'slide-up': 'slideUp 0.5s ease-out',
-          },
-          keyframes: {
-            fadeIn: {
-              '0%': { opacity: '0' },
-              '100%': { opacity: '1' },
-            },
-            slideUp: {
-              '0%': { transform: 'translateY(20px)', opacity: '0' },
-              '100%': { transform: 'translateY(0)', opacity: '1' },
-            }
-          }
-        }
-      }
-    }
-  </script>
+
   <style>
     /* Custom scrollbar for Swiss precision feel - Improved Contrast */
     ::-webkit-scrollbar {
