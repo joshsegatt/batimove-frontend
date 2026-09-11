@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Send, Package2, MapPin, Euro } from 'lucide-react';
+import { ArrowLeft, Send, Package2, MapPin, Coins } from 'lucide-react';
 import { Button } from '../components/UIComponents';
 import { sendQuoteEmail } from '../services/api';
 import { trackGoogleAdsLeadConversion } from '../utils/analytics';
@@ -167,7 +167,7 @@ export default function CalculatorCheckout() {
                                         <p className="text-xs text-slate-400 mt-1">m³</p>
                                     </div>
                                     <div className="bg-slate-800/50 rounded-xl p-4 text-center">
-                                        <Euro className="w-6 h-6 text-batimove-blue mx-auto mb-2" />
+                                        <Coins className="w-6 h-6 text-batimove-blue mx-auto mb-2" />
                                         <p className="text-3xl font-bold text-batimove-blue">
                                             {calculatorData.estimatedPrice}
                                         </p>

@@ -56,3 +56,99 @@ img {
     will-change: transform;
   }
 }
+
+/* =========================================================================
+   SWISS FIDUCIARY, BEXIO & INVOICE A4 PRINT STYLES (ISO 216 Conforme)
+   ========================================================================= */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm 12mm 10mm 12mm;
+  }
+
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 10pt !important;
+    line-height: 1.3 !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Hide app shell, navigation, modals, backdrop overlays, toasts, and controls */
+  aside,
+  header,
+  nav,
+  .no-print,
+  button,
+  input,
+  select,
+  textarea,
+  .sticky,
+  [role="alert"],
+  .mobile-bottom-bar,
+  .drawer-backdrop,
+  .drawer-controls {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  /* Unset fixed positions for the invoice wrapper during print */
+  .invoice-print-wrapper {
+    position: static !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    display: block !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .invoice-drawer-content {
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Ensure print document is visible and expands naturally */
+  .print-area,
+  .invoice-print-area {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  /* Prevent awkward page breaks */
+  table, tr, td, th,
+  .invoice-avoid-break,
+  .qr-bill-print {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .qr-bill-print {
+    border-top: 1px dashed #64748b !important;
+    margin-top: 8mm !important;
+    padding-top: 4mm !important;
+  }
+}

@@ -1,241 +1,519 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Check, ArrowRight, Star, Phone } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Link, useSearchParams } from 'react-router-dom';
+import { 
+  Check, 
+  ArrowRight, 
+  ChevronRight,
+  MessageSquare,
+  Lock,
+  Phone,
+  Home,
+  Building2,
+  Trash2,
+  Sparkles,
+  Archive,
+  Truck,
+  Loader2,
+  ShieldCheck
+} from 'lucide-react';
 import { Button } from '../components/UIComponents';
-import { Link } from 'react-router-dom';
+import { submitServiceQuote } from '../services/api';
 
-const servicesList = [
+interface ServiceItem {
+  id: string;
+  number: number;
+  name: string;
+  shortName: string;
+  subtitle: string;
+  tags: string[];
+  icon: React.FC<{ className?: string }>;
+  image: string;
+}
+
+const SERVICES_DATA: ServiceItem[] = [
   {
-    id: 'priv',
-    title: "Déménagement Privé",
-    subtitle: "Confort & Sérénité",
-    description: "Une prise en charge complète de votre foyer. De l'emballage de vos objets fragiles au remontage de vos meubles, nous traitons vos biens avec une délicatesse absolue.",
-    features: ["Emballage 'Art & Vaisselle'", "Démontage/Remontage inclus", "Protection des sols et murs", "Assurance tous risques incluse"],
-    image: "/service_demenagement_prive.jpg",
-    isPopular: true
+    id: 'prive',
+    number: 1,
+    name: "Déménagement Résidentiel",
+    shortName: "Résidentiel",
+    subtitle: "Prestation complète pour votre déménagement à domicile.",
+    tags: ["Emballage sur-mesure", "Démontage", "Garantie RC 5M"],
+    icon: Home,
+    image: "/service-residential-3d.png"
   },
   {
-    id: 'pro',
-    title: "Transfert d'Entreprise",
-    subtitle: "Business Solutions",
-    description: "Minimisez l'impact sur votre productivité. Nos équipes opèrent le soir ou le week-end pour garantir une reprise d'activité immédiate dès le lundi matin.",
-    features: ["Intervention hors horaires", "Gestion de parc informatique", "Archives et confidentialité", "Coordinateur de projet dédié"],
-    image: "/service_transfert_entreprise.jpg",
-    isPopular: false
-  },
-  {
-    id: 'clean',
-    title: "Nettoyage & Remise",
-    subtitle: "Garantie de Bails",
-    description: "Ne craignez plus l'état des lieux de sortie. Nous assurons un nettoyage conforme aux normes des régies suisses avec garantie de reprise.",
-    features: ["Garantie d'acceptation", "Présence lors de l'état des lieux", "Nettoyage vitres & stores", "Shampouinage moquettes"],
-    image: "/service_nettoyage_remise.jpg",
-    isPopular: false
-  },
-  {
-    id: 'storage',
-    title: "Garde-Meubles",
-    subtitle: "Sécurité Maximale",
-    description: "Vos biens stockés dans des containers individuels plombés, au sein d'entrepôts tempérés et sécurisés 24/7 sous vidéo-surveillance.",
-    features: ["Accès sur rendez-vous", "Containers ventilés", "Courte ou longue durée", "Inventaire photo détaillé"],
-    image: "/service_garde_meubles.jpg",
-    isPopular: false
-  },
-  {
-    id: 'lift',
-    title: "Monte-Meubles",
-    subtitle: "Accès Difficiles",
-    description: "Passage par la fenêtre jusqu'au 12ème étage. Idéal pour les canapés volumineux ou les cages d'escalier étroites des immeubles anciens.",
-    features: ["Jusqu'à 500kg de charge", "Opérateur qualifié inclus", "Sécurisation de la zone", "Permis de voirie géré"],
-    image: "/service_monte_meubles.jpg",
-    isPopular: false
-  },
-  {
-    id: 'inter',
-    title: "International",
-    subtitle: "Douanes & Logistique",
-    description: "Quittez ou rejoignez la Suisse sans tracas administratifs. Nous gérons les formalités douanières et la logistique transfrontalière.",
-    features: ["Gestion formalités douanières", "Fret routier, maritime ou aérien", "Emballage export spécifique", "Réseau de partenaires mondiaux"],
-    image: "/service_international_douane.jpg",
-    isPopular: false
+    id: 'entreprise',
+    number: 2,
+    name: "Transfert d'Entreprise & Bureaux",
+    shortName: "Entreprise",
+    subtitle: "Déménagement professionnel clé en main.",
+    tags: ["Planification", "Zéro interruption"],
+    icon: Building2,
+    image: "/service-b2b-3d.png"
   },
   {
     id: 'debarras',
-    title: "Débarras Professionnel",
-    subtitle: "Vidage & Évacuation Écologique",
-    description: "Libérez votre espace en toute sérénité. Notre équipe spécialisée évacue caves, greniers, garages et appartements complets avec un tri méticuleux, recyclage responsable et élimination conforme aux normes environnementales suisses. Service rapide, discret et respectueux de l'environnement.",
-    features: [
-      "Évacuation complète et tri sélectif professionnel",
-      "Recyclage écologique certifié (80% valorisé)",
-      "Nettoyage approfondi après débarras inclus",
-      "Devis gratuit sur place sous 24h",
-      "Don aux associations caritatives locales",
-      "Intervention rapide (48h) et tarifs transparents"
-    ],
-    image: "/service_debarras_ecologique.jpg",
-    isPopular: false
+    number: 3,
+    name: "Débarras Professionnel & Écologique",
+    shortName: "Débarras",
+    subtitle: "Valorisation et tri sélectif des biens.",
+    tags: ["Écoresponsable", "Certifié"],
+    icon: Trash2,
+    image: "/service-debarras-3d.png"
+  },
+  {
+    id: 'nettoyage',
+    number: 4,
+    name: "Nettoyage État des Lieux",
+    shortName: "Nettoyage",
+    subtitle: "Nettoyage professionnel conforme régies.",
+    tags: ["État des lieux", "Clés en main"],
+    icon: Sparkles,
+    image: "/service-cleaning-3d.png"
   }
 ];
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
-
-const item = {
-  hidden: { opacity: 0, y: 30 },
-  show: { opacity: 1, y: 0 }
-};
-
 export const Services: React.FC = () => {
+  const [searchParams] = useSearchParams();
+
+  const getInitialService = () => {
+    const rawId = searchParams.get('type') || '';
+    if (rawId === 'pro' || rawId === 'entreprise' || rawId === 'business') return 'entreprise';
+    if (rawId === 'clean' || rawId === 'nettoyage') return 'nettoyage';
+    if (rawId === 'debarras') return 'debarras';
+    return 'prive';
+  };
+
+  const [selectedServiceId, setSelectedServiceId] = useState<string>(getInitialService);
+
+  useEffect(() => {
+    const rawId = searchParams.get('type') || '';
+    if (rawId === 'pro' || rawId === 'entreprise' || rawId === 'business') setSelectedServiceId('entreprise');
+    else if (rawId === 'clean' || rawId === 'nettoyage') setSelectedServiceId('nettoyage');
+    else if (rawId === 'debarras') setSelectedServiceId('debarras');
+    else if (rawId === 'prive' || rawId === 'residentiel') setSelectedServiceId('prive');
+  }, [searchParams]);
+  
+  // Form State
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    date: '',
+    fromCity: '',
+    toCity: '',
+    details: ''
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const currentService = SERVICES_DATA.find(s => s.id === selectedServiceId) || SERVICES_DATA[0];
+  const CurrentIcon = currentService.icon;
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    if (errorMessage) setErrorMessage('');
+  };
+
+  const handleSubmitQuote = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.name || !formData.phone) {
+      setErrorMessage('Veuillez renseigner au moins votre nom et votre numéro de téléphone.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setErrorMessage('');
+
+    try {
+      await submitServiceQuote({
+        serviceName: currentService.name,
+        clientName: formData.name,
+        clientEmail: formData.email || 'Non renseigné',
+        clientPhone: formData.phone,
+        date: formData.date,
+        fromCity: formData.fromCity,
+        toCity: formData.toCity,
+        details: formData.details
+      });
+
+      setIsSuccess(true);
+      setFormData({
+        name: '',
+        phone: '',
+        email: '',
+        date: '',
+        fromCity: '',
+        toCity: '',
+        details: ''
+      });
+    } catch (err: any) {
+      console.error(err);
+      setErrorMessage('Une erreur est survenue lors de l\'envoi. Veuillez réessayer ou contacter le 0800 825 925.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-slate-50 pt-24 pb-16 font-sans">
+    <div className="flex-1 min-h-[calc(100dvh-98px)] lg:h-[calc(100dvh-98px)] lg:max-h-[calc(100dvh-98px)] bg-[#FAFBFD] text-slate-900 flex flex-col justify-between relative overflow-y-auto lg:overflow-hidden font-sans">
+      
+      {/* Subtle Ambient Studio Lights */}
+      <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-sky-100/35 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute bottom-0 left-1/4 w-[600px] h-[600px] bg-slate-100/60 rounded-full blur-[150px] pointer-events-none" />
 
-      {/* Header Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h1 className="font-display text-3xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">
-            Nos Services <span className="text-batimove-red">Premium</span>
-          </h1>
-          <p className="text-base md:text-lg text-slate-600 max-w-3xl mx-auto font-normal leading-relaxed">
-            Une gamme complète de prestations conçue pour répondre aux exigences les plus élevées.
-            Précision, ponctualité et savoir-faire suisse à chaque étape.
-          </p>
-        </motion.div>
-      </div>
+      {/* Main Centered Content Container */}
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-5 flex-1 flex flex-col justify-center relative z-10 my-auto">
 
-      {/* Services Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {servicesList.map((service) => (
-            <motion.div
-              key={service.id}
-              variants={item}
-              className="group flex flex-col bg-white rounded-[2rem] overflow-hidden border border-slate-100 shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:shadow-blue-900/10 transition-all duration-500 hover:-translate-y-2 relative"
-            >
-              {service.isPopular && (
-                <div className="absolute top-4 right-4 z-20">
-                  <div className="bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-bold text-batimove-red border border-red-100 shadow-sm flex items-center gap-1 font-display tracking-wide">
-                    <Star className="w-3 h-3 fill-current" />
-                    RECOMMANDÉ
-                  </div>
-                </div>
-              )}
+        {/* 2-COLUMN LUXURY GRID */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-7 lg:gap-10 items-center w-full flex-1 min-h-0">
 
-              {/* Image Container with Zoom Effect */}
-              <div className="h-48 overflow-hidden relative">
-                <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-transparent transition-colors z-10" />
-                <img
-                  src={service.image}
-                  alt={service.title}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
-                  style={{ imageRendering: 'high-quality' }}
-                />
+          {/* LEFT COLUMN: EDITORIAL LUXURY HEADER + NUMBERED SERVICE CARDS (7 COLS) */}
+          <div className="lg:col-span-7 flex flex-col justify-center">
+            
+            {/* Editorial Header */}
+            <div className="mb-4 sm:mb-5 flex-shrink-0">
+              <div className="text-[10px] tracking-[0.18em] font-bold text-sky-700 uppercase mb-1.5 flex items-center gap-2">
+                <span>GENÈVE</span>
+                <span className="text-slate-300">•</span>
+                <span>VAUD</span>
+                <span className="text-slate-300">•</span>
+                <span>LAUSANNE</span>
+                <span className="text-slate-300">•</span>
+                <span>SUISSE ROMANDE</span>
               </div>
-
-              {/* Content */}
-              <div className="p-8 flex flex-col flex-1">
-                <div className="mb-4">
-                  <span className="font-display text-xs font-bold text-batimove-blue uppercase tracking-widest mb-2 block">
-                    {service.subtitle}
-                  </span>
-                  <h3 className="font-display text-2xl font-bold text-slate-900 group-hover:text-batimove-blue transition-colors">
-                    {service.title}
-                  </h3>
-                </div>
-
-                <p className="text-slate-600 mb-6 leading-relaxed text-[15px] flex-grow font-normal">
-                  {service.description}
-                </p>
-
-                <div className="space-y-3 mb-8">
-                  {service.features.map((feature, idx) => (
-                    <div key={idx} className="flex items-start gap-3 text-sm text-slate-700">
-                      <div className="mt-0.5 min-w-[18px]">
-                        <Check className="w-4.5 h-4.5 text-green-600" strokeWidth={3} />
-                      </div>
-                      <span className="font-medium">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-auto pt-6 border-t border-slate-50">
-                  <Link to={`/quote/${service.id}`} className="block">
-                    <Button
-                      variant="outline"
-                      className="w-full justify-between text-slate-700 font-bold text-sm border-slate-200 group-hover:bg-batimove-blue group-hover:text-white group-hover:border-batimove-blue transition-all rounded-xl py-3"
-                    >
-                      Demander une offre
-                      <ArrowRight className="w-4 h-4" />
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Bottom CTA */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="mt-20 text-center"
-        >
-          <div className="bg-batimove-dark rounded-[2.5rem] p-10 md:p-16 relative overflow-hidden shadow-2xl">
-            {/* Cube Texture Overlay */}
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 mix-blend-overlay"></div>
-
-            {/* Subtle Blue Gradient */}
-            <div className="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-batimove-blue opacity-20 rounded-full blur-3xl"></div>
-            <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-blue-900/20 to-transparent"></div>
-
-            <div className="relative z-10">
-              <h2 className="font-display text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">Un projet spécifique ?</h2>
-              <p className="text-slate-200 text-lg md:text-xl mb-10 max-w-2xl mx-auto font-normal leading-relaxed">
-                Nous réalisons également des transports d'objets d'art, de pianos, de coffres-forts et des déménagements VIP sur mesure.
+              <h1 className="font-serif text-3xl sm:text-4xl lg:text-[42px] font-bold text-[#0B1E33] tracking-tight leading-[1.1]">
+                Services de Déménagement<br />
+                & Logistique
+              </h1>
+              <p className="text-slate-500 text-xs sm:text-sm mt-1.5 font-normal leading-relaxed max-w-lg">
+                Prestations sur-mesure pour particuliers et entreprises en Suisse romande.
               </p>
+            </div>
 
-              <div className="flex flex-col sm:flex-row justify-center gap-5 items-center">
-                {/* Primary Button */}
-                <Link to="/quote/general" className="w-full sm:w-auto">
-                  <Button size="lg" className="w-full sm:w-auto bg-batimove-red hover:bg-red-600 text-white rounded-full px-10 py-4 shadow-lg shadow-red-900/50 hover:shadow-red-500/50 transition-all hover:-translate-y-1 font-bold font-display tracking-wide">
-                    Obtenir un devis sur mesure
-                  </Button>
-                </Link>
+            {/* 4 Numbered Service Cards */}
+            <div className="space-y-3">
+              {SERVICES_DATA.map((service) => {
+                const isSelected = selectedServiceId === service.id;
 
-                {/* Secondary Button - FIXED COLOR VISIBILITY */}
-                <a href="tel:+41225550000" className="w-full sm:w-auto group">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="w-full sm:w-auto rounded-full px-10 py-4 bg-white text-batimove-blue hover:bg-slate-50 border-2 border-white shadow-xl font-bold flex items-center justify-center gap-2 font-display transition-all hover:-translate-y-1"
+                return (
+                  <button
+                    key={service.id}
+                    onClick={() => {
+                      setSelectedServiceId(service.id);
+                      setIsSuccess(false);
+                    }}
+                    className={`w-full text-left p-3.5 sm:p-4 rounded-2xl transition-all duration-300 flex items-center justify-between gap-3 cursor-pointer group relative ${
+                      isSelected
+                        ? 'bg-white border-[1.5px] border-[#0B1E33] shadow-[0_14px_36px_-8px_rgba(11,30,51,0.09),0_1px_3px_rgba(0,0,0,0.03)] ring-4 ring-[#0B1E33]/5'
+                        : 'bg-white hover:bg-slate-50/80 border border-slate-200/90 hover:border-slate-300 shadow-[0_2px_8px_rgba(0,0,0,0.02)]'
+                    }`}
                   >
-                    <Phone className="w-4 h-4" />
-                    Appeler un conseiller
-                  </Button>
-                </a>
-              </div>
+                    {/* Left: Checkmark Circle + Number + Content */}
+                    <div className="flex items-start gap-3.5 min-w-0 flex-1">
+                      {/* Checkmark Circle + Number */}
+                      <div className="flex items-center gap-2 shrink-0 mt-0.5">
+                        <div className="w-5 h-5 rounded-full bg-[#0B1E33] text-white flex items-center justify-center shadow-sm">
+                          <Check className="w-3 h-3 stroke-[3]" />
+                        </div>
+                        <span className="text-sm sm:text-base font-bold text-[#0B1E33] font-mono leading-none">
+                          {service.number}
+                        </span>
+                      </div>
+
+                      {/* Content */}
+                      <div className="min-w-0 flex-1">
+                        <h2 className="text-xs sm:text-sm font-bold text-[#0B1E33] truncate">
+                          {service.name}
+                        </h2>
+                        <p className="text-[11px] text-slate-500 truncate mt-0.5 font-normal">
+                          {service.subtitle}
+                        </p>
+
+                        {/* Pill Tags */}
+                        <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                          {service.tags.map((tag, idx) => (
+                            <span
+                              key={idx}
+                              className="text-[10px] px-2.5 py-0.5 rounded-full font-medium bg-white text-slate-600 border border-slate-200/90 shadow-2xs"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Right: Transparent 3D Render Image when selected (or Chevron) */}
+                    <div className="flex items-center gap-2 shrink-0">
+                      {isSelected ? (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.92 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.25 }}
+                          className="hidden sm:flex items-center justify-center w-28 sm:w-36 h-14 sm:h-16"
+                        >
+                          <img
+                            src={service.image}
+                            alt={service.name}
+                            className="max-h-full max-w-full object-contain filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.12)]"
+                          />
+                        </motion.div>
+                      ) : null}
+                      
+                      <div className="w-6 h-6 flex items-center justify-center">
+                        <ChevronRight className={`w-4 h-4 transition-transform duration-200 ${
+                          isSelected ? 'text-[#0B1E33] translate-x-0.5' : 'text-slate-300 group-hover:text-slate-500'
+                        }`} />
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </div>
-        </motion.div>
+
+          {/* RIGHT COLUMN: THE $50K LUXURY MODAL (5 COLS) */}
+          <div className="lg:col-span-5 bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-7 shadow-[0_25px_60px_-15px_rgba(11,30,51,0.08),0_1px_2px_rgba(0,0,0,0.02)] flex flex-col justify-between text-slate-900 relative backdrop-blur-xl">
+            <div>
+              {/* Header */}
+              <div className="flex items-center justify-between pb-3.5 border-b border-slate-100">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-emerald-50 border border-emerald-200/70 flex items-center justify-center text-emerald-700 shrink-0 shadow-xs">
+                    <MessageSquare className="w-4 h-4 fill-current" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-[#0B1E33] text-sm sm:text-[15px] leading-tight">
+                      Demande de devis confidentiel
+                    </h3>
+                  </div>
+                </div>
+                <span className="text-[10px] font-semibold text-slate-600 bg-slate-100/90 border border-slate-200/70 px-2.5 py-0.5 rounded-md flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  Réponse sous 2h
+                </span>
+              </div>
+
+              {/* Selected Service Pill */}
+              <div className="my-3.5">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200/80 text-emerald-900 text-xs font-semibold shadow-2xs">
+                  <CurrentIcon className="w-4 h-4 text-emerald-700" />
+                  <span>{currentService.shortName}</span>
+                </div>
+              </div>
+
+              {/* Form or Success State */}
+              <AnimatePresence mode="wait">
+                {isSuccess ? (
+                  <motion.div
+                    key="success"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="py-10 text-center space-y-3"
+                  >
+                    <div className="w-12 h-12 mx-auto rounded-full bg-emerald-100 border border-emerald-300 flex items-center justify-center text-emerald-600 shadow-sm">
+                      <Check className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-[#0B1E33] text-base">
+                        Demande transmise avec succès !
+                      </h4>
+                      <p className="text-xs text-slate-600 mt-1 max-w-xs mx-auto leading-relaxed">
+                        Votre dossier pour <strong>{currentService.name}</strong> a bien été envoyé à <strong>info@batimove.ch</strong>.
+                      </p>
+                      <p className="text-xs text-sky-700 font-semibold mt-2">
+                        Un conseiller Batimove vous recontacte sous 2h ouvrées.
+                      </p>
+                    </div>
+                    <Button
+                      onClick={() => setIsSuccess(false)}
+                      className="bg-slate-100 hover:bg-slate-200 text-[#0B1E33] text-xs px-4 py-2 rounded-xl border border-slate-300 cursor-pointer font-semibold transition-all mt-2"
+                    >
+                      Nouvelle demande
+                    </Button>
+                  </motion.div>
+                ) : (
+                  <motion.form
+                    key="form"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    onSubmit={handleSubmitQuote}
+                    className="space-y-3"
+                  >
+                    {/* Error Message */}
+                    {errorMessage && (
+                      <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs text-center font-medium">
+                        {errorMessage}
+                      </div>
+                    )}
+
+                    {/* Row 1: NOM & TÉLÉPHONE */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[10px] uppercase tracking-widest font-bold text-slate-700 block mb-1">
+                          NOM
+                        </label>
+                        <input
+                          type="text"
+                          name="name"
+                          required
+                          placeholder="Votre nom"
+                          value={formData.name}
+                          onChange={handleInputChange}
+                          className="h-10 sm:h-11 w-full bg-[#F8FAFC]/90 hover:bg-white focus:bg-white border border-slate-200 focus:border-[#0B1E33] focus:ring-4 focus:ring-[#0B1E33]/5 rounded-xl px-3.5 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-200"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] uppercase tracking-widest font-bold text-slate-700 block mb-1">
+                          TÉLÉPHONE
+                        </label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          required
+                          placeholder="+41"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          className="h-10 sm:h-11 w-full bg-[#F8FAFC]/90 hover:bg-white focus:bg-white border border-slate-200 focus:border-[#0B1E33] focus:ring-4 focus:ring-[#0B1E33]/5 rounded-xl px-3.5 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-200"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Row 2: EMAIL & DATE SOUHAITÉE */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[10px] uppercase tracking-widest font-bold text-slate-700 block mb-1">
+                          EMAIL
+                        </label>
+                        <input
+                          type="email"
+                          name="email"
+                          placeholder="votre@email.ch"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          className="h-10 sm:h-11 w-full bg-[#F8FAFC]/90 hover:bg-white focus:bg-white border border-slate-200 focus:border-[#0B1E33] focus:ring-4 focus:ring-[#0B1E33]/5 rounded-xl px-3.5 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-200"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] uppercase tracking-widest font-bold text-slate-700 block mb-1">
+                          DATE SOUHAITÉE
+                        </label>
+                        <input
+                          type="text"
+                          name="date"
+                          placeholder="jj.mm.aaaa"
+                          value={formData.date}
+                          onChange={handleInputChange}
+                          className="h-10 sm:h-11 w-full bg-[#F8FAFC]/90 hover:bg-white focus:bg-white border border-slate-200 focus:border-[#0B1E33] focus:ring-4 focus:ring-[#0B1E33]/5 rounded-xl px-3.5 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-200"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Row 3: VILLE DÉPART & VILLE ARRIVÉE */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[10px] uppercase tracking-widest font-bold text-slate-700 block mb-1">
+                          VILLE DÉPART
+                        </label>
+                        <input
+                          type="text"
+                          name="fromCity"
+                          placeholder="Ex. Genève"
+                          value={formData.fromCity}
+                          onChange={handleInputChange}
+                          className="h-10 sm:h-11 w-full bg-[#F8FAFC]/90 hover:bg-white focus:bg-white border border-slate-200 focus:border-[#0B1E33] focus:ring-4 focus:ring-[#0B1E33]/5 rounded-xl px-3.5 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-200"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] uppercase tracking-widest font-bold text-slate-700 block mb-1">
+                          VILLE ARRIVÉE
+                        </label>
+                        <input
+                          type="text"
+                          name="toCity"
+                          placeholder="Ex. Lausanne"
+                          value={formData.toCity}
+                          onChange={handleInputChange}
+                          className="h-10 sm:h-11 w-full bg-[#F8FAFC]/90 hover:bg-white focus:bg-white border border-slate-200 focus:border-[#0B1E33] focus:ring-4 focus:ring-[#0B1E33]/5 rounded-xl px-3.5 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-200"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Row 4: PRÉCISIONS (OPTIONNEL) */}
+                    <div>
+                      <label className="text-[10px] uppercase tracking-widest font-bold text-slate-700 block mb-1">
+                        PRÉCISIONS (OPTIONNEL)
+                      </label>
+                      <input
+                        type="text"
+                        name="details"
+                        placeholder="Vos besoins spécifiques, objets sensibles, étages, parking..."
+                        value={formData.details}
+                        onChange={handleInputChange}
+                        className="h-10 sm:h-11 w-full bg-[#F8FAFC]/90 hover:bg-white focus:bg-white border border-slate-200 focus:border-[#0B1E33] focus:ring-4 focus:ring-[#0B1E33]/5 rounded-xl px-3.5 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-200"
+                      />
+                    </div>
+
+                    {/* CTA Button ($50k Apple/Stripe Tactile Polish) */}
+                    <div className="pt-2">
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="w-full bg-[#D90429] hover:bg-[#c00322] active:scale-[0.99] text-white py-3.5 rounded-xl font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-[0_10px_25px_-5px_rgba(217,4,41,0.35),inset_0_1px_0_0_rgba(255,255,255,0.2)] transition-all cursor-pointer"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <span>Envoi en cours...</span>
+                          </>
+                        ) : (
+                          <>
+                            <span>Demander mon devis</span>
+                            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                          </>
+                        )}
+                      </button>
+                      <div className="text-center text-[11px] text-slate-500 mt-2.5 flex items-center justify-center gap-1.5">
+                        <Lock className="w-3.5 h-3.5 text-slate-400" />
+                        <span>Transmis à info@batimove.ch • Réponse sous 2h</span>
+                      </div>
+                    </div>
+                  </motion.form>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+
+        </div>
+
       </div>
+
+      {/* Pristine Light Bottom Bar */}
+      <div className="w-full border-t border-slate-200/80 bg-white/95 backdrop-blur-md py-2.5 px-4 flex-shrink-0 text-[11px] text-slate-500 z-10">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-1.5">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            <span>🇨🇭 Batimove Sàrl • Entreprise agréée RC Pro 5M CHF • Genève, Vaud, Fribourg, Valais</span>
+          </div>
+          <div className="flex items-center gap-4 text-slate-600 font-medium">
+            <a href="tel:0800825925" className="hover:text-slate-900 transition-colors flex items-center gap-1">
+              <Phone className="w-3 h-3 text-sky-600" />
+              Hotline: 0800 825 925
+            </a>
+            <span className="text-slate-300">•</span>
+            <Link to="/calculator" className="hover:text-slate-900 text-sky-700 transition-colors">Calculateur de volume</Link>
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 };

@@ -31,7 +31,7 @@ export const gtag = (...args: any[]): void => {
     window.gtag(...args);
   } else {
     // Queue call onto dataLayer if gtag not ready yet
-    window.dataLayer.push(arguments);
+    window.dataLayer.push(args);
   }
 };
 

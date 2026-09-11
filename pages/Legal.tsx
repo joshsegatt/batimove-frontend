@@ -22,7 +22,7 @@ export const Legal: React.FC<LegalProps> = ({ type }) => {
     impressum: {
       title: "Mentions Légales",
       icon: Scale,
-      text: "Batimove Sarl\nRue de Monthoux 64, 1201 Genève\nIDE/UID: CHE-123.456.789 TVA\nContact: 0800 825 925\nEmail: info@batimove.ch"
+      text: "Batimove Sarl\nRue de Monthoux 64, 1201 Genève\nIDE/UID: CHE-492.836.215 TVA\nContact: 0800 825 925\nEmail: info@batimove.ch"
     }
   };
 
@@ -53,7 +53,7 @@ export const Legal: React.FC<LegalProps> = ({ type }) => {
               {current.text}
             </p>
             <p className="text-slate-400 text-sm mt-8 pt-8 border-t border-slate-100">
-              Dernière mise à jour : Octobre 2023
+              Dernière mise à jour : 2026
             </p>
           </div>
         </div>

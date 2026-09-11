@@ -1,12 +1,13 @@
 {
-  "name": "Batimove | Déménagement Premium en Suisse",
+  "name": "Batimove Sàrl | OS & Déménagement",
   "short_name": "Batimove",
+  "description": "Système de Gestion Fiducière et Opérationnelle Batimove Sàrl",
   "icons": [
     {
       "src": "/favicon-48x48.png",
       "sizes": "48x48",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/favicon-192x192.png",
@@ -23,6 +24,33 @@
   ],
   "start_url": "/",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "background_color": "#0B1E33",
-  "theme_color": "#0052A3"
+  "theme_color": "#0B1E33",
+  "shortcuts": [
+    {
+      "name": "Batimove OS (Portal)",
+      "short_name": "Portal OS",
+      "description": "Accès sécurisé Direction & Comptabilité",
+      "url": "/#/portal",
+      "icons": [
+        {
+          "src": "/favicon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Demander un Devis",
+      "short_name": "Devis",
+      "description": "Calculateur & Devis Gratuit",
+      "url": "/#/quote",
+      "icons": [
+        {
+          "src": "/favicon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
 }
