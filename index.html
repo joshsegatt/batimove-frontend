@@ -220,6 +220,18 @@
         window.addEventListener('load', function() {
           navigator.serviceWorker.register('/sw.js').then(function(reg) {
             console.log('Batimove OS ServiceWorker registered:', reg.scope);
+            try { reg.update(); } catch(e) {}
+            reg.onupdatefound = function() {
+              var worker = reg.installing;
+              if (worker) {
+                worker.onstatechange = function() {
+                  if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+                    console.log('Nouvelle version Batimove OS disponible. Actualisation automatique...');
+                    window.location.reload();
+                  }
+                };
+              }
+            };
           }).catch(function(err) {
             console.log('Batimove OS ServiceWorker registration failed:', err);
           });
