@@ -1,5 +1,6 @@
 import React from 'react';
-import { PageContainer, AppHeader, SectionHeader, KpiCard, ActionCard } from './index';
+import { PageContainer, AppHeader } from './MobileLayout';
+import { SectionHeader, KpiCard, ActionCard } from './MobilePrimitives';
 import { Plus, Users, Truck, Receipt, Calendar, Bell } from 'lucide-react';
 
 interface MobileDashboardProps {
