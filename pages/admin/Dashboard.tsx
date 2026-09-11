@@ -55,6 +55,7 @@ import {
 } from '../../services/supabaseClient';
 import { InvoiceDocument } from '../../components/InvoiceDocument';
 import { FinancialAppView } from '../../components/admin/FinancialAppView';
+import { BottomNavigation, BottomNavItem, PageContainer, AppHeader, MobileDashboard } from '../../components/mobile';
 import { exportInvoiceToPdf } from '../../utils/pdfExport';
 import { 
   adminLogout, 
@@ -65,12 +66,13 @@ import {
   updateUserProfile,
   UserProfile
 } from '../../services/adminAuth';
+import { Home } from 'lucide-react';
 
 interface DashboardProps {
   onLogout: () => void;
 }
 
-type MainView = 'operations' | 'fiduciary' | 'fleet' | 'crm' | 'settings';
+export type MainView = 'home' | 'operations' | 'fiduciary' | 'fleet' | 'crm' | 'settings';
 type BoardViewMode = 'table' | 'kanban';
 
 // Swiss Currency Formatter (CHF 12'450.00)
@@ -132,7 +134,10 @@ const DEFAULT_FLEET = [
 const DEFAULT_KPI_ORDER = ['revenue', 'tax', 'pipeline', 'fleet'];
 
 export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
-  const [currentView, setCurrentView] = useState<MainView>('operations');
+  const [currentView, setCurrentView] = useState<MainView>(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) return 'home';
+    return 'operations';
+  });
   const [boardViewMode, setBoardViewMode] = useState<BoardViewMode>('table');
   const [fiduciarySubView, setFiduciarySubView] = useState<'app' | 'statement'>('app');
   const [leads, setLeads] = useState<LeadItem[]>([]);
@@ -1259,6 +1264,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
         
         {/* Top Board Navigation Bar */}
+        {currentView !== 'home' && (
         <header className="bg-white border-b border-slate-200/90 sticky top-0 z-20 px-4 sm:px-6 lg:px-8 py-3 flex flex-col gap-3 shadow-2xs no-print">
           
           {/* Upper row: Breadcrumbs, Board Title & User Fast Actions */}
@@ -1429,14 +1435,30 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
           </div>
 
         </header>
+        )}
 
         {/* Dashboard Body Container */}
-        <main className="p-4 sm:p-6 lg:p-8 space-y-6 flex-1 max-w-[1700px] w-full mx-auto">
-          
+        <main className="p-0 sm:p-6 lg:p-8 space-y-0 sm:space-y-6 flex-1 max-w-[1700px] w-full mx-auto">
+          {currentView === 'home' && (
+             <MobileDashboard 
+               stats={{ 
+                 revenue: overallTotalVolume, 
+                 activeMissions: operationsLeads.filter(l => l.status === 'valide' || l.status === 'en_cours').length, 
+                 fleetActive: fleetVehicles.filter(v => v.status === 'en_service' || v.status === 'en_mission').length, 
+                 newLeads: crmLeads.filter(l => l.status === 'nouveau').length 
+               }} 
+               onAction={(action) => {
+                 if (action === 'new_lead') { setCurrentView('crm'); setIsLeadModalOpen(true); }
+                 else if (action === 'view_fleet') setCurrentView('fleet');
+                 else if (action === 'view_fiduciary') setCurrentView('fiduciary');
+               }} 
+             />
+          )}
+
           {/* =========================================================================
               3. DRAGGABLE LUXURY KPI CARDS (OPERATIONS & CRM ONLY)
               ========================================================================= */}
-          {currentView !== 'fiduciary' && (
+          {currentView !== 'fiduciary' && currentView !== 'home' && (
             <div className="space-y-2 no-print">
               <div className="flex items-center justify-between px-1 text-[11px] text-slate-400">
                 <span className="flex items-center gap-1.5">
@@ -2510,60 +2532,26 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       </AnimatePresence>
 
       {/* =========================================================================
-          10. MONDAY.COM MOBILE BOTTOM NAVIGATION BAR (< 1024px)
+          10. BATIMOVE OS MOBILE BOTTOM NAVIGATION BAR (< 1024px)
           ========================================================================= */}
       {!(currentView === 'fiduciary' && fiduciarySubView === 'app') && (
-        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0B1E33] border-t border-white/10 px-2 py-2 flex items-center justify-around text-[10px] text-slate-300 backdrop-blur-lg shadow-2xl no-print">
-          <button
-            onClick={() => setCurrentView('operations')}
-            className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-xl transition-all ${
-              currentView === 'operations' ? 'text-sky-400 font-bold bg-white/10' : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <Layers className="w-4 h-4" />
-            <span>Devis</span>
-          </button>
-
-          <button
-            onClick={() => setCurrentView('fiduciary')}
-            className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-xl transition-all ${
-              currentView === 'fiduciary' ? 'text-emerald-400 font-bold bg-white/10' : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <Receipt className="w-4 h-4" />
-            <span>Compta</span>
-          </button>
-
-          <button
-            onClick={() => setCurrentView('fleet')}
-            className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-xl transition-all ${
-              currentView === 'fleet' ? 'text-amber-400 font-bold bg-white/10' : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <Truck className="w-4 h-4" />
-            <span>Flotte</span>
-          </button>
-
-          <button
-            onClick={() => setCurrentView('crm')}
-            className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-xl transition-all ${
-              currentView === 'crm' ? 'text-purple-400 font-bold bg-white/10' : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <Users className="w-4 h-4" />
-            <span>CRM</span>
-          </button>
-
-          <button
-            onClick={() => setIsAccountModalOpen(true)}
-            className="flex flex-col items-center gap-1 py-1 px-2.5 rounded-xl text-slate-400 hover:text-white transition-all cursor-pointer"
-          >
-            <div className={`w-4 h-4 rounded-full ${currentUser.avatarBg} text-white flex items-center justify-center font-bold text-[8px]`}>
-              {currentUser.initials}
-            </div>
-            <span>Compte</span>
-          </button>
-        </nav>
+        <BottomNavigation 
+          items={[
+            { id: 'home', label: 'Accueil', icon: Home },
+            { id: 'crm', label: 'Devis', icon: Users },
+            { id: 'operations', label: 'Missions', icon: Layers },
+            { id: 'fleet', label: 'Flotte', icon: Truck },
+            { id: 'menu', label: 'Menu', icon: Menu }
+          ]}
+          activeId={currentView}
+          onChange={(id) => {
+            if (id === 'menu') {
+              setIsMobileMenuOpen(true);
+            } else {
+              setCurrentView(id as MainView);
+            }
+          }}
+        />
       )}
 
       {/* Mobile Menu Slide-Out Drawer */}
