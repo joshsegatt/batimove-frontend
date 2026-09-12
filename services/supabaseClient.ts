@@ -196,27 +196,29 @@ export const setStoredLeadOwner = (leadId: string, ownerId: string, ownerName: s
   } catch {}
 };
 
-const resolveLeadOwner = (item: any, storedOwners: Record<string, { owner_id: string; owner_name: string }>): { owner_id: string; owner_name: string } => {
+const resolveLeadOwner = (item: any, storedOwners: Record<string, { owner_id: string; owner_name: string }>): { owner_id: 'user-anderson' | 'user-josue'; owner_name: string } => {
   const leadId = String(item.id || '');
   const stored = storedOwners[leadId];
   if (stored && stored.owner_id) {
+    const oid: 'user-anderson' | 'user-josue' = stored.owner_id === 'user-josue' ? 'user-josue' : 'user-anderson';
     return {
-      owner_id: stored.owner_id,
-      owner_name: stored.owner_name || (stored.owner_id === 'user-josue' ? 'Josue Segat' : 'Anderson Martins')
+      owner_id: oid,
+      owner_name: stored.owner_name || (oid === 'user-josue' ? 'Josue Segat' : 'Anderson Martins')
     };
   }
 
   if (item.owner_id && (item.owner_id === 'user-josue' || item.owner_id === 'user-anderson')) {
+    const oid: 'user-anderson' | 'user-josue' = item.owner_id;
     return {
-      owner_id: item.owner_id,
-      owner_name: item.owner_name || (item.owner_id === 'user-josue' ? 'Josue Segat' : 'Anderson Martins')
+      owner_id: oid,
+      owner_name: item.owner_name || (oid === 'user-josue' ? 'Josue Segat' : 'Anderson Martins')
     };
   }
 
   if (item.notes && typeof item.notes === 'string' && item.notes.includes('[owner:')) {
     const match = item.notes.match(/\[owner:(user-[a-z]+)\]/);
     if (match && match[1]) {
-      const oid = match[1];
+      const oid: 'user-anderson' | 'user-josue' = match[1] === 'user-josue' ? 'user-josue' : 'user-anderson';
       return {
         owner_id: oid,
         owner_name: oid === 'user-josue' ? 'Josue Segat' : 'Anderson Martins'
@@ -225,7 +227,7 @@ const resolveLeadOwner = (item: any, storedOwners: Record<string, { owner_id: st
   }
 
   // Initial distribution fallback only if never explicitly set
-  const defaultOwnerId = (leadId && (leadId.endsWith('1') || leadId.endsWith('3'))) ? 'user-josue' : 'user-anderson';
+  const defaultOwnerId: 'user-anderson' | 'user-josue' = (leadId && (leadId.endsWith('1') || leadId.endsWith('3'))) ? 'user-josue' : 'user-anderson';
   return {
     owner_id: defaultOwnerId,
     owner_name: defaultOwnerId === 'user-josue' ? 'Josue Segat' : 'Anderson Martins'
@@ -423,9 +425,12 @@ export const updateLeadDetails = async (
   updates: Partial<LeadItem>,
   expectedVersion?: number
 ): Promise<UpdateLeadResult> => {
-  if (updates.owner_id || updates.owner_name) {
-    const oId = updates.owner_id || 'user-anderson';
-    const oName = updates.owner_name || (oId === 'user-josue' ? 'Josue Segat' : 'Anderson Martins');
+  const oId: 'user-anderson' | 'user-josue' | undefined = updates.owner_id 
+    ? (updates.owner_id === 'user-josue' ? 'user-josue' : 'user-anderson') 
+    : undefined;
+  const oName = updates.owner_name || (oId === 'user-josue' ? 'Josue Segat' : 'Anderson Martins');
+
+  if (oId) {
     setStoredLeadOwner(id, oId, oName);
   }
 
@@ -461,7 +466,7 @@ export const updateLeadDetails = async (
         let updatedLead: LeadItem | null = null;
         const updated = current.map(item => {
           if (item.id === id) {
-            updatedLead = { ...item, ...saved };
+            updatedLead = { ...item, ...saved, ...(oId ? { owner_id: oId, owner_name: oName } : {}) };
             return updatedLead;
           }
           return item;
@@ -472,7 +477,29 @@ export const updateLeadDetails = async (
     }
 
     // Direct update fallback if RPC not yet deployed
-    await supabase.from('leads').update(updates).eq('id', id);
+    // Sanitize non-existent PostgreSQL columns to prevent Postgres errors
+    const dbUpdates: any = { ...updates };
+    delete dbUpdates.owner_id;
+    delete dbUpdates.owner_name;
+
+    // Persist owner into notes column so PostgreSQL itself remembers the owner
+    if (oId) {
+      const savedRaw = localStorage.getItem(LOCAL_STORAGE_LEADS);
+      let existingNotes = updates.notes || '';
+      if (!existingNotes && savedRaw) {
+        try {
+          const parsed = JSON.parse(savedRaw);
+          const found = parsed.find((l: any) => l.id === id);
+          if (found && found.notes) existingNotes = found.notes;
+        } catch {}
+      }
+      const cleanNotes = existingNotes.replace(/\[owner:[^\]]+\]/g, '').trim();
+      dbUpdates.notes = `${cleanNotes} [owner:${oId}]`.trim();
+    }
+
+    if (Object.keys(dbUpdates).length > 0) {
+      await supabase.from('leads').update(dbUpdates).eq('id', id);
+    }
   } catch (err) {
     console.warn('Supabase details update notice:', err);
   }
@@ -481,7 +508,12 @@ export const updateLeadDetails = async (
   let updatedLead: LeadItem | null = null;
   const updated = current.map(item => {
     if (item.id === id) {
-      updatedLead = { ...item, ...updates, version: (item.version || 1) + 1 };
+      updatedLead = { 
+        ...item, 
+        ...updates, 
+        ...(oId ? { owner_id: oId, owner_name: oName } : {}),
+        version: (item.version || 1) + 1 
+      };
       return updatedLead;
     }
     return item;

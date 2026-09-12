@@ -1443,12 +1443,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
              <MobileDashboard 
                stats={{ 
                  revenue: metrics.totalTTC, 
-                 activeMissions: leads.filter(l => l.status === 'valide' || l.status === 'en_cours').length, 
+                 activeMissions: leads.filter(l => l.status === 'confirme' || l.status === 'en_cours').length, 
                  fleetActive: fleetVehicles.filter(v => v.status === 'en_service' || v.status === 'en_mission').length, 
                  newLeads: leads.filter(l => l.status === 'nouveau').length 
                }} 
                onAction={(action) => {
-                 if (action === 'new_lead') { setCurrentView('crm'); setIsLeadModalOpen(true); }
+                 if (action === 'new_lead') { setCurrentView('crm'); setIsNewModalOpen(true); }
                  else if (action === 'view_fleet') setCurrentView('fleet');
                  else if (action === 'view_fiduciary') setCurrentView('fiduciary');
                }} 

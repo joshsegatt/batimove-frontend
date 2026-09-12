@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, User, Shield, KeyRound, Users, Check, 
   Lock, ArrowRight, ShieldAlert, Sparkles, Building2,
-  Download, Phone, Mail, Camera, Trash2, UploadCloud
+  Download, Phone, Mail, Camera, Trash2, UploadCloud,
+  CheckCircle2, Copy
 } from 'lucide-react';
 import { 
   UserProfile, 
@@ -639,11 +640,24 @@ export function AccountDrawer({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div>
                     <span className="text-slate-400">Raison sociale :</span>
-                    <p className="font-bold text-white mt-0.5">{BATIMOVE_COMPANY_CONFIG.name}</p>
+                    <p className="font-bold text-white mt-0.5">{BATIMOVE_COMPANY_CONFIG.legalName}</p>
                   </div>
                   <div>
                     <span className="text-slate-400">Numéro IDE / TVA Suisse :</span>
-                    <p className="font-bold text-white font-mono mt-0.5">{BATIMOVE_COMPANY_CONFIG.ideTva}</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <p className="font-bold text-white font-mono">{BATIMOVE_COMPANY_CONFIG.ide}</p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(BATIMOVE_COMPANY_CONFIG.ide);
+                          toast.success("Copié", "Numéro IDE copié dans le presse-papier");
+                        }}
+                        className="text-slate-500 hover:text-white transition-colors cursor-pointer"
+                        title="Copier le numéro IDE"
+                      >
+                        <Copy className="w-3 h-3" />
+                      </button>
+                    </div>
                   </div>
                   <div>
                     <span className="text-slate-400">Banque Officielle :</span>
@@ -651,7 +665,20 @@ export function AccountDrawer({
                   </div>
                   <div>
                     <span className="text-slate-400">IBAN BCGE Genève :</span>
-                    <p className="font-bold text-white font-mono mt-0.5">{BATIMOVE_COMPANY_CONFIG.iban}</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <p className="font-bold text-white font-mono">{BATIMOVE_COMPANY_CONFIG.iban}</p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(BATIMOVE_COMPANY_CONFIG.iban);
+                          toast.success("Copié", "IBAN BCGE copié dans le presse-papier");
+                        }}
+                        className="text-slate-500 hover:text-white transition-colors cursor-pointer"
+                        title="Copier l'IBAN"
+                      >
+                        <Copy className="w-3 h-3" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

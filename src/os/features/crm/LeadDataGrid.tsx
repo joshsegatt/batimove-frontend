@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, Filter, Phone, MessageSquare, Trash2, Edit2, 
@@ -61,10 +62,41 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
     setLocalLeads(leads);
   }, [leads]);
   
-  // Popovers State
-  const [activeStatusPopover, setActiveStatusPopover] = useState<string | null>(null);
-  const [activePriorityPopover, setActivePriorityPopover] = useState<string | null>(null);
-  const [activeOwnerPopover, setActiveOwnerPopover] = useState<string | null>(null);
+  // Unified Portal Popover State (Zero-clipping, immune to parent overflow)
+  type PopoverType = 'status' | 'owner' | 'priority';
+  interface ActivePopoverInfo {
+    type: PopoverType;
+    lead: LeadItem;
+    rect: DOMRect;
+  }
+  const [activePopover, setActivePopover] = useState<ActivePopoverInfo | null>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!activePopover) return;
+    const handlePointerDown = (e: MouseEvent | TouchEvent) => {
+      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
+        setActivePopover(null);
+      }
+    };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setActivePopover(null);
+    };
+    const handleScroll = (e: Event) => {
+      // If scroll happens outside the popover itself, dismiss popover
+      if (popoverRef.current && popoverRef.current.contains(e.target as Node)) return;
+      setActivePopover(null);
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('scroll', handleScroll, true);
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('scroll', handleScroll, true);
+    };
+  }, [activePopover]);
   
   // Inline Cell Editing State
   const [editingAmountId, setEditingAmountId] = useState<string | null>(null);
@@ -162,7 +194,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
   };
 
   const handleStatusChange = async (id: string, newStatus: LeadItem['status']) => {
-    setActiveStatusPopover(null);
+    setActivePopover(null);
     setLocalLeads(prev => prev.map(l => l.id === id ? { ...l, status: newStatus } : l));
     try {
       await updateLeadStatus(id, newStatus);
@@ -174,7 +206,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
   };
 
   const handlePriorityChange = async (lead: LeadItem, newPriority: PriorityType) => {
-    setActivePriorityPopover(null);
+    setActivePopover(null);
     const currentNotes = lead.notes || '';
     const clean = currentNotes.replace(/Priorité:[^|]*\|?/, '').trim();
     const updatedNotes = `${clean} | Priorité: ${newPriority}`;
@@ -189,12 +221,13 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
   };
 
   const handleOwnerChange = async (lead: LeadItem, director: UserProfile) => {
-    setActiveOwnerPopover(null);
+    setActivePopover(null);
+    const targetOwnerId: 'user-anderson' | 'user-josue' = director.id === 'user-josue' ? 'user-josue' : 'user-anderson';
     // Instant optimistic update
-    setLocalLeads(prev => prev.map(l => l.id === lead.id ? { ...l, owner_id: director.id, owner_name: director.name } : l));
+    setLocalLeads(prev => prev.map(l => l.id === lead.id ? { ...l, owner_id: targetOwnerId, owner_name: director.name } : l));
     try {
       await updateLeadDetails(lead.id, {
-        owner_id: director.id as any,
+        owner_id: targetOwnerId,
         owner_name: director.name
       });
       toast.success("Responsable assigné", `Dossier ${lead.id} confié à ${director.name}`);
@@ -351,10 +384,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
     }).format(amount || 0);
   };
 
-  // Close all popovers when clicking outside
-  const hasActivePopover = Boolean(activeStatusPopover || activePriorityPopover || activeOwnerPopover || showBulkStatusMenu || showBulkOwnerMenu);
-
-  // Render a Single Lead Row with Full Monday.com Aesthetics, Stacking Fix & Smart Popover Direction
+  // Render a Single Lead Row with Full Monday.com Aesthetics & Zero-Clipping Portal Dropdowns
   const renderRow = (lead: LeadItem, index: number, groupStripeColor: string = 'bg-blue-500', totalInGroup: number = 10) => {
     const statusMeta = STATUS_COLORS[lead.status] || STATUS_COLORS.nouveau;
     const priority = getLeadPriority(lead);
@@ -362,8 +392,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
     const owner = getLeadOwner(lead);
     const amount = lead.amount_chf || lead.estimated_amount_chf || 0;
     const phoneFlag = getPhoneFlag(lead.client_phone);
-    const isRowActive = activeOwnerPopover === lead.id || activeStatusPopover === lead.id || activePriorityPopover === lead.id;
-    const opensUpward = totalInGroup > 1 && index >= Math.max(1, totalInGroup - 2);
+    const isRowActive = activePopover?.lead.id === lead.id;
 
     return (
       <div
@@ -371,7 +400,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
         onClick={() => onSelectLead(lead)}
         className={cn(
           "grid grid-cols-[6px_40px_1.4fr_140px_130px_115px_1.1fr_135px_140px_100px_65px] min-w-[1240px] items-stretch group transition-colors duration-150 cursor-pointer text-xs border-b border-slate-200/70",
-          isRowActive ? "z-50 relative shadow-sm" : "z-0 relative",
+          isRowActive ? "z-20 relative bg-blue-50/50" : "z-0 relative",
           selectedLeads.has(lead.id)
             ? "bg-[#E3EFFF]"
             : index % 2 === 0
@@ -415,11 +444,18 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
         </div>
 
         {/* 4. Responsable / Commercial (Photo / Avatar + 1-Click Dropdown) */}
-        <div className="px-2.5 py-2 border-r border-slate-200/80 flex items-center relative" onClick={e => e.stopPropagation()}>
+        <div className="px-2.5 py-2 border-r border-slate-200/80 flex items-center" onClick={e => e.stopPropagation()}>
           <button
             type="button"
-            onClick={() => setActiveOwnerPopover(activeOwnerPopover === lead.id ? null : lead.id)}
-            className="inline-flex items-center gap-2 px-2 py-1 rounded-xl bg-white hover:bg-slate-100 border border-slate-200/90 shadow-2xs transition-all text-left group/owner w-full cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              const rect = e.currentTarget.getBoundingClientRect();
+              setActivePopover(prev => prev?.lead.id === lead.id && prev.type === 'owner' ? null : { type: 'owner', lead, rect });
+            }}
+            className={cn(
+              "inline-flex items-center gap-2 px-2 py-1 rounded-xl bg-white hover:bg-slate-100 border border-slate-200/90 shadow-2xs transition-all text-left group/owner w-full cursor-pointer",
+              isRowActive && activePopover?.type === 'owner' && "ring-2 ring-blue-500/50 border-blue-400"
+            )}
             title={`Commercial : ${owner.name} (${owner.role}) - Cliquer pour réassigner`}
           >
             {owner.avatarUrl ? (
@@ -438,110 +474,43 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
             </span>
             <ChevronDown className="w-3 h-3 text-slate-400 group-hover/owner:text-slate-700 flex-shrink-0 ml-auto" />
           </button>
-
-          <AnimatePresence>
-            {activeOwnerPopover === lead.id && (
-              <motion.div
-                initial={{ opacity: 0, y: opensUpward ? -4 : 4, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: opensUpward ? -4 : 4, scale: 0.95 }}
-                className={cn(
-                  "absolute left-2 w-52 bg-white rounded-2xl shadow-[0_20px_50px_-5px_rgba(0,0,0,0.3)] border border-slate-200 p-1.5 z-[60] ring-1 ring-black/10",
-                  opensUpward ? "bottom-full mb-1.5" : "top-full mt-1.5"
-                )}
-              >
-                <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                  Direction Responsable
-                </div>
-                {getUsersList().map(dir => (
-                  <button
-                    key={dir.id}
-                    type="button"
-                    onClick={() => handleOwnerChange(lead, dir)}
-                    className={cn(
-                      "w-full text-left px-2 py-2 rounded-xl text-xs flex items-center justify-between hover:bg-slate-50 transition-colors cursor-pointer",
-                      owner.id === dir.id ? "bg-blue-50 font-bold text-blue-900 border border-blue-200/60" : "text-slate-700"
-                    )}
-                  >
-                    <div className="flex items-center gap-2">
-                      {dir.avatarUrl ? (
-                        <img src={dir.avatarUrl} alt={dir.name} className="w-6 h-6 rounded-full object-cover" />
-                      ) : (
-                        <span className={cn("w-6 h-6 rounded-full text-white text-[10px] font-bold flex items-center justify-center shadow-2xs", dir.avatarBg)}>
-                          {dir.initials}
-                        </span>
-                      )}
-                      <div className="flex flex-col truncate">
-                        <span className="truncate text-xs font-semibold">{dir.name}</span>
-                        <span className="text-[10px] text-slate-400">{dir.role}</span>
-                      </div>
-                    </div>
-                    {owner.id === dir.id && <Check className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />}
-                  </button>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
 
         {/* 5. Négociation / Statut (Monday.com Signature Full Solid Color Block) */}
-        <div className="px-2 py-2 border-r border-slate-200/80 flex items-center justify-center relative" onClick={e => e.stopPropagation()}>
+        <div className="px-2 py-2 border-r border-slate-200/80 flex items-center justify-center" onClick={e => e.stopPropagation()}>
           <button
             type="button"
-            onClick={() => setActiveStatusPopover(activeStatusPopover === lead.id ? null : lead.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              const rect = e.currentTarget.getBoundingClientRect();
+              setActivePopover(prev => prev?.lead.id === lead.id && prev.type === 'status' ? null : { type: 'status', lead, rect });
+            }}
             className={cn(
               "w-full h-7 rounded-md text-[11px] font-bold flex items-center justify-between px-2.5 shadow-sm transition-transform active:scale-95 cursor-pointer",
               statusMeta.bg,
-              statusMeta.text
+              statusMeta.text,
+              isRowActive && activePopover?.type === 'status' && "ring-2 ring-blue-500/80"
             )}
           >
             <span className="truncate">{statusMeta.label}</span>
             <ChevronDown className="w-3 h-3 opacity-70 flex-shrink-0 ml-1" />
           </button>
-
-          <AnimatePresence>
-            {activeStatusPopover === lead.id && (
-              <motion.div
-                initial={{ opacity: 0, y: opensUpward ? -4 : 4, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: opensUpward ? -4 : 4, scale: 0.95 }}
-                className={cn(
-                  "absolute left-0 w-48 bg-white rounded-2xl shadow-[0_20px_50px_-5px_rgba(0,0,0,0.3)] border border-slate-200 p-1.5 z-[60] ring-1 ring-black/10",
-                  opensUpward ? "bottom-full mb-1.5" : "top-full mt-1.5"
-                )}
-              >
-                {ALL_STATUSES.map(st => {
-                  const meta = STATUS_COLORS[st] || STATUS_COLORS.nouveau;
-                  return (
-                    <button
-                      key={st}
-                      type="button"
-                      onClick={() => handleStatusChange(lead.id, st)}
-                      className={cn(
-                        "w-full text-left px-2.5 py-1.5 my-0.5 rounded-lg text-xs font-bold flex items-center justify-between transition-all cursor-pointer",
-                        meta.bg,
-                        meta.text
-                      )}
-                    >
-                      <span>{meta.label}</span>
-                      {lead.status === st && <Check className="w-3.5 h-3.5 text-white flex-shrink-0" />}
-                    </button>
-                  );
-                })}
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
 
         {/* 6. Priorité (Vibrant Solid Badge Popover) */}
-        <div className="px-2 py-2 border-r border-slate-200/80 flex items-center justify-center relative" onClick={e => e.stopPropagation()}>
+        <div className="px-2 py-2 border-r border-slate-200/80 flex items-center justify-center" onClick={e => e.stopPropagation()}>
           <button
             type="button"
-            onClick={() => setActivePriorityPopover(activePriorityPopover === lead.id ? null : lead.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              const rect = e.currentTarget.getBoundingClientRect();
+              setActivePopover(prev => prev?.lead.id === lead.id && prev.type === 'priority' ? null : { type: 'priority', lead, rect });
+            }}
             className={cn(
               "w-full h-7 rounded-md text-[10px] font-bold flex items-center justify-between px-2 shadow-2xs transition-transform active:scale-95 cursor-pointer",
               priorityMeta.bg,
-              priorityMeta.text
+              priorityMeta.text,
+              isRowActive && activePopover?.type === 'priority' && "ring-2 ring-blue-500/80"
             )}
           >
             <div className="flex items-center gap-1.5 truncate">
@@ -550,38 +519,6 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
             </div>
             <ChevronDown className="w-3 h-3 opacity-70 flex-shrink-0 ml-1" />
           </button>
-
-          <AnimatePresence>
-            {activePriorityPopover === lead.id && (
-              <motion.div
-                initial={{ opacity: 0, y: opensUpward ? -4 : 4, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: opensUpward ? -4 : 4, scale: 0.95 }}
-                className={cn(
-                  "absolute left-0 w-36 bg-white rounded-2xl shadow-[0_20px_50px_-5px_rgba(0,0,0,0.3)] border border-slate-200 p-1.5 z-[60] ring-1 ring-black/10",
-                  opensUpward ? "bottom-full mb-1.5" : "top-full mt-1.5"
-                )}
-              >
-                {(['Urgente', 'Haute', 'Normale', 'Basse'] as PriorityType[]).map(pr => (
-                  <button
-                    key={pr}
-                    type="button"
-                    onClick={() => handlePriorityChange(lead, pr)}
-                    className={cn(
-                      "w-full text-left px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-between hover:bg-slate-50 transition-colors cursor-pointer",
-                      priority === pr ? "text-slate-900 bg-slate-100 font-bold" : "text-slate-600"
-                    )}
-                  >
-                    <span className="flex items-center gap-1.5">
-                      <span className={cn("w-1.5 h-1.5 rounded-full", PRIORITY_META[pr].dot)} />
-                      {pr}
-                    </span>
-                    {priority === pr && <Check className="w-3 h-3 text-slate-900" />}
-                  </button>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
 
         {/* 7. Prestation */}
@@ -697,13 +634,10 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
 
   return (
     <div className="w-full space-y-4 relative">
-      {/* Global Transparent Backdrop to dismiss active popovers */}
-      {hasActivePopover && (
+      {/* Bulk action menus backdrop */}
+      {(showBulkStatusMenu || showBulkOwnerMenu) && (
         <div 
           onClick={() => {
-            setActiveStatusPopover(null);
-            setActivePriorityPopover(null);
-            setActiveOwnerPopover(null);
             setShowBulkStatusMenu(false);
             setShowBulkOwnerMenu(false);
           }}
@@ -1054,13 +988,13 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
                     exit={{ opacity: 0, y: -4 }}
                     className="absolute bottom-full mb-2 left-0 w-48 bg-white text-slate-900 rounded-2xl shadow-2xl border border-slate-200 p-1.5 z-50"
                   >
-                    {TEAM_DIRECTORS.map(dir => (
+                    {getUsersList().map(dir => (
                       <button
                         key={dir.id}
                         onClick={() => handleBulkAssign(dir)}
-                        className="w-full text-left px-2.5 py-2 rounded-xl text-xs font-semibold hover:bg-slate-100 flex items-center gap-2"
+                        className="w-full text-left px-2.5 py-2 rounded-xl text-xs font-semibold hover:bg-slate-100 flex items-center gap-2 cursor-pointer"
                       >
-                        <span className={cn("w-5 h-5 rounded-lg text-white text-[10px] font-bold flex items-center justify-center", dir.bg)}>
+                        <span className={cn("w-5 h-5 rounded-lg text-white text-[10px] font-bold flex items-center justify-center", dir.avatarBg)}>
                           {dir.initials}
                         </span>
                         <span>{dir.name}</span>
@@ -1074,7 +1008,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
             {/* Bulk CSV Export */}
             <button 
               onClick={handleExportSelectedCSV}
-              className="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+              className="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
               title="Exporter la sélection en CSV"
             >
               <Download className="w-3.5 h-3.5 text-slate-300" />
@@ -1084,7 +1018,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
             {/* Bulk Delete */}
             <button 
               onClick={handleBulkDelete}
-              className="text-xs font-semibold text-rose-400 hover:text-rose-300 transition-colors flex items-center gap-1 ml-1"
+              className="text-xs font-semibold text-rose-400 hover:text-rose-300 transition-colors flex items-center gap-1 ml-1 cursor-pointer"
             >
               <Trash2 className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Supprimer</span>
@@ -1092,7 +1026,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
 
             <button 
               onClick={() => setSelectedLeads(new Set())}
-              className="text-xs text-slate-400 hover:text-white p-1 rounded-lg ml-1"
+              className="text-xs text-slate-400 hover:text-white p-1 rounded-lg ml-1 cursor-pointer"
               title="Désélectionner"
             >
               <X className="w-3.5 h-3.5" />
@@ -1100,6 +1034,137 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* ZERO-CLIPPING PORTAL POPOVER (Renders directly into document.body) */}
+      {activePopover && createPortal(
+        (() => {
+          const { type, lead, rect } = activePopover;
+          const width = type === 'owner' ? 245 : type === 'status' ? 195 : 160;
+          const height = type === 'owner' ? 150 : type === 'status' ? 260 : 180;
+          const spaceBelow = window.innerHeight - rect.bottom;
+          const openUp = spaceBelow < height && rect.top > height;
+
+          const top = openUp ? Math.max(8, rect.top - height - 4) : Math.min(window.innerHeight - height - 8, rect.bottom + 4);
+          const left = Math.max(8, Math.min(rect.left, window.innerWidth - width - 12));
+
+          return (
+            <div 
+              ref={popoverRef}
+              style={{
+                position: 'fixed',
+                top: `${top}px`,
+                left: `${left}px`,
+                width: `${width}px`,
+                zIndex: 99999
+              }}
+              className="bg-white rounded-2xl shadow-[0_20px_60px_-10px_rgba(0,0,0,0.35)] border border-slate-200/90 p-1.5 ring-1 ring-black/10"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {type === 'owner' && (
+                <div>
+                  <div className="px-2.5 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 mb-1">
+                    Direction Responsable
+                  </div>
+                  {getUsersList().map(dir => {
+                    const isLeadOwner = lead.owner_id === dir.id || lead.owner_name === dir.name;
+                    return (
+                      <button
+                        key={dir.id}
+                        type="button"
+                        onClick={() => {
+                          handleOwnerChange(lead, dir);
+                          setActivePopover(null);
+                        }}
+                        className={cn(
+                          "w-full text-left px-2.5 py-2 rounded-xl text-xs flex items-center justify-between hover:bg-slate-100 transition-colors cursor-pointer my-0.5",
+                          isLeadOwner ? "bg-blue-50/80 font-bold text-blue-900 border border-blue-200/60" : "text-slate-700"
+                        )}
+                      >
+                        <div className="flex items-center gap-2.5">
+                          {dir.avatarUrl ? (
+                            <img src={dir.avatarUrl} alt={dir.name} className="w-6 h-6 rounded-full object-cover shadow-xs" />
+                          ) : (
+                            <span className={cn("w-6 h-6 rounded-full text-white text-[10px] font-bold flex items-center justify-center shadow-xs", dir.avatarBg)}>
+                              {dir.initials}
+                            </span>
+                          )}
+                          <div className="flex flex-col truncate">
+                            <span className="truncate text-xs font-semibold">{dir.name}</span>
+                            <span className="text-[10px] text-slate-400">{dir.role}</span>
+                          </div>
+                        </div>
+                        {isLeadOwner && <Check className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {type === 'status' && (
+                <div>
+                  <div className="px-2.5 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 mb-1">
+                    Changer le Statut
+                  </div>
+                  {ALL_STATUSES.map(st => {
+                    const meta = STATUS_COLORS[st] || STATUS_COLORS.nouveau;
+                    const isCurrent = lead.status === st;
+                    return (
+                      <button
+                        key={st}
+                        type="button"
+                        onClick={() => {
+                          handleStatusChange(lead.id, st);
+                          setActivePopover(null);
+                        }}
+                        className={cn(
+                          "w-full text-left px-2.5 py-1.5 my-0.5 rounded-lg text-xs font-bold flex items-center justify-between transition-all cursor-pointer",
+                          meta.bg,
+                          meta.text
+                        )}
+                      >
+                        <span>{meta.label}</span>
+                        {isCurrent && <Check className="w-3.5 h-3.5 text-white flex-shrink-0" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {type === 'priority' && (
+                <div>
+                  <div className="px-2.5 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 mb-1">
+                    Priorité Dossier
+                  </div>
+                  {(['Urgente', 'Haute', 'Normale', 'Basse'] as PriorityType[]).map(pr => {
+                    const isCurrent = getLeadPriority(lead) === pr;
+                    return (
+                      <button
+                        key={pr}
+                        type="button"
+                        onClick={() => {
+                          handlePriorityChange(lead, pr);
+                          setActivePopover(null);
+                        }}
+                        className={cn(
+                          "w-full text-left px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-between hover:bg-slate-100 transition-colors cursor-pointer my-0.5",
+                          isCurrent ? "text-slate-900 bg-slate-100 font-bold" : "text-slate-600"
+                        )}
+                      >
+                        <span className="flex items-center gap-1.5">
+                          <span className={cn("w-1.5 h-1.5 rounded-full", PRIORITY_META[pr].dot)} />
+                          {pr}
+                        </span>
+                        {isCurrent && <Check className="w-3.5 h-3.5 text-slate-900" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })(),
+        document.body
+      )}
     </div>
   );
 }
