@@ -52,9 +52,14 @@ const PRIORITY_META: Record<PriorityType, { bg: string; text: string; dot: strin
 
 export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, initialFilter }: LeadDataGridProps) {
   const { toast, confirm } = useToast();
+  const [localLeads, setLocalLeads] = useState<LeadItem[]>(leads);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatusTab, setSelectedStatusTab] = useState<string>(initialFilter || 'ALL');
   const [viewMode, setViewMode] = useState<'table' | 'grouped' | 'kanban'>('grouped');
+
+  React.useEffect(() => {
+    setLocalLeads(leads);
+  }, [leads]);
   
   // Popovers State
   const [activeStatusPopover, setActiveStatusPopover] = useState<string | null>(null);
@@ -79,9 +84,9 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
     setCollapsedGroups(prev => ({ ...prev, [groupId]: !prev[groupId] }));
   };
 
-  // Filter leads
+  // Filter leads using localLeads for instant optimistic response
   const filteredLeads = useMemo(() => {
-    return leads.filter(lead => {
+    return localLeads.filter(lead => {
       const query = searchQuery.toLowerCase().trim();
       const matchesSearch = !query || 
         lead.client_name?.toLowerCase().includes(query) ||
@@ -100,7 +105,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
 
       return matchesSearch && matchesStatus;
     });
-  }, [leads, searchQuery, selectedStatusTab]);
+  }, [localLeads, searchQuery, selectedStatusTab]);
 
   // Group Definitions (Monday.com work groups with signature colors)
   const groupedData = useMemo(() => {
@@ -109,7 +114,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
         id: 'incoming',
         title: 'Nouveaux Devis & Demandes Entrantes',
         circleBg: 'bg-[#E2498A]',
-        textColor: 'text-[#E2498A]',
+        headerColor: 'text-[#E2498A]',
         stripeColor: 'bg-[#E2498A]',
         badgeColor: 'bg-rose-50 text-[#E2498A] border border-rose-200',
         items: filteredLeads.filter(l => l.status === 'nouveau' || l.status === 'visite')
@@ -118,7 +123,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
         id: 'active',
         title: 'Dossiers en Négociation & Visites',
         circleBg: 'bg-[#0073EA]',
-        textColor: 'text-[#0073EA]',
+        headerColor: 'text-[#0073EA]',
         stripeColor: 'bg-[#0073EA]',
         badgeColor: 'bg-blue-50 text-[#0073EA] border border-blue-200',
         items: filteredLeads.filter(l => l.status === 'en_cours')
@@ -127,7 +132,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
         id: 'confirmed',
         title: 'Missions Confirmées & Facturées',
         circleBg: 'bg-[#00C875]',
-        textColor: 'text-[#00C875]',
+        headerColor: 'text-[#00C875]',
         stripeColor: 'bg-[#00C875]',
         badgeColor: 'bg-emerald-50 text-[#00C875] border border-emerald-200',
         items: filteredLeads.filter(l => l.status === 'confirme' || l.status === 'facture')
@@ -136,7 +141,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
         id: 'archived',
         title: 'Dossiers Clôturés ou Archivés',
         circleBg: 'bg-[#797E93]',
-        textColor: 'text-[#797E93]',
+        headerColor: 'text-[#797E93]',
         stripeColor: 'bg-[#797E93]',
         badgeColor: 'bg-slate-100 text-[#797E93] border border-slate-200',
         items: filteredLeads.filter(l => l.status === 'termine' || l.status === 'annule')
@@ -158,6 +163,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
 
   const handleStatusChange = async (id: string, newStatus: LeadItem['status']) => {
     setActiveStatusPopover(null);
+    setLocalLeads(prev => prev.map(l => l.id === id ? { ...l, status: newStatus } : l));
     try {
       await updateLeadStatus(id, newStatus);
       toast.success("Statut mis à jour", `Dossier passé à ${STATUS_COLORS[newStatus]?.label || newStatus}`);
@@ -169,10 +175,11 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
 
   const handlePriorityChange = async (lead: LeadItem, newPriority: PriorityType) => {
     setActivePriorityPopover(null);
+    const currentNotes = lead.notes || '';
+    const clean = currentNotes.replace(/Priorité:[^|]*\|?/, '').trim();
+    const updatedNotes = `${clean} | Priorité: ${newPriority}`;
+    setLocalLeads(prev => prev.map(l => l.id === lead.id ? { ...l, notes: updatedNotes } : l));
     try {
-      const currentNotes = lead.notes || '';
-      const clean = currentNotes.replace(/Priorité:[^|]*\|?/, '').trim();
-      const updatedNotes = `${clean} | Priorité: ${newPriority}`;
       await updateLeadDetails(lead.id, { notes: updatedNotes });
       toast.success("Priorité mise à jour", `Dossier ${lead.id} classé en ${newPriority}`);
       onReload();
@@ -183,12 +190,14 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
 
   const handleOwnerChange = async (lead: LeadItem, director: UserProfile) => {
     setActiveOwnerPopover(null);
+    // Instant optimistic update
+    setLocalLeads(prev => prev.map(l => l.id === lead.id ? { ...l, owner_id: director.id, owner_name: director.name } : l));
     try {
       await updateLeadDetails(lead.id, {
         owner_id: director.id as any,
         owner_name: director.name
       });
-      toast.success("Responsable assigné", `Dossier confié à ${director.name}`);
+      toast.success("Responsable assigné", `Dossier ${lead.id} confié à ${director.name}`);
       onReload();
     } catch (err) {
       toast.error("Erreur", "Impossible de changer le responsable");
@@ -345,8 +354,8 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
   // Close all popovers when clicking outside
   const hasActivePopover = Boolean(activeStatusPopover || activePriorityPopover || activeOwnerPopover || showBulkStatusMenu || showBulkOwnerMenu);
 
-  // Render a Single Lead Row with Full Monday.com Aesthetics & Stacking Fix
-  const renderRow = (lead: LeadItem, index: number, groupStripeColor: string = 'bg-blue-500') => {
+  // Render a Single Lead Row with Full Monday.com Aesthetics, Stacking Fix & Smart Popover Direction
+  const renderRow = (lead: LeadItem, index: number, groupStripeColor: string = 'bg-blue-500', totalInGroup: number = 10) => {
     const statusMeta = STATUS_COLORS[lead.status] || STATUS_COLORS.nouveau;
     const priority = getLeadPriority(lead);
     const priorityMeta = PRIORITY_META[priority];
@@ -354,14 +363,15 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
     const amount = lead.amount_chf || lead.estimated_amount_chf || 0;
     const phoneFlag = getPhoneFlag(lead.client_phone);
     const isRowActive = activeOwnerPopover === lead.id || activeStatusPopover === lead.id || activePriorityPopover === lead.id;
+    const opensUpward = totalInGroup > 1 && index >= Math.max(1, totalInGroup - 2);
 
     return (
       <div
         key={lead.id}
         onClick={() => onSelectLead(lead)}
         className={cn(
-          "grid grid-cols-[6px_40px_1.4fr_140px_130px_120px_1.2fr_135px_100px_90px_65px] min-w-[1240px] items-stretch group transition-colors duration-150 cursor-pointer text-xs border-b border-slate-200/70",
-          isRowActive ? "z-40 relative shadow-sm" : "z-0 relative",
+          "grid grid-cols-[6px_40px_1.4fr_140px_130px_115px_1.1fr_135px_140px_100px_65px] min-w-[1240px] items-stretch group transition-colors duration-150 cursor-pointer text-xs border-b border-slate-200/70",
+          isRowActive ? "z-50 relative shadow-sm" : "z-0 relative",
           selectedLeads.has(lead.id)
             ? "bg-[#E3EFFF]"
             : index % 2 === 0
@@ -397,7 +407,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
               e.stopPropagation();
               onSelectLead(lead);
             }}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors flex items-center gap-1 flex-shrink-0"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors flex items-center gap-1 flex-shrink-0 cursor-pointer"
             title="Consulter les notes et l'historique"
           >
             <MessageSquare className="w-3.5 h-3.5" />
@@ -432,10 +442,13 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
           <AnimatePresence>
             {activeOwnerPopover === lead.id && (
               <motion.div
-                initial={{ opacity: 0, y: 4, scale: 0.95 }}
+                initial={{ opacity: 0, y: opensUpward ? -4 : 4, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 4, scale: 0.95 }}
-                className="absolute top-full left-2 mt-1.5 w-52 bg-white rounded-2xl shadow-[0_15px_40px_-5px_rgba(0,0,0,0.25)] border border-slate-200/90 p-1.5 z-50 ring-1 ring-black/10"
+                exit={{ opacity: 0, y: opensUpward ? -4 : 4, scale: 0.95 }}
+                className={cn(
+                  "absolute left-2 w-52 bg-white rounded-2xl shadow-[0_20px_50px_-5px_rgba(0,0,0,0.3)] border border-slate-200 p-1.5 z-[60] ring-1 ring-black/10",
+                  opensUpward ? "bottom-full mb-1.5" : "top-full mt-1.5"
+                )}
               >
                 <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                   Direction Responsable
@@ -446,8 +459,8 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
                     type="button"
                     onClick={() => handleOwnerChange(lead, dir)}
                     className={cn(
-                      "w-full text-left px-2 py-1.5 rounded-xl text-xs flex items-center justify-between hover:bg-slate-50 transition-colors cursor-pointer",
-                      owner.id === dir.id ? "bg-slate-100 font-bold text-slate-900" : "text-slate-600"
+                      "w-full text-left px-2 py-2 rounded-xl text-xs flex items-center justify-between hover:bg-slate-50 transition-colors cursor-pointer",
+                      owner.id === dir.id ? "bg-blue-50 font-bold text-blue-900 border border-blue-200/60" : "text-slate-700"
                     )}
                   >
                     <div className="flex items-center gap-2">
@@ -463,7 +476,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
                         <span className="text-[10px] text-slate-400">{dir.role}</span>
                       </div>
                     </div>
-                    {owner.id === dir.id && <Check className="w-3.5 h-3.5 text-slate-900 flex-shrink-0" />}
+                    {owner.id === dir.id && <Check className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />}
                   </button>
                 ))}
               </motion.div>
@@ -489,10 +502,13 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
           <AnimatePresence>
             {activeStatusPopover === lead.id && (
               <motion.div
-                initial={{ opacity: 0, y: 4, scale: 0.95 }}
+                initial={{ opacity: 0, y: opensUpward ? -4 : 4, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 4, scale: 0.95 }}
-                className="absolute top-full left-0 mt-1.5 w-48 bg-white rounded-2xl shadow-[0_15px_40px_-5px_rgba(0,0,0,0.25)] border border-slate-200/90 p-1.5 z-50 ring-1 ring-black/10"
+                exit={{ opacity: 0, y: opensUpward ? -4 : 4, scale: 0.95 }}
+                className={cn(
+                  "absolute left-0 w-48 bg-white rounded-2xl shadow-[0_20px_50px_-5px_rgba(0,0,0,0.3)] border border-slate-200 p-1.5 z-[60] ring-1 ring-black/10",
+                  opensUpward ? "bottom-full mb-1.5" : "top-full mt-1.5"
+                )}
               >
                 {ALL_STATUSES.map(st => {
                   const meta = STATUS_COLORS[st] || STATUS_COLORS.nouveau;
@@ -502,7 +518,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
                       type="button"
                       onClick={() => handleStatusChange(lead.id, st)}
                       className={cn(
-                        "w-full text-left px-2.5 py-2 my-0.5 rounded-lg text-xs font-bold flex items-center justify-between transition-all cursor-pointer",
+                        "w-full text-left px-2.5 py-1.5 my-0.5 rounded-lg text-xs font-bold flex items-center justify-between transition-all cursor-pointer",
                         meta.bg,
                         meta.text
                       )}
@@ -517,12 +533,75 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
           </AnimatePresence>
         </div>
 
-        {/* 6. Prestation */}
+        {/* 6. Priorité (Vibrant Solid Badge Popover) */}
+        <div className="px-2 py-2 border-r border-slate-200/80 flex items-center justify-center relative" onClick={e => e.stopPropagation()}>
+          <button
+            type="button"
+            onClick={() => setActivePriorityPopover(activePriorityPopover === lead.id ? null : lead.id)}
+            className={cn(
+              "w-full h-7 rounded-md text-[10px] font-bold flex items-center justify-between px-2 shadow-2xs transition-transform active:scale-95 cursor-pointer",
+              priorityMeta.bg,
+              priorityMeta.text
+            )}
+          >
+            <div className="flex items-center gap-1.5 truncate">
+              <span className={cn("w-1.5 h-1.5 rounded-full", priorityMeta.dot)} />
+              <span className="truncate">{priority}</span>
+            </div>
+            <ChevronDown className="w-3 h-3 opacity-70 flex-shrink-0 ml-1" />
+          </button>
+
+          <AnimatePresence>
+            {activePriorityPopover === lead.id && (
+              <motion.div
+                initial={{ opacity: 0, y: opensUpward ? -4 : 4, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: opensUpward ? -4 : 4, scale: 0.95 }}
+                className={cn(
+                  "absolute left-0 w-36 bg-white rounded-2xl shadow-[0_20px_50px_-5px_rgba(0,0,0,0.3)] border border-slate-200 p-1.5 z-[60] ring-1 ring-black/10",
+                  opensUpward ? "bottom-full mb-1.5" : "top-full mt-1.5"
+                )}
+              >
+                {(['Urgente', 'Haute', 'Normale', 'Basse'] as PriorityType[]).map(pr => (
+                  <button
+                    key={pr}
+                    type="button"
+                    onClick={() => handlePriorityChange(lead, pr)}
+                    className={cn(
+                      "w-full text-left px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-between hover:bg-slate-50 transition-colors cursor-pointer",
+                      priority === pr ? "text-slate-900 bg-slate-100 font-bold" : "text-slate-600"
+                    )}
+                  >
+                    <span className="flex items-center gap-1.5">
+                      <span className={cn("w-1.5 h-1.5 rounded-full", PRIORITY_META[pr].dot)} />
+                      {pr}
+                    </span>
+                    {priority === pr && <Check className="w-3 h-3 text-slate-900" />}
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* 7. Prestation */}
         <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center text-slate-700 truncate font-semibold text-[11px]">
           {lead.service_type || 'Déménagement'}
         </div>
 
-        {/* 7. Trajet & Date (Pin Icon + Cities) */}
+        {/* 8. Téléphone (Country Flag + Link) */}
+        <div className="px-2.5 py-2.5 border-r border-slate-200/80 flex items-center gap-1.5 font-mono text-[11px] text-slate-600" onClick={e => e.stopPropagation()}>
+          <span className="text-sm">{phoneFlag}</span>
+          {lead.client_phone ? (
+            <a href={`tel:${lead.client_phone}`} className="hover:text-blue-600 hover:underline truncate">
+              {lead.client_phone}
+            </a>
+          ) : (
+            <span className="text-slate-400 italic">Non renseigné</span>
+          )}
+        </div>
+
+        {/* 9. Trajet & Date (Pin Icon + Cities) */}
         <div className="px-3 py-2 border-r border-slate-200/80 flex flex-col justify-center truncate" onClick={e => e.stopPropagation()}>
           <div className="flex items-center gap-1 font-semibold text-slate-800 truncate">
             <span className="text-slate-400">📍</span>
@@ -533,7 +612,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
 
           {editingDateId === lead.id ? (
             <input 
-              type="text"
+              type="text" 
               autoFocus
               value={editingDateVal}
               placeholder="ex: 28.03.2026"
@@ -560,19 +639,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
           )}
         </div>
 
-        {/* 8. Téléphone (Country Flag + Link) */}
-        <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center gap-1.5 font-mono text-[11px] text-slate-600" onClick={e => e.stopPropagation()}>
-          <span className="text-sm">{phoneFlag}</span>
-          {lead.client_phone ? (
-            <a href={`tel:${lead.client_phone}`} className="hover:text-blue-600 hover:underline truncate">
-              {lead.client_phone}
-            </a>
-          ) : (
-            <span className="text-slate-400 italic">Non renseigné</span>
-          )}
-        </div>
-
-        {/* 9. Montant CHF (Bold Tabular + 1-Click Inline Edit) */}
+        {/* 10. Montant CHF (Bold Tabular + 1-Click Inline Edit) */}
         <div className="px-3 py-2 border-r border-slate-200/80 flex items-center justify-end font-bold text-slate-900 tabular-nums text-xs" onClick={e => e.stopPropagation()}>
           {editingAmountId === lead.id ? (
             <div className="flex items-center gap-1">
@@ -602,51 +669,6 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
               {formatCHF(amount)}
             </span>
           )}
-        </div>
-
-        {/* 10. Priorité (Vibrant Solid Badge Popover) */}
-        <div className="px-2.5 py-2.5 border-r border-slate-200/80 flex items-center justify-center relative" onClick={e => e.stopPropagation()}>
-          <button
-            type="button"
-            onClick={() => setActivePriorityPopover(activePriorityPopover === lead.id ? null : lead.id)}
-            className={cn(
-              "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold transition-transform active:scale-95 shadow-2xs cursor-pointer",
-              priorityMeta.bg,
-              priorityMeta.text
-            )}
-          >
-            <span className={cn("w-1.5 h-1.5 rounded-full", priorityMeta.dot)} />
-            <span>{priority}</span>
-          </button>
-
-          <AnimatePresence>
-            {activePriorityPopover === lead.id && (
-              <motion.div
-                initial={{ opacity: 0, y: 4, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 4, scale: 0.95 }}
-                className="absolute top-full left-0 mt-1.5 w-36 bg-white rounded-2xl shadow-[0_15px_40px_-5px_rgba(0,0,0,0.25)] border border-slate-200/90 p-1.5 z-50 ring-1 ring-black/10"
-              >
-                {(['Urgente', 'Haute', 'Normale', 'Basse'] as PriorityType[]).map(pr => (
-                  <button
-                    key={pr}
-                    type="button"
-                    onClick={() => handlePriorityChange(lead, pr)}
-                    className={cn(
-                      "w-full text-left px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-between hover:bg-slate-50 transition-colors cursor-pointer",
-                      priority === pr ? "text-slate-900 bg-slate-100 font-bold" : "text-slate-600"
-                    )}
-                  >
-                    <span className="flex items-center gap-1.5">
-                      <span className={cn("w-1.5 h-1.5 rounded-full", PRIORITY_META[pr].dot)} />
-                      {pr}
-                    </span>
-                    {priority === pr && <Check className="w-3 h-3 text-slate-900" />}
-                  </button>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
 
         {/* 11. Actions */}
@@ -830,11 +852,11 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
                   </div>
                 </div>
 
-                {/* Group Content Wrapped in Horizontal Scroll with 11-column matching headers */}
+                {/* Group Content Wrapped in Horizontal Scroll with 11-column matching headers & pb-44 to avoid clipping */}
                 {!isCollapsed && (
-                  <div className="w-full overflow-x-auto">
+                  <div className="w-full overflow-x-auto pb-44">
                     {/* Header Columns inside Group matching renderRow grid exactly */}
-                    <div className="grid grid-cols-[6px_40px_1.4fr_140px_130px_120px_1.2fr_135px_100px_90px_65px] min-w-[1240px] border-b border-slate-200 bg-[#E2E8F0]/70 text-[10px] font-bold text-slate-600 uppercase tracking-wider items-stretch">
+                    <div className="grid grid-cols-[6px_40px_1.4fr_140px_130px_115px_1.1fr_135px_140px_100px_65px] min-w-[1240px] border-b border-slate-200 bg-[#E2E8F0]/70 text-[10px] font-bold text-slate-600 uppercase tracking-wider items-stretch">
                       <div className="w-full h-full" />
                       <div className="px-2 py-2.5 border-r border-slate-200/80 flex items-center justify-center">
                         <input 
@@ -862,8 +884,8 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
                       <div className="px-2 py-2.5 border-r border-slate-200/80 flex items-center justify-center font-bold">Priorité</div>
                       <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center font-bold">Prestation</div>
                       <div className="px-2.5 py-2.5 border-r border-slate-200/80 flex items-center font-bold">Contact Téléphone</div>
-                      <div className="px-2.5 py-2.5 border-r border-slate-200/80 flex items-center font-bold">Date Trajet</div>
-                      <div className="px-2.5 py-2.5 border-r border-slate-200/80 flex items-center justify-end font-bold">Montant</div>
+                      <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center font-bold">Trajet & Date</div>
+                      <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center justify-end font-bold">Montant</div>
                       <div className="px-2 py-2.5 text-right flex items-center justify-end font-bold">Actions</div>
                     </div>
 
@@ -873,7 +895,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
                           Aucun dossier dans ce groupe.
                         </div>
                       ) : (
-                        group.items.map((lead, idx) => renderRow(lead, idx, group.stripeColor))
+                        group.items.map((lead, idx) => renderRow(lead, idx, group.stripeColor, group.items.length))
                       )}
                     </div>
 
@@ -909,9 +931,9 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
       ) : (
         /* VIEW: SIMPLE FLAT TABLE */
         <div className="w-full bg-[#F8FAFC] rounded-2xl border border-slate-200/90 shadow-xs flex flex-col overflow-hidden">
-          <div className="w-full overflow-x-auto">
+          <div className="w-full overflow-x-auto pb-44">
             {/* Header Row matching renderRow grid exactly */}
-            <div className="grid grid-cols-[6px_40px_1.4fr_140px_130px_120px_1.2fr_135px_100px_90px_65px] min-w-[1240px] border-b border-slate-200 bg-[#EEF2F6] text-[10px] font-bold text-slate-600 uppercase tracking-wider items-stretch">
+            <div className="grid grid-cols-[6px_40px_1.4fr_140px_130px_115px_1.1fr_135px_140px_100px_65px] min-w-[1240px] border-b border-slate-200 bg-[#EEF2F6] text-[10px] font-bold text-slate-600 uppercase tracking-wider items-stretch">
               <div className="w-full h-full bg-slate-400" />
               <div className="px-2 py-3 border-r border-slate-200/80 flex items-center justify-center">
                 <input 
@@ -930,8 +952,8 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
               <div className="px-2 py-3 border-r border-slate-200/80 flex items-center justify-center font-bold">Priorité</div>
               <div className="px-3 py-3 border-r border-slate-200/80 flex items-center font-bold">Prestation</div>
               <div className="px-2.5 py-3 border-r border-slate-200/80 flex items-center font-bold">Contact Téléphone</div>
-              <div className="px-2.5 py-3 border-r border-slate-200/80 flex items-center font-bold">Date Trajet</div>
-              <div className="px-2.5 py-3 border-r border-slate-200/80 flex items-center justify-end font-bold">Montant</div>
+              <div className="px-3 py-3 border-r border-slate-200/80 flex items-center font-bold">Trajet & Date</div>
+              <div className="px-3 py-3 border-r border-slate-200/80 flex items-center justify-end font-bold">Montant</div>
               <div className="px-2 py-3 text-right flex items-center justify-end font-bold">Actions</div>
             </div>
 
@@ -942,7 +964,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, ini
                   Aucun dossier correspondant aux critères.
                 </div>
               ) : (
-                filteredLeads.map((lead, idx) => renderRow(lead, idx, 'bg-blue-500'))
+                filteredLeads.map((lead, idx) => renderRow(lead, idx, 'bg-blue-500', filteredLeads.length))
               )}
             </div>
 

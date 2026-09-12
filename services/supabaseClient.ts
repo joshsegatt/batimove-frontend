@@ -178,6 +178,59 @@ export const INITIAL_FINANCIAL: FinancialRecord[] = [
 
 const LOCAL_STORAGE_LEADS = 'batimove_os_leads_v2';
 const LOCAL_STORAGE_FINANCIAL = 'batimove_os_financial_v2';
+const LOCAL_STORAGE_LEAD_OWNERS = 'batimove_lead_owners_map_v1';
+
+export const getStoredLeadOwners = (): Record<string, { owner_id: string; owner_name: string }> => {
+  try {
+    const raw = localStorage.getItem(LOCAL_STORAGE_LEAD_OWNERS);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return {};
+};
+
+export const setStoredLeadOwner = (leadId: string, ownerId: string, ownerName: string) => {
+  try {
+    const current = getStoredLeadOwners();
+    current[leadId] = { owner_id: ownerId, owner_name: ownerName };
+    localStorage.setItem(LOCAL_STORAGE_LEAD_OWNERS, JSON.stringify(current));
+  } catch {}
+};
+
+const resolveLeadOwner = (item: any, storedOwners: Record<string, { owner_id: string; owner_name: string }>): { owner_id: string; owner_name: string } => {
+  const leadId = String(item.id || '');
+  const stored = storedOwners[leadId];
+  if (stored && stored.owner_id) {
+    return {
+      owner_id: stored.owner_id,
+      owner_name: stored.owner_name || (stored.owner_id === 'user-josue' ? 'Josue Segat' : 'Anderson Martins')
+    };
+  }
+
+  if (item.owner_id && (item.owner_id === 'user-josue' || item.owner_id === 'user-anderson')) {
+    return {
+      owner_id: item.owner_id,
+      owner_name: item.owner_name || (item.owner_id === 'user-josue' ? 'Josue Segat' : 'Anderson Martins')
+    };
+  }
+
+  if (item.notes && typeof item.notes === 'string' && item.notes.includes('[owner:')) {
+    const match = item.notes.match(/\[owner:(user-[a-z]+)\]/);
+    if (match && match[1]) {
+      const oid = match[1];
+      return {
+        owner_id: oid,
+        owner_name: oid === 'user-josue' ? 'Josue Segat' : 'Anderson Martins'
+      };
+    }
+  }
+
+  // Initial distribution fallback only if never explicitly set
+  const defaultOwnerId = (leadId && (leadId.endsWith('1') || leadId.endsWith('3'))) ? 'user-josue' : 'user-anderson';
+  return {
+    owner_id: defaultOwnerId,
+    owner_name: defaultOwnerId === 'user-josue' ? 'Josue Segat' : 'Anderson Martins'
+  };
+};
 
 const getSessionAuthToken = (): string => {
   return sessionStorage.getItem('batimove_os_session_auth_v4') || 
@@ -188,6 +241,8 @@ const getSessionAuthToken = (): string => {
 
 export const fetchLeads = async (): Promise<LeadItem[]> => {
   const token = getSessionAuthToken();
+  const storedOwners = getStoredLeadOwners();
+
   try {
     if (token) {
       const { data, error } = await supabase.rpc('get_dashboard_leads', { p_token: token });
@@ -196,6 +251,8 @@ export const fetchLeads = async (): Promise<LeadItem[]> => {
           const amt = Math.max(0, Number(item.amount_chf ?? item.estimated_amount_chf ?? 0) || 0);
           let st = item.status;
           if (st === 'termine') st = 'facture';
+          const { owner_id, owner_name } = resolveLeadOwner(item, storedOwners);
+
           return {
             id: String(item.id || `BM-2026-${Math.floor(100 + Math.random() * 900)}`),
             created_at: item.created_at || new Date().toISOString(),
@@ -211,8 +268,8 @@ export const fetchLeads = async (): Promise<LeadItem[]> => {
             estimated_amount_chf: amt,
             status: st || 'nouveau',
             notes: item.notes || '',
-            owner_id: item.owner_id || (item.id && (item.id.endsWith('1') || item.id.endsWith('3')) ? 'user-josue' : 'user-anderson'),
-            owner_name: item.owner_name || ((item.owner_id === 'user-josue' || (item.id && (item.id.endsWith('1') || item.id.endsWith('3')))) ? 'Josue Segat' : 'Anderson Martins'),
+            owner_id,
+            owner_name,
             version: Number(item.version || 1),
             updated_at: item.updated_at || item.created_at || new Date().toISOString(),
             idempotency_key: item.idempotency_key || ''
@@ -234,6 +291,8 @@ export const fetchLeads = async (): Promise<LeadItem[]> => {
         const amt = Math.max(0, Number(item.amount_chf ?? item.estimated_amount_chf ?? 0) || 0);
         let st = item.status;
         if (st === 'termine') st = 'facture';
+        const { owner_id, owner_name } = resolveLeadOwner(item, storedOwners);
+
         return {
           id: String(item.id || `BM-2026-${Math.floor(100 + Math.random() * 900)}`),
           created_at: item.created_at || new Date().toISOString(),
@@ -249,8 +308,8 @@ export const fetchLeads = async (): Promise<LeadItem[]> => {
           estimated_amount_chf: amt,
           status: st || 'nouveau',
           notes: item.notes || '',
-          owner_id: item.owner_id || (item.id && (item.id.endsWith('1') || item.id.endsWith('3')) ? 'user-josue' : 'user-anderson'),
-          owner_name: item.owner_name || ((item.owner_id === 'user-josue' || (item.id && (item.id.endsWith('1') || item.id.endsWith('3')))) ? 'Josue Segat' : 'Anderson Martins'),
+          owner_id,
+          owner_name,
           version: Number(item.version || 1),
           updated_at: item.updated_at || item.created_at || new Date().toISOString(),
           idempotency_key: item.idempotency_key || ''
@@ -364,6 +423,12 @@ export const updateLeadDetails = async (
   updates: Partial<LeadItem>,
   expectedVersion?: number
 ): Promise<UpdateLeadResult> => {
+  if (updates.owner_id || updates.owner_name) {
+    const oId = updates.owner_id || 'user-anderson';
+    const oName = updates.owner_name || (oId === 'user-josue' ? 'Josue Segat' : 'Anderson Martins');
+    setStoredLeadOwner(id, oId, oName);
+  }
+
   const token = getSessionAuthToken();
   try {
     if (token) {

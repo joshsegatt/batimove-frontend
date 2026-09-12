@@ -61,7 +61,9 @@ export function BatimoveOS({ onLogout }: BatimoveOSProps) {
     return <Onboarding onComplete={() => setShowOnboarding(false)} />;
   }
 
-  const displayedLeads = leads;
+  const displayedLeads = workspaceMode === 'individual'
+    ? leads.filter(l => l.owner_id === currentUser.id || l.owner_name?.toLowerCase().includes(currentUser.initials === 'AM' ? 'anderson' : 'josue'))
+    : leads;
   const operationLeads = displayedLeads.filter(l => l.status === 'confirme' || l.status === 'facture' || l.status === 'termine');
   const unreadCount = leads.filter(l => l.status === 'nouveau').length;
 
