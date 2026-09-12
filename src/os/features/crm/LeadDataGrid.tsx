@@ -1,23 +1,62 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MoreHorizontal, Phone, Trash2, Edit2, FileText, ChevronDown, Check } from 'lucide-react';
+import { 
+  Search, Filter, Phone, MessageSquare, Trash2, Edit2, 
+  ChevronDown, Check, LayoutGrid, List, ArrowRight, X, Download
+} from 'lucide-react';
 import { LeadItem, deleteLead, updateLeadStatus } from '../../../../services/supabaseClient';
+import { KanbanBoard } from './KanbanBoard';
 import { cn } from '../../core/utils/cn';
 
-const STATUS_COLORS: Record<string, string> = {
-  New: 'bg-blue-100 text-blue-700',
-  Contacted: 'bg-yellow-100 text-yellow-700',
-  Negotiation: 'bg-purple-100 text-purple-700',
-  Won: 'bg-emerald-100 text-emerald-700',
-  Completed: 'bg-gray-100 text-gray-700',
-  Lost: 'bg-red-100 text-red-700',
+interface LeadDataGridProps {
+  leads: LeadItem[];
+  onReload: () => void;
+  onSelectLead: (lead: LeadItem) => void;
+  initialFilter?: string | null;
+}
+
+const STATUS_COLORS: Record<string, { bg: string; text: string; label: string }> = {
+  nouveau: { bg: 'bg-blue-50 border-blue-200', text: 'text-blue-700', label: 'Nouveau' },
+  visite: { bg: 'bg-indigo-50 border-indigo-200', text: 'text-indigo-700', label: 'Visite planifiée' },
+  en_cours: { bg: 'bg-amber-50 border-amber-200', text: 'text-amber-700', label: 'En négociation' },
+  confirme: { bg: 'bg-emerald-50 border-emerald-200', text: 'text-emerald-700', label: 'Confirmé' },
+  facture: { bg: 'bg-purple-50 border-purple-200', text: 'text-purple-700', label: 'Facturé' },
+  termine: { bg: 'bg-gray-50 border-gray-200', text: 'text-gray-700', label: 'Terminé' },
+  annule: { bg: 'bg-red-50 border-red-200', text: 'text-red-700', label: 'Annulé' },
 };
 
-const STATUS_OPTIONS = ['New', 'Contacted', 'Negotiation', 'Won', 'Completed', 'Lost'];
+const ALL_STATUSES: LeadItem['status'][] = ['nouveau', 'visite', 'en_cours', 'confirme', 'facture', 'termine', 'annule'];
 
-export function LeadDataGrid({ leads, onReload }: { leads: LeadItem[], onReload: () => void }) {
+export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: LeadDataGridProps) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedStatusTab, setSelectedStatusTab] = useState<string>(initialFilter || 'ALL');
+  const [viewMode, setViewMode] = useState<'table' | 'kanban'>('table');
   const [activeStatusPopover, setActiveStatusPopover] = useState<string | null>(null);
   const [selectedLeads, setSelectedLeads] = useState<Set<string>>(new Set());
+
+  // Filter leads
+  const filteredLeads = useMemo(() => {
+    return leads.filter(lead => {
+      // Search match
+      const query = searchQuery.toLowerCase().trim();
+      const matchesSearch = !query || 
+        lead.client_name?.toLowerCase().includes(query) ||
+        lead.id?.toLowerCase().includes(query) ||
+        lead.from_city?.toLowerCase().includes(query) ||
+        lead.to_city?.toLowerCase().includes(query) ||
+        lead.client_phone?.toLowerCase().includes(query);
+
+      // Status tab match
+      let matchesStatus = true;
+      if (selectedStatusTab === 'en_attente') {
+        matchesStatus = lead.status === 'nouveau' || lead.status === 'visite' || lead.status === 'en_cours';
+      } else if (selectedStatusTab !== 'ALL') {
+        matchesStatus = lead.status === selectedStatusTab;
+      }
+
+      return matchesSearch && matchesStatus;
+    });
+  }, [leads, searchQuery, selectedStatusTab]);
 
   const toggleSelection = (id: string) => {
     const next = new Set(selectedLeads);
@@ -27,179 +66,330 @@ export function LeadDataGrid({ leads, onReload }: { leads: LeadItem[], onReload:
   };
 
   const selectAll = () => {
-    if (selectedLeads.size === leads.length) setSelectedLeads(new Set());
-    else setSelectedLeads(new Set(leads.map(l => l.id)));
+    if (selectedLeads.size === filteredLeads.length) setSelectedLeads(new Set());
+    else setSelectedLeads(new Set(filteredLeads.map(l => l.id)));
   };
 
-  const handleStatusChange = async (id: string, newStatus: string) => {
+  const handleStatusChange = async (id: string, newStatus: LeadItem['status']) => {
     setActiveStatusPopover(null);
     try {
       await updateLeadStatus(id, newStatus);
-      onReload(); // Refresh data
+      onReload();
     } catch (err) {
-      console.error("Failed to update status", err);
-      alert("Erreur lors de la mise à jour");
+      alert('Erreur changement statut');
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm("Êtes-vous sûr de vouloir supprimer ce devis ?")) {
+    if (window.confirm("Confirmer la suppression de ce devis ?")) {
       try {
         await deleteLead(id);
         onReload();
       } catch (err) {
-        console.error("Failed to delete", err);
+        alert('Erreur suppression');
       }
     }
   };
 
-  return (
-    <div className="w-full bg-white rounded-2xl border border-gray-200/60 shadow-sm overflow-hidden flex flex-col">
-      {/* Table Header */}
-      <div className="grid grid-cols-[40px_1.5fr_1fr_1fr_1fr_100px] gap-4 p-4 border-b border-gray-200/60 bg-gray-50/50 text-xs font-semibold text-gray-500 uppercase tracking-wider items-center">
-        <div className="flex items-center justify-center">
-          <input 
-            type="checkbox" 
-            checked={selectedLeads.size === leads.length && leads.length > 0}
-            onChange={selectAll}
-            className="w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900 cursor-pointer"
-          />
-        </div>
-        <div>Client & Trajet</div>
-        <div>Volume / Prix</div>
-        <div>Date prévue</div>
-        <div>Statut</div>
-        <div className="text-right">Actions</div>
-      </div>
+  const handleBulkDelete = async () => {
+    if (window.confirm(`Supprimer définitivement ${selectedLeads.size} dossier(s) ?`)) {
+      for (const id of selectedLeads) {
+        try {
+          await deleteLead(id);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      setSelectedLeads(new Set());
+      onReload();
+    }
+  };
 
-      {/* Table Body */}
-      <div className="flex flex-col divide-y divide-gray-100">
-        {leads.length === 0 ? (
-           <div className="p-8 text-center text-sm text-gray-500 font-medium">Aucun devis trouvé.</div>
-        ) : (
-          leads.map((lead) => (
-            <div 
-              key={lead.id} 
+  const formatCHF = (amount?: number) => {
+    return new Intl.NumberFormat('fr-CH', {
+      style: 'currency',
+      currency: 'CHF',
+      minimumFractionDigits: 0
+    }).format(amount || 0);
+  };
+
+  return (
+    <div className="space-y-3">
+      {/* Control Bar: Search, Status Tabs, View Switcher */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-gray-200/80 shadow-sm">
+        {/* Search Input */}
+        <div className="relative flex-1 max-w-md">
+          <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <input 
+            type="text"
+            placeholder="Rechercher client, ID, ville, téléphone..."
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            className="w-full pl-9 pr-8 py-1.5 rounded-xl border border-gray-200 text-xs focus:border-gray-900 focus:outline-none placeholder:text-gray-400"
+          />
+          {searchQuery && (
+            <button onClick={() => setSearchQuery('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+
+        {/* Filter Pills and View Mode */}
+        <div className="flex items-center justify-between gap-2 overflow-x-auto">
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setSelectedStatusTab('ALL')}
               className={cn(
-                "grid grid-cols-[40px_1.5fr_1fr_1fr_1fr_100px] gap-4 p-4 items-center group transition-colors hover:bg-gray-50/80 cursor-pointer relative",
-                selectedLeads.has(lead.id) && "bg-blue-50/30"
+                "px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors",
+                selectedStatusTab === 'ALL' ? "bg-gray-900 text-white" : "text-gray-500 hover:bg-gray-100"
               )}
             >
-              <div className="flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
-                <input 
-                  type="checkbox" 
-                  checked={selectedLeads.has(lead.id)}
-                  onChange={() => toggleSelection(lead.id)}
-                  className="w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900 cursor-pointer"
-                />
+              Tous ({leads.length})
+            </button>
+            <button
+              onClick={() => setSelectedStatusTab('nouveau')}
+              className={cn(
+                "px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors",
+                selectedStatusTab === 'nouveau' ? "bg-blue-600 text-white" : "text-gray-500 hover:bg-gray-100"
+              )}
+            >
+              Nouveaux ({leads.filter(l => l.status === 'nouveau').length})
+            </button>
+            <button
+              onClick={() => setSelectedStatusTab('confirme')}
+              className={cn(
+                "px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors",
+                selectedStatusTab === 'confirme' ? "bg-emerald-600 text-white" : "text-gray-500 hover:bg-gray-100"
+              )}
+            >
+              Confirmés ({leads.filter(l => l.status === 'confirme').length})
+            </button>
+          </div>
+
+          {/* Mode Switcher: Table vs Kanban */}
+          <div className="flex items-center bg-gray-100 p-0.5 rounded-xl border border-gray-200">
+            <button
+              onClick={() => setViewMode('table')}
+              className={cn(
+                "flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all",
+                viewMode === 'table' ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-900"
+              )}
+            >
+              <List className="w-3.5 h-3.5" />
+              Tableau
+            </button>
+            <button
+              onClick={() => setViewMode('kanban')}
+              className={cn(
+                "flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all",
+                viewMode === 'kanban' ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-900"
+              )}
+            >
+              <LayoutGrid className="w-3.5 h-3.5" />
+              Kanban
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* VIEW: KANBAN MODE */}
+      {viewMode === 'kanban' ? (
+        <KanbanBoard 
+          leads={filteredLeads}
+          onSelectLead={onSelectLead}
+          onReload={onReload}
+        />
+      ) : (
+        /* VIEW: TABLE MODE (Monday.com style) */
+        <div className="w-full bg-white rounded-2xl border border-gray-200/80 shadow-sm overflow-hidden flex flex-col">
+          {/* Header Row */}
+          <div className="grid grid-cols-[36px_100px_1.5fr_1fr_1.2fr_120px_100px] gap-3 p-3.5 border-b border-gray-200/70 bg-gray-50/70 text-[11px] font-bold text-gray-400 uppercase tracking-wider items-center">
+            <div className="flex items-center justify-center">
+              <input 
+                type="checkbox" 
+                checked={selectedLeads.size === filteredLeads.length && filteredLeads.length > 0}
+                onChange={selectAll}
+                className="w-3.5 h-3.5 rounded border-gray-300 text-gray-900 focus:ring-gray-900 cursor-pointer"
+              />
+            </div>
+            <div>Réf</div>
+            <div>Client</div>
+            <div>Prestation</div>
+            <div>Trajet & Date</div>
+            <div>Montant / Statut</div>
+            <div className="text-right">Actions</div>
+          </div>
+
+          {/* Table Body */}
+          <div className="divide-y divide-gray-100">
+            {filteredLeads.length === 0 ? (
+              <div className="p-10 text-center text-sm font-medium text-gray-400">
+                Aucun dossier correspondant aux critères.
               </div>
+            ) : (
+              filteredLeads.map(lead => {
+                const cleanPhone = (lead.client_phone || '').replace(/[^0-9]/g, '');
+                const statusMeta = STATUS_COLORS[lead.status] || STATUS_COLORS.nouveau;
+                const amount = lead.amount_chf || lead.estimated_amount_chf || 0;
 
-              {/* Client Info */}
-              <div className="flex flex-col truncate">
-                <span className="font-semibold text-gray-900 text-sm truncate">{lead.client_name || 'Client Inconnu'}</span>
-                <div className="flex items-center gap-1 text-xs text-gray-500 mt-0.5 truncate">
-                  <span className="truncate max-w-[80px]">{lead.moving_from || 'N/A'}</span>
-                  <ArrowRight className="w-3 h-3 flex-shrink-0" />
-                  <span className="truncate max-w-[80px]">{lead.moving_to || 'N/A'}</span>
-                </div>
-              </div>
+                return (
+                  <div
+                    key={lead.id}
+                    onClick={() => onSelectLead(lead)}
+                    className={cn(
+                      "grid grid-cols-[36px_100px_1.5fr_1fr_1.2fr_120px_100px] gap-3 p-3.5 items-center group transition-colors hover:bg-gray-50/80 cursor-pointer text-xs relative",
+                      selectedLeads.has(lead.id) && "bg-blue-50/30"
+                    )}
+                  >
+                    {/* Checkbox */}
+                    <div className="flex items-center justify-center" onClick={e => e.stopPropagation()}>
+                      <input 
+                        type="checkbox" 
+                        checked={selectedLeads.has(lead.id)}
+                        onChange={() => toggleSelection(lead.id)}
+                        className="w-3.5 h-3.5 rounded border-gray-300 text-gray-900 focus:ring-gray-900 cursor-pointer"
+                      />
+                    </div>
 
-              {/* Volume & Price */}
-              <div className="flex flex-col">
-                <span className="font-medium text-gray-900 text-sm tabular-nums">CHF {lead.price || '0.00'}</span>
-                <span className="text-xs text-gray-500 mt-0.5">{lead.volume || '0 m³'}</span>
-              </div>
+                    {/* ID */}
+                    <div className="font-mono font-semibold text-gray-500">
+                      {lead.id}
+                    </div>
 
-              {/* Date */}
-              <div className="text-sm font-medium text-gray-600">
-                {lead.moving_date ? new Date(lead.moving_date).toLocaleDateString('fr-CH') : 'Non définie'}
-              </div>
+                    {/* Client Name & Phone */}
+                    <div className="flex flex-col truncate">
+                      <span className="font-bold text-gray-900 truncate group-hover:text-blue-600 transition-colors">
+                        {lead.client_name}
+                      </span>
+                      <span className="text-[11px] text-gray-400 font-mono">{lead.client_phone}</span>
+                    </div>
 
-              {/* Status Badge with Popover (Inline Edit) */}
-              <div className="relative flex items-center" onClick={(e) => e.stopPropagation()}>
-                <button 
-                  onClick={() => setActiveStatusPopover(activeStatusPopover === lead.id ? null : lead.id)}
-                  className={cn(
-                    "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-transform active:scale-95",
-                    STATUS_COLORS[lead.status] || 'bg-gray-100 text-gray-700'
-                  )}
-                >
-                  {lead.status}
-                  <ChevronDown className="w-3 h-3 opacity-50" />
-                </button>
+                    {/* Service Type */}
+                    <div className="text-gray-600 truncate font-medium">
+                      {lead.service_type || 'Déménagement'}
+                    </div>
 
-                {/* Status Dropdown */}
-                <AnimatePresence>
-                  {activeStatusPopover === lead.id && (
-                    <motion.div 
-                      initial={{ opacity: 0, y: 4, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 4, scale: 0.95 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute top-full left-0 mt-1 w-40 bg-white rounded-xl shadow-xl shadow-black/10 border border-gray-200 p-1 z-50"
-                    >
-                      {STATUS_OPTIONS.map(status => (
+                    {/* Route & Date */}
+                    <div className="flex flex-col truncate">
+                      <div className="flex items-center gap-1 font-medium text-gray-800 truncate">
+                        <span className="truncate">{lead.from_city || 'Genève'}</span>
+                        <ArrowRight className="w-3 h-3 text-gray-300 flex-shrink-0" />
+                        <span className="truncate">{lead.to_city || 'Suisse'}</span>
+                      </div>
+                      <span className="text-[11px] text-gray-400 mt-0.5">{lead.move_date || 'Date à fixer'}</span>
+                    </div>
+
+                    {/* Montant & Status Popover */}
+                    <div className="flex flex-col gap-1" onClick={e => e.stopPropagation()}>
+                      <span className="font-bold text-gray-900 tabular-nums">
+                        {formatCHF(amount)}
+                      </span>
+
+                      <div className="relative">
                         <button
-                          key={status}
-                          onClick={() => handleStatusChange(lead.id, status)}
+                          onClick={() => setActiveStatusPopover(activeStatusPopover === lead.id ? null : lead.id)}
                           className={cn(
-                            "w-full text-left px-3 py-2 rounded-lg text-sm font-medium flex items-center justify-between hover:bg-gray-50 transition-colors",
-                            lead.status === status ? "text-gray-900" : "text-gray-600"
+                            "flex items-center justify-between gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold border transition-transform active:scale-95",
+                            statusMeta.bg,
+                            statusMeta.text
                           )}
                         >
-                          {status}
-                          {lead.status === status && <Check className="w-4 h-4 text-gray-900" />}
+                          <span className="truncate">{statusMeta.label}</span>
+                          <ChevronDown className="w-2.5 h-2.5 opacity-60 flex-shrink-0" />
                         </button>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
 
-              {/* Hover Actions */}
-              <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
-                 <button className="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-900 hover:bg-gray-100 flex items-center justify-center transition-colors">
-                   <Phone className="w-4 h-4" />
-                 </button>
-                 <button className="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-900 hover:bg-gray-100 flex items-center justify-center transition-colors">
-                   <FileText className="w-4 h-4" />
-                 </button>
-                 <button 
-                   onClick={() => handleDelete(lead.id)}
-                   className="w-8 h-8 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition-colors"
-                 >
-                   <Trash2 className="w-4 h-4" />
-                 </button>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-      
-      {/* Bulk Action Bar Placeholder */}
+                        <AnimatePresence>
+                          {activeStatusPopover === lead.id && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 4, scale: 0.95 }}
+                              animate={{ opacity: 1, y: 0, scale: 1 }}
+                              exit={{ opacity: 0, y: 4, scale: 0.95 }}
+                              className="absolute top-full left-0 mt-1 w-44 bg-white rounded-xl shadow-xl border border-gray-200 p-1 z-50"
+                            >
+                              {ALL_STATUSES.map(st => (
+                                <button
+                                  key={st}
+                                  onClick={() => handleStatusChange(lead.id, st)}
+                                  className={cn(
+                                    "w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-between hover:bg-gray-50",
+                                    lead.status === st ? "text-gray-900 bg-gray-50" : "text-gray-600"
+                                  )}
+                                >
+                                  {STATUS_COLORS[st]?.label || st}
+                                  {lead.status === st && <Check className="w-3.5 h-3.5 text-gray-900" />}
+                                </button>
+                              ))}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    </div>
+
+                    {/* Hover Actions */}
+                    <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={e => e.stopPropagation()}>
+                      {lead.client_phone && (
+                        <>
+                          <a
+                            href={`tel:${lead.client_phone}`}
+                            className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                            title="Appeler"
+                          >
+                            <Phone className="w-3.5 h-3.5" />
+                          </a>
+                          <a
+                            href={`https://wa.me/${cleanPhone}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-1.5 rounded-lg text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
+                            title="WhatsApp"
+                          >
+                            <MessageSquare className="w-3.5 h-3.5" />
+                          </a>
+                        </>
+                      )}
+                      <button
+                        onClick={() => handleDelete(lead.id)}
+                        className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                        title="Supprimer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Floating Bulk Action Bar */}
       <AnimatePresence>
         {selectedLeads.size > 0 && (
-          <motion.div 
-            initial={{ y: 100 }}
-            animate={{ y: 0 }}
-            exit={{ y: 100 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-4 z-[100]"
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 50, opacity: 0 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-5 py-2.5 rounded-2xl shadow-2xl flex items-center gap-4 z-[100] border border-white/10"
           >
-            <span className="text-sm font-semibold">{selectedLeads.size} sélectionné(s)</span>
+            <span className="text-xs font-bold">{selectedLeads.size} sélectionné(s)</span>
             <div className="w-px h-4 bg-white/20" />
-            <button className="text-sm font-medium hover:text-red-400 transition-colors">Supprimer</button>
-            <button className="text-sm font-medium hover:text-blue-400 transition-colors">Exporter</button>
+            <button 
+              onClick={handleBulkDelete}
+              className="text-xs font-semibold text-red-400 hover:text-red-300 transition-colors flex items-center gap-1"
+            >
+              <Trash2 className="w-3.5 h-3.5" /> Supprimer la sélection
+            </button>
+            <button 
+              onClick={() => setSelectedLeads(new Set())}
+              className="text-xs text-gray-400 hover:text-white"
+            >
+              Désélectionner
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
     </div>
   );
-}
-// ArrowRight icon for UI
-function ArrowRight(props: any) {
-  return (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
-    </svg>
-  )
 }

@@ -1,17 +1,30 @@
 import React, { useState, useEffect } from "react";
-import { OsLayout } from "./core/layouts/OsLayout";
+import { OsLayout, OsView } from "./core/layouts/OsLayout";
 import { Onboarding } from "./core/components/Onboarding";
 import { useDashboardData } from "./core/hooks/useDashboardData";
 import { FinanceCockpit } from "./features/finance/FinanceCockpit";
 import { LeadDataGrid } from "./features/crm/LeadDataGrid";
+import { LeadDetailDrawer } from "./features/crm/LeadDetailDrawer";
+import { NewLeadModal } from "./features/crm/NewLeadModal";
+import { FleetView } from "./features/fleet/FleetView";
+import { FiduciaryView } from "./features/fiduciary/FiduciaryView";
+import { LeadItem } from "../../../services/supabaseClient";
 
-export function BatimoveOS() {
+interface BatimoveOSProps {
+  onLogout?: () => void;
+}
+
+export function BatimoveOS({ onLogout }: BatimoveOSProps) {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
-  const { leads, loading, error, reloadData } = useDashboardData();
+  const [activeView, setActiveView] = useState<OsView>('cockpit');
+  const [selectedLead, setSelectedLead] = useState<LeadItem | null>(null);
+  const [showNewLeadModal, setShowNewLeadModal] = useState(false);
+  const [drillDownFilter, setDrillDownFilter] = useState<string | null>(null);
+
+  const { leads, fleetVehicles, loading, error, reloadData } = useDashboardData();
 
   useEffect(() => {
-    // Check if user has seen onboarding
     const hasSeen = localStorage.getItem('batimove_os_onboarding_done');
     if (!hasSeen) {
       setShowOnboarding(true);
@@ -25,39 +38,117 @@ export function BatimoveOS() {
     return <Onboarding onComplete={() => setShowOnboarding(false)} />;
   }
 
-  return (
-    <OsLayout>
-      <div className="p-4 sm:p-8 max-w-6xl mx-auto w-full h-full flex flex-col gap-6">
-        <header className="flex flex-col gap-1">
-          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Vue d'ensemble</h1>
-          <p className="text-sm font-medium text-gray-500">Bienvenue sur le nouveau standard financier.</p>
-        </header>
+  // Filter confirmed missions for Operations view
+  const operationLeads = leads.filter(l => l.status === 'confirme' || l.status === 'facture' || l.status === 'termine');
 
+  return (
+    <OsLayout 
+      activeView={activeView}
+      onViewChange={(v) => {
+        setActiveView(v);
+        setDrillDownFilter(null);
+      }}
+      onOpenNewLead={() => setShowNewLeadModal(true)}
+      onLogout={onLogout}
+    >
+      <div className="py-6 space-y-6 animate-fadeIn">
         {error && (
-          <div className="p-4 rounded-xl bg-red-50 text-red-600 text-sm font-medium border border-red-100">
-            Erreur de chargement: {error}
+          <div className="p-4 rounded-2xl bg-red-50 text-red-700 text-xs font-semibold border border-red-200">
+            Erreur de connexion : {error}
           </div>
         )}
 
-        {/* Real Connected Finance Cockpit */}
-        <FinanceCockpit leads={leads} loading={loading} />
-        
-        {/* CRM Data Grid */}
-        <div className="mt-4 pt-4 border-t border-gray-200/50">
-           <div className="flex items-center justify-between mb-4">
-             <h2 className="text-lg font-semibold text-gray-900">Pipeline Actif</h2>
-             <button className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium shadow-sm hover:bg-gray-800 transition-colors">
-               + Nouveau Devis
-             </button>
-           </div>
-           
-           {loading ? (
-             <div className="h-96 rounded-2xl border border-gray-200/60 bg-gray-50 animate-pulse" />
-           ) : (
-             <LeadDataGrid leads={leads} onReload={reloadData} />
-           )}
-        </div>
+        {/* VIEW 1: COCKPIT (Overview & Finance Bento + Urgences) */}
+        {activeView === 'cockpit' && (
+          <div className="space-y-6">
+            <FinanceCockpit 
+              leads={leads} 
+              loading={loading}
+              activeFilter={drillDownFilter}
+              onFilterChange={setDrillDownFilter}
+            />
+
+            <div className="pt-2">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <h3 className="text-base font-bold text-gray-900">Dossiers & Affaires en Direct</h3>
+                  <p className="text-xs text-gray-400">Cliquez sur un dossier pour ouvrir le panneau d'édition ou la facture</p>
+                </div>
+              </div>
+
+              <LeadDataGrid 
+                leads={leads}
+                onReload={reloadData}
+                onSelectLead={setSelectedLead}
+                initialFilter={drillDownFilter}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* VIEW 2: CRM (Full pipeline view with Table/Kanban) */}
+        {activeView === 'crm' && (
+          <div className="space-y-4">
+            <LeadDataGrid 
+              leads={leads}
+              onReload={reloadData}
+              onSelectLead={setSelectedLead}
+            />
+          </div>
+        )}
+
+        {/* VIEW 3: OPERATIONS (Planning & Confirmed Missions) */}
+        {activeView === 'operations' && (
+          <div className="space-y-4">
+            <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-100 flex items-center justify-between">
+              <div>
+                <h4 className="font-bold text-sm text-blue-900">Planning des Déménagements Validés</h4>
+                <p className="text-xs text-blue-700 mt-0.5">Dossiers confirmés nécessitant l'attribution de véhicules et d'équipes</p>
+              </div>
+              <span className="px-3 py-1 rounded-full bg-blue-600 text-white text-xs font-bold">
+                {operationLeads.length} missions
+              </span>
+            </div>
+
+            <LeadDataGrid 
+              leads={operationLeads}
+              onReload={reloadData}
+              onSelectLead={setSelectedLead}
+              initialFilter="confirme"
+            />
+          </div>
+        )}
+
+        {/* VIEW 4: FLEET & LOGISTICS */}
+        {activeView === 'fleet' && (
+          <FleetView 
+            vehicles={fleetVehicles}
+            onReload={reloadData}
+          />
+        )}
+
+        {/* VIEW 5: FIDUCIARY & TVA SUISSE */}
+        {activeView === 'fiduciary' && (
+          <FiduciaryView 
+            leads={leads}
+            onSelectLead={setSelectedLead}
+          />
+        )}
       </div>
+
+      {/* Slide-over Detail Drawer */}
+      <LeadDetailDrawer 
+        lead={selectedLead}
+        onClose={() => setSelectedLead(null)}
+        onUpdate={reloadData}
+      />
+
+      {/* Add New Lead Modal */}
+      <NewLeadModal 
+        isOpen={showNewLeadModal}
+        onClose={() => setShowNewLeadModal(false)}
+        onCreated={reloadData}
+      />
     </OsLayout>
   );
 }

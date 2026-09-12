@@ -93,7 +93,7 @@ export const Portal: React.FC = () => {
       {!authenticated ? (
         <Login onSuccess={handleLoginSuccess} />
       ) : (
-        <BatimoveOS />
+        <BatimoveOS onLogout={handleLogout} />
       )}
     </ErrorBoundary>
   );
