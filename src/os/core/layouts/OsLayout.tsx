@@ -1,12 +1,12 @@
 import React from 'react';
 import { 
   Home, Layers, Calendar, Truck, Landmark, User, 
-  LogOut, Plus, Search, ShieldCheck, CheckCircle2, Users
+  LogOut, Plus, Search, ShieldCheck, CheckCircle2, Users, Settings
 } from 'lucide-react';
 import { UserProfile } from '../../../../services/adminAuth';
 import { cn } from '../utils/cn';
 
-export type OsView = 'cockpit' | 'crm' | 'operations' | 'fleet' | 'fiduciary';
+export type OsView = 'cockpit' | 'crm' | 'operations' | 'fleet' | 'fiduciary' | 'settings';
 
 interface OsLayoutProps {
   children: React.ReactNode;
@@ -37,6 +37,7 @@ export function OsLayout({
     operations: { title: "Opérations & Missions", subtitle: "Planning des déménagements confirmés" },
     fleet: { title: "Flotte & Équipes", subtitle: "Disponibilité des camions et affectations" },
     fiduciary: { title: "Extrait Fiduciaire & TVA 8.1%", subtitle: "Comptabilité suisse et facturation BCGE" },
+    settings: { title: "Paramètres & Organisation", subtitle: "Identité légale, BCGE, équipe et sécurité" },
   };
 
   const navItems: { id: OsView; label: string; icon: React.ReactNode }[] = [
@@ -45,6 +46,7 @@ export function OsLayout({
     { id: 'operations', label: 'Missions', icon: <Calendar className="w-5 h-5" /> },
     { id: 'fleet', label: 'Flotte', icon: <Truck className="w-5 h-5" /> },
     { id: 'fiduciary', label: 'Fiduciaire', icon: <Landmark className="w-5 h-5" /> },
+    { id: 'settings', label: 'Paramètres', icon: <Settings className="w-5 h-5" /> },
   ];
 
   return (
@@ -135,7 +137,7 @@ export function OsLayout({
               </p>
             </div>
 
-            {/* Workspace Pill Button (Monday.com style) */}
+            {/* Workspace Pill Button */}
             <button
               onClick={onOpenAccount}
               className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gray-100/80 hover:bg-gray-200/70 text-xs font-semibold text-gray-700 border border-gray-200/60 transition-colors"
@@ -203,7 +205,7 @@ export function OsLayout({
             key={item.id}
             onClick={() => onViewChange(item.id)}
             className={cn(
-              "flex flex-col items-center justify-center gap-1 py-1 px-2.5 rounded-xl transition-all",
+              "flex flex-col items-center justify-center gap-1 py-1 px-2 rounded-xl transition-all",
               activeView === item.id ? "text-gray-900 scale-105" : "text-gray-400 hover:text-gray-600"
             )}
           >

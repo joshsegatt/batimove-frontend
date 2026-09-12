@@ -8,6 +8,7 @@ import { LeadDetailDrawer } from "./features/crm/LeadDetailDrawer";
 import { NewLeadModal } from "./features/crm/NewLeadModal";
 import { FleetView } from "./features/fleet/FleetView";
 import { FiduciaryView } from "./features/fiduciary/FiduciaryView";
+import { SettingsView } from "./features/settings/SettingsView";
 import { AccountDrawer } from "./core/components/AccountDrawer";
 import { CommandPalette } from "./core/components/CommandPalette";
 import { LeadItem } from "../../services/supabaseClient";
@@ -32,7 +33,7 @@ export function BatimoveOS({ onLogout }: BatimoveOSProps) {
   const [workspaceMode, setWorkspaceMode] = useState<'team' | 'individual'>('team');
   const [currentUser, setCurrentUserState] = useState<UserProfile>(() => getCurrentUser());
 
-  const { leads, fleetVehicles, loading, error, reloadData } = useDashboardData();
+  const { leads, fleetVehicles, financialRecords, loading, error, reloadData } = useDashboardData();
 
   useEffect(() => {
     const hasSeen = localStorage.getItem('batimove_os_onboarding_done');
@@ -57,10 +58,7 @@ export function BatimoveOS({ onLogout }: BatimoveOSProps) {
     return <Onboarding onComplete={() => setShowOnboarding(false)} />;
   }
 
-  // If in individual mode, we can show personal focus or all
   const displayedLeads = leads;
-
-  // Filter confirmed missions for Operations view
   const operationLeads = displayedLeads.filter(l => l.status === 'confirme' || l.status === 'facture' || l.status === 'termine');
 
   return (
@@ -102,7 +100,7 @@ export function BatimoveOS({ onLogout }: BatimoveOSProps) {
           </div>
         )}
 
-        {/* VIEW 1: COCKPIT (Overview & Finance Bento + Urgences) */}
+        {/* VIEW 1: COCKPIT */}
         {activeView === 'cockpit' && (
           <div className="space-y-6">
             <FinanceCockpit 
@@ -130,7 +128,7 @@ export function BatimoveOS({ onLogout }: BatimoveOSProps) {
           </div>
         )}
 
-        {/* VIEW 2: CRM (Full pipeline view with Table/Kanban) */}
+        {/* VIEW 2: CRM */}
         {activeView === 'crm' && (
           <div className="space-y-4">
             <LeadDataGrid 
@@ -141,7 +139,7 @@ export function BatimoveOS({ onLogout }: BatimoveOSProps) {
           </div>
         )}
 
-        {/* VIEW 3: OPERATIONS (Planning & Confirmed Missions) */}
+        {/* VIEW 3: OPERATIONS */}
         {activeView === 'operations' && (
           <div className="space-y-4">
             <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-100 flex items-center justify-between">
@@ -163,7 +161,7 @@ export function BatimoveOS({ onLogout }: BatimoveOSProps) {
           </div>
         )}
 
-        {/* VIEW 4: FLEET & LOGISTICS */}
+        {/* VIEW 4: FLEET */}
         {activeView === 'fleet' && (
           <FleetView 
             vehicles={fleetVehicles}
@@ -171,7 +169,7 @@ export function BatimoveOS({ onLogout }: BatimoveOSProps) {
           />
         )}
 
-        {/* VIEW 5: FIDUCIARY & TVA SUISSE */}
+        {/* VIEW 5: FIDUCIARY & FINANCIAL HUB */}
         {activeView === 'fiduciary' && (
           <>
             {!currentUser.permissions.canViewFinancials ? (
@@ -193,10 +191,22 @@ export function BatimoveOS({ onLogout }: BatimoveOSProps) {
             ) : (
               <FiduciaryView 
                 leads={displayedLeads}
+                financialRecords={financialRecords}
                 onSelectLead={setSelectedLead}
+                onReload={reloadData}
               />
             )}
           </>
+        )}
+
+        {/* VIEW 6: SETTINGS & ORGANISATION */}
+        {activeView === 'settings' && (
+          <SettingsView
+            currentUser={currentUser}
+            onUserChange={setCurrentUserState}
+            workspaceMode={workspaceMode}
+            onWorkspaceModeChange={setWorkspaceMode}
+          />
         )}
       </div>
 
@@ -214,7 +224,7 @@ export function BatimoveOS({ onLogout }: BatimoveOSProps) {
         onCreated={reloadData}
       />
 
-      {/* Account & Security Drawer (Team vs Individual, Fast Switch, PIN) */}
+      {/* Account & Security Drawer */}
       <AccountDrawer
         isOpen={showAccountDrawer}
         onClose={() => setShowAccountDrawer(false)}
@@ -224,7 +234,7 @@ export function BatimoveOS({ onLogout }: BatimoveOSProps) {
         onUserChange={setCurrentUserState}
       />
 
-      {/* Command Palette (Cmd+K) */}
+      {/* Command Palette */}
       <CommandPalette
         isOpen={showCommandPalette}
         onClose={() => setShowCommandPalette(false)}

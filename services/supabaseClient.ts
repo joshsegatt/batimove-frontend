@@ -624,3 +624,28 @@ export const updateFleetVehicleStatus = async (id: string, status: string): Prom
   localStorage.setItem(LOCAL_STORAGE_FLEET, JSON.stringify(updated));
 };
 
+export const deleteFleetVehicle = async (id: string): Promise<{ success: boolean }> => {
+  try {
+    await supabase.from('fleet_vehicles').delete().eq('id', id);
+  } catch (err) {
+    console.warn('Supabase fleet delete error:', err);
+  }
+  const current = await fetchFleetVehicles();
+  const updated = current.filter(v => v.id !== id);
+  localStorage.setItem(LOCAL_STORAGE_FLEET, JSON.stringify(updated));
+  return { success: true };
+};
+
+export const deleteFinancialRecord = async (id: string): Promise<{ success: boolean }> => {
+  try {
+    await supabase.from('financial_records').delete().eq('id', id);
+  } catch (err) {
+    console.warn('Supabase financial delete error:', err);
+  }
+  const current = await fetchFinancialRecords();
+  const updated = current.filter(r => r.id !== id);
+  localStorage.setItem(LOCAL_STORAGE_FINANCIAL, JSON.stringify(updated));
+  return { success: true };
+};
+
+
