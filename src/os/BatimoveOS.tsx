@@ -3,11 +3,12 @@ import { OsLayout } from "./core/layouts/OsLayout";
 import { Onboarding } from "./core/components/Onboarding";
 import { useDashboardData } from "./core/hooks/useDashboardData";
 import { FinanceCockpit } from "./features/finance/FinanceCockpit";
+import { LeadDataGrid } from "./features/crm/LeadDataGrid";
 
 export function BatimoveOS() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
-  const { leads, loading, error } = useDashboardData();
+  const { leads, loading, error, reloadData } = useDashboardData();
 
   useEffect(() => {
     // Check if user has seen onboarding
@@ -41,12 +42,20 @@ export function BatimoveOS() {
         {/* Real Connected Finance Cockpit */}
         <FinanceCockpit leads={leads} loading={loading} />
         
-        {/* Placeholder for Data Grid */}
+        {/* CRM Data Grid */}
         <div className="mt-4 pt-4 border-t border-gray-200/50">
-           <h2 className="text-lg font-semibold text-gray-900 mb-4">Pipeline Actif</h2>
-           <div className="h-96 rounded-2xl border border-gray-200/60 bg-white shadow-sm flex items-center justify-center text-gray-400 font-medium">
-             Data Grid (En construction - Style Monday.com)
+           <div className="flex items-center justify-between mb-4">
+             <h2 className="text-lg font-semibold text-gray-900">Pipeline Actif</h2>
+             <button className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium shadow-sm hover:bg-gray-800 transition-colors">
+               + Nouveau Devis
+             </button>
            </div>
+           
+           {loading ? (
+             <div className="h-96 rounded-2xl border border-gray-200/60 bg-gray-50 animate-pulse" />
+           ) : (
+             <LeadDataGrid leads={leads} onReload={reloadData} />
+           )}
         </div>
       </div>
     </OsLayout>
