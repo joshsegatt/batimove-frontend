@@ -1,7 +1,7 @@
 import React from 'react';
 import { 
   Home, Layers, Calendar, Truck, Landmark, User, 
-  LogOut, Plus, Search, ShieldCheck, CheckCircle2, Users, Settings
+  LogOut, Plus, Search, ShieldCheck, CheckCircle2, Users, Settings, Bell
 } from 'lucide-react';
 import { UserProfile } from '../../../../services/adminAuth';
 import { cn } from '../utils/cn';
@@ -15,6 +15,8 @@ interface OsLayoutProps {
   onOpenNewLead: () => void;
   onOpenCommandPalette: () => void;
   onOpenAccount: () => void;
+  onOpenNotifications: () => void;
+  unreadNotificationsCount?: number;
   workspaceMode: 'team' | 'individual';
   currentUser: UserProfile;
   onLogout?: () => void;
@@ -27,6 +29,8 @@ export function OsLayout({
   onOpenNewLead,
   onOpenCommandPalette,
   onOpenAccount,
+  onOpenNotifications,
+  unreadNotificationsCount = 0,
   workspaceMode,
   currentUser,
   onLogout 
@@ -167,6 +171,20 @@ export function OsLayout({
               <kbd className="hidden sm:inline font-mono bg-white px-1.5 py-0.5 rounded text-[10px] shadow-sm border border-gray-200 text-gray-400">
                 ⌘K
               </kbd>
+            </button>
+
+            {/* Notification Bell with Badge */}
+            <button
+              onClick={onOpenNotifications}
+              className="relative p-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors border border-gray-200/60 shadow-sm"
+              title="Notifications"
+            >
+              <Bell className="w-4 h-4" />
+              {unreadNotificationsCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-white">
+                  {unreadNotificationsCount}
+                </span>
+              )}
             </button>
 
             {/* New Lead Button */}

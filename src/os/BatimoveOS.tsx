@@ -11,6 +11,7 @@ import { FiduciaryView } from "./features/fiduciary/FiduciaryView";
 import { SettingsView } from "./features/settings/SettingsView";
 import { AccountDrawer } from "./core/components/AccountDrawer";
 import { CommandPalette } from "./core/components/CommandPalette";
+import { NotificationPopover } from "./core/components/NotificationPopover";
 import { LeadItem } from "../../services/supabaseClient";
 import { getCurrentUser, UserProfile } from "../../services/adminAuth";
 import { ShieldAlert, User, Users } from "lucide-react";
@@ -27,6 +28,7 @@ export function BatimoveOS({ onLogout }: BatimoveOSProps) {
   const [showNewLeadModal, setShowNewLeadModal] = useState(false);
   const [showAccountDrawer, setShowAccountDrawer] = useState(false);
   const [showCommandPalette, setShowCommandPalette] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   const [drillDownFilter, setDrillDownFilter] = useState<string | null>(null);
 
   // Workspace Mode (Monday.com style: Team vs Individual)
@@ -60,6 +62,7 @@ export function BatimoveOS({ onLogout }: BatimoveOSProps) {
 
   const displayedLeads = leads;
   const operationLeads = displayedLeads.filter(l => l.status === 'confirme' || l.status === 'facture' || l.status === 'termine');
+  const unreadCount = leads.filter(l => l.status === 'nouveau').length;
 
   return (
     <OsLayout 
@@ -71,6 +74,8 @@ export function BatimoveOS({ onLogout }: BatimoveOSProps) {
       onOpenNewLead={() => setShowNewLeadModal(true)}
       onOpenCommandPalette={() => setShowCommandPalette(true)}
       onOpenAccount={() => setShowAccountDrawer(true)}
+      onOpenNotifications={() => setShowNotifications(prev => !prev)}
+      unreadNotificationsCount={unreadCount}
       workspaceMode={workspaceMode}
       currentUser={currentUser}
       onLogout={onLogout}
@@ -232,6 +237,14 @@ export function BatimoveOS({ onLogout }: BatimoveOSProps) {
         onWorkspaceModeChange={setWorkspaceMode}
         currentUser={currentUser}
         onUserChange={setCurrentUserState}
+      />
+
+      {/* Notification Center Popover */}
+      <NotificationPopover
+        isOpen={showNotifications}
+        onClose={() => setShowNotifications(false)}
+        leads={leads}
+        onSelectLead={setSelectedLead}
       />
 
       {/* Command Palette */}

@@ -3,11 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, Phone, MessageSquare, Mail, Download, Trash2, 
   Save, Calendar, MapPin, DollarSign, Shield, CheckCircle2,
-  FileText, ExternalLink, Loader2
+  FileText, ExternalLink, Loader2, History, Truck, Users, AlertTriangle
 } from 'lucide-react';
 import { LeadItem, updateLeadDetails, deleteLead } from '../../../../services/supabaseClient';
 import { InvoiceDocument } from '../../../../components/InvoiceDocument';
 import { exportInvoiceToPdf } from '../../../../utils/pdfExport';
+import { ActivityLog } from './ActivityLog';
+import { QuickMessageModal } from './QuickMessageModal';
 import { cn } from '../../core/utils/cn';
 
 interface LeadDetailDrawerProps {
@@ -19,10 +21,12 @@ interface LeadDetailDrawerProps {
 export function LeadDetailDrawer({ lead, onClose, onUpdate }: LeadDetailDrawerProps) {
   if (!lead) return null;
 
-  const [activeTab, setActiveTab] = useState<'details' | 'invoice' | 'notes'>('details');
+  const [activeTab, setActiveTab] = useState<'details' | 'activity' | 'invoice'>('details');
   const [formData, setFormData] = useState<LeadItem>({ ...lead });
   const [saving, setSaving] = useState(false);
   const [exportingPdf, setExportingPdf] = useState(false);
+  const [showQuickMsg, setShowQuickMsg] = useState(false);
+  const [quickMsgChannel, setQuickMsgChannel] = useState<'whatsapp' | 'email'>('whatsapp');
   const invoiceRef = useRef<HTMLDivElement>(null);
 
   const cleanPhone = (lead.client_phone || '').replace(/[^0-9]/g, '');
@@ -132,7 +136,7 @@ export function LeadDetailDrawer({ lead, onClose, onUpdate }: LeadDetailDrawerPr
           </div>
         </div>
 
-        {/* Action Toolbar */}
+        {/* Action Toolbar with Quick Communication Templates */}
         <div className="px-6 py-3 bg-gray-50/80 border-b border-gray-200/60 flex items-center justify-between gap-2 overflow-x-auto">
           <div className="flex items-center gap-2">
             {lead.client_phone && (
@@ -144,25 +148,29 @@ export function LeadDetailDrawer({ lead, onClose, onUpdate }: LeadDetailDrawerPr
                   <Phone className="w-3.5 h-3.5 text-blue-600" />
                   Appeler
                 </a>
-                <a 
-                  href={`https://wa.me/${cleanPhone}?text=Bonjour%20${encodeURIComponent(lead.client_name)}%2C%20concernant%20votre%20dossier%20Batimove%20${lead.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-700 hover:bg-emerald-100 shadow-sm"
+                <button 
+                  onClick={() => {
+                    setQuickMsgChannel('whatsapp');
+                    setShowQuickMsg(true);
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-700 hover:bg-emerald-100 shadow-sm active:scale-95 transition-all"
                 >
                   <MessageSquare className="w-3.5 h-3.5 text-emerald-600" />
-                  WhatsApp
-                </a>
+                  WhatsApp Templates
+                </button>
               </>
             )}
             {lead.client_email && (
-              <a 
-                href={`mailto:${lead.client_email}?subject=Batimove%20-%20Dossier%20${lead.id}`}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-gray-200 text-xs font-semibold text-gray-700 hover:border-gray-300 shadow-sm"
+              <button 
+                onClick={() => {
+                  setQuickMsgChannel('email');
+                  setShowQuickMsg(true);
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-gray-200 text-xs font-semibold text-gray-700 hover:border-gray-300 shadow-sm active:scale-95 transition-all"
               >
                 <Mail className="w-3.5 h-3.5 text-purple-600" />
-                Email
-              </a>
+                Email Modèles
+              </button>
             )}
           </div>
 
@@ -175,8 +183,8 @@ export function LeadDetailDrawer({ lead, onClose, onUpdate }: LeadDetailDrawerPr
           </button>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="flex items-center px-6 border-b border-gray-200 text-sm font-semibold">
+        {/* Tab Navigation (3 Tabs: Details, Activity Feed, Swiss Invoice) */}
+        <div className="flex items-center px-6 border-b border-gray-200 text-xs font-semibold">
           <button 
             onClick={() => setActiveTab('details')}
             className={cn(
@@ -187,19 +195,30 @@ export function LeadDetailDrawer({ lead, onClose, onUpdate }: LeadDetailDrawerPr
             Informations & Logistique
           </button>
           <button 
+            onClick={() => setActiveTab('activity')}
+            className={cn(
+              "py-3 px-3 border-b-2 transition-colors flex items-center gap-1.5",
+              activeTab === 'activity' ? "border-gray-900 text-gray-900" : "border-transparent text-gray-400 hover:text-gray-600"
+            )}
+          >
+            <History className="w-3.5 h-3.5" />
+            Historique & Activité
+          </button>
+          <button 
             onClick={() => setActiveTab('invoice')}
             className={cn(
               "py-3 px-3 border-b-2 transition-colors flex items-center gap-1.5",
               activeTab === 'invoice' ? "border-gray-900 text-gray-900" : "border-transparent text-gray-400 hover:text-gray-600"
             )}
           >
-            <FileText className="w-4 h-4" />
+            <FileText className="w-3.5 h-3.5" />
             Facture Suisse QR
           </button>
         </div>
 
         {/* Content Area */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          {/* TAB 1: DETAILS & LOGISTICS ALLOCATION */}
           {activeTab === 'details' && (
             <div className="space-y-5">
               {/* Form Grid */}
@@ -297,8 +316,59 @@ export function LeadDetailDrawer({ lead, onClose, onUpdate }: LeadDetailDrawerPr
                 </div>
               </div>
 
+              {/* FLEET & TEAM ALLOCATION (Monday.com Resource Assignment) */}
+              <div className="p-4 rounded-2xl bg-gray-50 border border-gray-200/80 space-y-3">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-700">
+                  <Truck className="w-4 h-4 text-blue-600" />
+                  Affectation Flotte & Équipe Opérationnelle
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">
+                      Véhicule Assigné
+                    </label>
+                    <select
+                      value={formData.notes?.includes('Véhicule:') ? formData.notes.split('Véhicule:')[1]?.split('|')[0]?.trim() : 'Iveco Daily 30m³'}
+                      onChange={(e) => {
+                        const currentNotes = formData.notes || '';
+                        const clean = currentNotes.replace(/Véhicule:[^|]*\|?/, '').trim();
+                        handleChange('notes', `${clean} | Véhicule: ${e.target.value}`);
+                      }}
+                      className="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs font-semibold focus:border-gray-900 focus:outline-none bg-white"
+                    >
+                      <option value="Iveco Daily 30m³ (GE-4921)">Iveco Daily 30m³ (GE-4921)</option>
+                      <option value="Renault Master 22m³ (GE-3810)">Renault Master 22m³ (GE-3810)</option>
+                      <option value="Mercedes Sprinter 19m³ (VD-8491)">Mercedes Sprinter 19m³ (VD-8491)</option>
+                      <option value="Monte-meubles Böcker (GE-9021)">Monte-meubles Böcker (GE-9021)</option>
+                      <option value="Non assigné">Non assigné</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">
+                      Équipe Responsable
+                    </label>
+                    <select
+                      value={formData.notes?.includes('Équipe:') ? formData.notes.split('Équipe:')[1]?.split('|')[0]?.trim() : 'Équipe Alpha'}
+                      onChange={(e) => {
+                        const currentNotes = formData.notes || '';
+                        const clean = currentNotes.replace(/Équipe:[^|]*\|?/, '').trim();
+                        handleChange('notes', `${clean} | Équipe: ${e.target.value}`);
+                      }}
+                      className="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs font-semibold focus:border-gray-900 focus:outline-none bg-white"
+                    >
+                      <option value="Équipe Alpha (Yannick & 3 équipiers)">Équipe Alpha (Yannick M. & 3 équipiers)</option>
+                      <option value="Équipe Beta (Marc & 2 équipiers)">Équipe Beta (Marc V. & 2 équipiers)</option>
+                      <option value="Équipe Gamma (Spécialiste B2B)">Équipe Gamma (Spécialiste B2B)</option>
+                      <option value="À définir">À définir</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
               <div>
-                <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Type de prestation</label>
+                <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Prestation</label>
                 <input 
                   type="text"
                   value={formData.service_type || ''}
@@ -310,7 +380,7 @@ export function LeadDetailDrawer({ lead, onClose, onUpdate }: LeadDetailDrawerPr
               <div>
                 <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Détails de l'inventaire / Accès</label>
                 <textarea 
-                  rows={3}
+                  rows={2}
                   value={formData.details || ''}
                   onChange={(e) => handleChange('details', e.target.value)}
                   className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:border-gray-900 focus:outline-none"
@@ -318,7 +388,7 @@ export function LeadDetailDrawer({ lead, onClose, onUpdate }: LeadDetailDrawerPr
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Notes internes</label>
+                <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Consignes Internes & Logistiques</label>
                 <textarea 
                   rows={2}
                   value={formData.notes || ''}
@@ -329,6 +399,12 @@ export function LeadDetailDrawer({ lead, onClose, onUpdate }: LeadDetailDrawerPr
             </div>
           )}
 
+          {/* TAB 2: ACTIVITY LOG & AUDIT FEED */}
+          {activeTab === 'activity' && (
+            <ActivityLog lead={formData} />
+          )}
+
+          {/* TAB 3: SWISS QR INVOICE */}
           {activeTab === 'invoice' && (
             <div className="space-y-4">
               <div className="flex items-center justify-between bg-blue-50/50 p-4 rounded-2xl border border-blue-100">
@@ -356,6 +432,14 @@ export function LeadDetailDrawer({ lead, onClose, onUpdate }: LeadDetailDrawerPr
           )}
         </div>
       </motion.div>
+
+      {/* Quick Communication Templates Modal */}
+      <QuickMessageModal
+        isOpen={showQuickMsg}
+        onClose={() => setShowQuickMsg(false)}
+        lead={formData}
+        defaultChannel={quickMsgChannel}
+      />
     </div>
   );
 }

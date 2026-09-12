@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { TrendingUp, ArrowUpRight, Receipt, FileCheck, AlertCircle, Clock } from 'lucide-react';
+import { TrendingUp, ArrowUpRight, Receipt, FileCheck, AlertCircle, Clock, Calendar } from 'lucide-react';
 import { LeadItem } from '../../../../services/supabaseClient';
 import { cn } from '../../core/utils/cn';
 
@@ -11,9 +11,34 @@ interface FinanceCockpitProps {
   onFilterChange?: (filter: string | null) => void;
 }
 
+type AccountingPeriod = 'month' | 'q1' | 'year' | 'all';
+
 export function FinanceCockpit({ leads, loading, activeFilter, onFilterChange }: FinanceCockpitProps) {
+  const [period, setPeriod] = useState<AccountingPeriod>('all');
+
+  // Filter leads based on selected accounting period
+  const periodLeads = useMemo(() => {
+    if (period === 'all') return leads;
+    
+    // In our seed data, leads are from March 2026 (03.2026)
+    return leads.filter(l => {
+      const dateStr = l.move_date || l.created_at || '';
+      if (period === 'month') {
+        return dateStr.includes('03.2026') || dateStr.includes('2026-03');
+      }
+      if (period === 'q1') {
+        return dateStr.includes('01.2026') || dateStr.includes('02.2026') || dateStr.includes('03.2026') ||
+               dateStr.includes('2026-01') || dateStr.includes('2026-02') || dateStr.includes('2026-03');
+      }
+      if (period === 'year') {
+        return dateStr.includes('2026');
+      }
+      return true;
+    });
+  }, [leads, period]);
+
   // 1. Confirmed / Invoiced Revenue (CA Réalisé)
-  const confirmedLeads = leads.filter(l => l.status === 'confirme' || l.status === 'facture' || l.status === 'termine');
+  const confirmedLeads = periodLeads.filter(l => l.status === 'confirme' || l.status === 'facture' || l.status === 'termine');
   const totalRevenue = confirmedLeads.reduce((acc, lead) => {
     const val = lead.amount_chf || lead.estimated_amount_chf || 0;
     return acc + Number(val);
@@ -24,14 +49,14 @@ export function FinanceCockpit({ leads, loading, activeFilter, onFilterChange }:
   const revenueHT = totalRevenue - tvaAmount;
 
   // 3. Pipeline in Negotiation / Pending (Devis en Attente)
-  const pendingLeads = leads.filter(l => l.status === 'nouveau' || l.status === 'visite' || l.status === 'en_cours');
+  const pendingLeads = periodLeads.filter(l => l.status === 'nouveau' || l.status === 'visite' || l.status === 'en_cours');
   const pipelineValue = pendingLeads.reduce((acc, lead) => {
     const val = lead.amount_chf || lead.estimated_amount_chf || 0;
     return acc + Number(val);
   }, 0);
 
   // 4. Invoiced / Pending Payment
-  const invoicedLeads = leads.filter(l => l.status === 'facture');
+  const invoicedLeads = periodLeads.filter(l => l.status === 'facture');
   const invoicedValue = invoicedLeads.reduce((acc, lead) => {
     const val = lead.amount_chf || lead.estimated_amount_chf || 0;
     return acc + Number(val);
@@ -58,12 +83,59 @@ export function FinanceCockpit({ leads, loading, activeFilter, onFilterChange }:
 
   return (
     <div className="flex flex-col gap-3">
+      {/* Control Bar: Accounting Period Selector */}
+      <div className="flex items-center justify-between bg-white p-2.5 rounded-2xl border border-gray-200/80 shadow-sm">
+        <div className="flex items-center gap-2 text-xs font-bold text-gray-500 pl-1">
+          <Calendar className="w-3.5 h-3.5 text-gray-400" />
+          <span className="uppercase tracking-wider text-[10px]">Période Fiscale</span>
+        </div>
+
+        <div className="flex items-center gap-1 bg-gray-100 p-0.5 rounded-xl border border-gray-200">
+          <button
+            onClick={() => setPeriod('month')}
+            className={cn(
+              "px-2.5 py-1 rounded-lg text-xs font-semibold transition-all",
+              period === 'month' ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-900"
+            )}
+          >
+            Mois en cours
+          </button>
+          <button
+            onClick={() => setPeriod('q1')}
+            className={cn(
+              "px-2.5 py-1 rounded-lg text-xs font-semibold transition-all",
+              period === 'q1' ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-900"
+            )}
+          >
+            Trimestre Q1
+          </button>
+          <button
+            onClick={() => setPeriod('year')}
+            className={cn(
+              "px-2.5 py-1 rounded-lg text-xs font-semibold transition-all",
+              period === 'year' ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-900"
+            )}
+          >
+            Exercice 2026
+          </button>
+          <button
+            onClick={() => setPeriod('all')}
+            className={cn(
+              "px-2.5 py-1 rounded-lg text-xs font-semibold transition-all",
+              period === 'all' ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-900"
+            )}
+          >
+            Tout
+          </button>
+        </div>
+      </div>
+
       {/* Active Drill-Down Banner */}
       {activeFilter && (
         <div className="flex items-center justify-between px-4 py-2 rounded-xl bg-blue-50 border border-blue-200/60 text-blue-900 text-xs font-medium animate-fadeIn">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
-            <span>Filtre actif : <strong>{activeFilter}</strong> ({leads.length} dossiers affichés)</span>
+            <span>Filtre actif : <strong>{activeFilter}</strong> ({periodLeads.length} dossiers affichés)</span>
           </div>
           <button 
             onClick={() => onFilterChange?.(null)}
@@ -187,20 +259,20 @@ export function FinanceCockpit({ leads, loading, activeFilter, onFilterChange }:
                 <FileCheck className="w-4 h-4" />
               </div>
               <span className="text-[11px] font-semibold text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded-full">
-                {leads.length > 0 ? Math.round((confirmedLeads.length / leads.length) * 100) : 0}% Conversion
+                {periodLeads.length > 0 ? Math.round((confirmedLeads.length / periodLeads.length) * 100) : 0}% Conversion
               </span>
             </div>
 
             <div className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">
-              Total Dossiers
+              Dossiers ({period === 'all' ? 'Total' : period.toUpperCase()})
             </div>
             <div className="text-2xl font-bold tracking-tight text-white tabular-nums">
-              {leads.length}
+              {periodLeads.length}
             </div>
           </div>
 
           <div className="mt-2 text-[11px] text-gray-400 font-medium">
-            Moyenne : {leads.length > 0 ? formatCHF(totalRevenue / (confirmedLeads.length || 1)) : 'CHF 0.00'} / mission
+            Moyenne : {periodLeads.length > 0 ? formatCHF(totalRevenue / (confirmedLeads.length || 1)) : 'CHF 0.00'} / mission
           </div>
         </motion.div>
 
