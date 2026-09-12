@@ -1,8 +1,9 @@
 import React from 'react';
 import { 
   Home, Layers, Calendar, Truck, Landmark, User, 
-  LogOut, Plus, Search, ShieldCheck, CheckCircle2 
+  LogOut, Plus, Search, ShieldCheck, CheckCircle2, Users
 } from 'lucide-react';
+import { UserProfile } from '../../../../services/adminAuth';
 import { cn } from '../utils/cn';
 
 export type OsView = 'cockpit' | 'crm' | 'operations' | 'fleet' | 'fiduciary';
@@ -12,6 +13,10 @@ interface OsLayoutProps {
   activeView: OsView;
   onViewChange: (view: OsView) => void;
   onOpenNewLead: () => void;
+  onOpenCommandPalette: () => void;
+  onOpenAccount: () => void;
+  workspaceMode: 'team' | 'individual';
+  currentUser: UserProfile;
   onLogout?: () => void;
 }
 
@@ -20,6 +25,10 @@ export function OsLayout({
   activeView, 
   onViewChange, 
   onOpenNewLead,
+  onOpenCommandPalette,
+  onOpenAccount,
+  workspaceMode,
+  currentUser,
   onLogout 
 }: OsLayoutProps) {
   const VIEW_TITLES: Record<OsView, { title: string; subtitle: string }> = {
@@ -77,20 +86,33 @@ export function OsLayout({
           </nav>
         </div>
 
-        {/* Bottom: Logout */}
-        <div className="flex flex-col items-center gap-2">
+        {/* Bottom: User Avatar & Logout */}
+        <div className="flex flex-col items-center gap-3">
+          {/* User Avatar Button (Opens Account Drawer) */}
+          <button
+            onClick={onOpenAccount}
+            className={cn(
+              "w-9 h-9 rounded-xl flex items-center justify-center text-white text-xs font-bold transition-transform active:scale-95 shadow-sm border border-black/10 relative group",
+              currentUser.avatarBg
+            )}
+            title={`Compte: ${currentUser.name} (${currentUser.role})`}
+          >
+            {currentUser.initials}
+            {/* Tooltip */}
+            <span className="absolute left-14 px-2 py-1 bg-gray-900 text-white text-[11px] font-semibold rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity shadow-lg whitespace-nowrap z-50">
+              {currentUser.name}
+            </span>
+          </button>
+
           {onLogout && (
             <button
               onClick={onLogout}
-              className="w-10 h-10 rounded-xl text-gray-400 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition-colors"
+              className="w-9 h-9 rounded-xl text-gray-400 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition-colors"
               title="Déconnexion"
             >
               <LogOut className="w-4 h-4" />
             </button>
           )}
-          <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-800 text-[11px] font-bold flex items-center justify-center border border-blue-200">
-            CH
-          </div>
         </div>
       </aside>
 
@@ -98,21 +120,54 @@ export function OsLayout({
       <main className="flex-1 flex flex-col relative w-full h-full overflow-hidden">
         {/* TOP HEADER GLASSMORPHISM */}
         <header className="h-16 w-full flex items-center justify-between px-4 sm:px-8 border-b border-gray-200/70 bg-white/80 backdrop-blur-md absolute top-0 z-40">
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-base sm:text-lg font-bold tracking-tight text-gray-900">
-                {VIEW_TITLES[activeView].title}
-              </h1>
-              <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-semibold border border-emerald-200/60">
-                <CheckCircle2 className="w-3 h-3" /> Live
-              </span>
+          <div className="flex items-center gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-base sm:text-lg font-bold tracking-tight text-gray-900">
+                  {VIEW_TITLES[activeView].title}
+                </h1>
+                <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-semibold border border-emerald-200/60">
+                  <CheckCircle2 className="w-3 h-3" /> Live
+                </span>
+              </div>
+              <p className="hidden sm:block text-xs font-medium text-gray-400">
+                {VIEW_TITLES[activeView].subtitle}
+              </p>
             </div>
-            <p className="hidden sm:block text-xs font-medium text-gray-400">
-              {VIEW_TITLES[activeView].subtitle}
-            </p>
+
+            {/* Workspace Pill Button (Monday.com style) */}
+            <button
+              onClick={onOpenAccount}
+              className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gray-100/80 hover:bg-gray-200/70 text-xs font-semibold text-gray-700 border border-gray-200/60 transition-colors"
+            >
+              {workspaceMode === 'team' ? (
+                <>
+                  <Users className="w-3.5 h-3.5 text-gray-500" />
+                  <span>Équipe Batimove</span>
+                </>
+              ) : (
+                <>
+                  <User className="w-3.5 h-3.5 text-blue-600" />
+                  <span>Mon Espace ({currentUser.name.split(' ')[0]})</span>
+                </>
+              )}
+            </button>
           </div>
 
           <div className="flex items-center gap-2.5">
+            {/* Search Bar / Cmd+K Trigger */}
+            <button
+              onClick={onOpenCommandPalette}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-xs font-medium text-gray-500 border border-gray-200/60 transition-colors shadow-sm"
+            >
+              <Search className="w-3.5 h-3.5 text-gray-400" />
+              <span className="hidden sm:inline">Rechercher...</span>
+              <kbd className="hidden sm:inline font-mono bg-white px-1.5 py-0.5 rounded text-[10px] shadow-sm border border-gray-200 text-gray-400">
+                ⌘K
+              </kbd>
+            </button>
+
+            {/* New Lead Button */}
             <button
               onClick={onOpenNewLead}
               className="flex items-center gap-1.5 px-3.5 py-1.5 sm:py-2 rounded-xl bg-gray-900 text-white text-xs font-semibold hover:bg-gray-800 active:scale-95 transition-all shadow-md shadow-gray-900/10"
@@ -122,15 +177,16 @@ export function OsLayout({
               <span className="sm:hidden">Devis</span>
             </button>
 
-            {onLogout && (
-              <button
-                onClick={onLogout}
-                className="lg:hidden p-2 rounded-xl text-gray-400 hover:text-red-600 hover:bg-gray-100 transition-colors"
-                title="Déconnexion"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
-            )}
+            {/* Mobile Account Trigger */}
+            <button
+              onClick={onOpenAccount}
+              className="lg:hidden w-8 h-8 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-sm"
+              style={{ backgroundColor: currentUser.avatarBg ? undefined : '#0052A3' }}
+            >
+              <div className={cn("w-full h-full rounded-xl flex items-center justify-center", currentUser.avatarBg)}>
+                {currentUser.initials}
+              </div>
+            </button>
           </div>
         </header>
 
