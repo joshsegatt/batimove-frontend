@@ -54,9 +54,9 @@ export function OsLayout({
   ];
 
   return (
-    <div className="flex h-screen w-full bg-[#FAFAFA] text-gray-900 font-sans antialiased overflow-hidden selection:bg-blue-500/20">
+    <div className="flex h-screen w-full bg-[#F4F6F8] text-slate-900 font-sans antialiased overflow-hidden selection:bg-blue-500/20">
       {/* DESKTOP THIN RAIL */}
-      <aside className="hidden lg:flex w-16 flex-col items-center justify-between bg-white border-r border-gray-200/80 py-4 z-50 shadow-[1px_0_3px_rgba(0,0,0,0.02)]">
+      <aside className="hidden lg:flex w-16 flex-col items-center justify-between bg-white border-r border-slate-200/80 py-4 z-50 shadow-[1px_0_4px_rgba(0,0,0,0.03)]">
         {/* Top: Logo & Nav Items */}
         <div className="flex flex-col items-center gap-6 w-full">
           {/* Batimove Swiss Monogram */}
@@ -210,8 +210,8 @@ export function OsLayout({
           </div>
         </header>
 
-        {/* SCROLLABLE MAIN CONTENT */}
-        <div className="flex-1 overflow-y-auto pt-16 pb-24 lg:pb-8 px-4 sm:px-8 max-w-7xl mx-auto w-full">
+        {/* SCROLLABLE MAIN CONTENT (Full Width Luxury Canvas) */}
+        <div className="flex-1 overflow-y-auto pt-16 pb-24 lg:pb-8 px-4 sm:px-8 xl:px-12 w-full">
           {children}
         </div>
       </main>

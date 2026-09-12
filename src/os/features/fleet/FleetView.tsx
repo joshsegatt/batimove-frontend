@@ -328,7 +328,7 @@ export function FleetView({ vehicles, onReload }: FleetViewProps) {
                 <input
                   type="text"
                   required
-                  placeholder="ex: Yannick M."
+                  placeholder="ex: Chauffeur 1 / Anderson M."
                   value={formData.driver}
                   onChange={e => setFormData({ ...formData, driver: e.target.value })}
                   className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:border-gray-900 focus:outline-none"

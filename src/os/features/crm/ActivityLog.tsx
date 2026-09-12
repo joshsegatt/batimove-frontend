@@ -39,7 +39,7 @@ export function ActivityLog({ lead }: ActivityLogProps) {
       },
       {
         id: 'evt-stat',
-        authorName: 'Alexandre de Senarclens',
+        authorName: 'Anderson Martins',
         authorRole: 'Directeur Général',
         timestamp: 'Hier à 14:30',
         type: 'status_change',

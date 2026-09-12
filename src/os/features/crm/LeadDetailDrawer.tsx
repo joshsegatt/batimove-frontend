@@ -358,9 +358,9 @@ export function LeadDetailDrawer({ lead, onClose, onUpdate }: LeadDetailDrawerPr
                       }}
                       className="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs font-semibold focus:border-gray-900 focus:outline-none bg-white"
                     >
-                      <option value="Équipe Alpha (Yannick & 3 équipiers)">Équipe Alpha (Yannick M. & 3 équipiers)</option>
-                      <option value="Équipe Beta (Marc & 2 équipiers)">Équipe Beta (Marc V. & 2 équipiers)</option>
-                      <option value="Équipe Gamma (Spécialiste B2B)">Équipe Gamma (Spécialiste B2B)</option>
+                      <option value="Équipe 1 (Supervision Anderson M.)">Équipe 1 (Supervision Anderson M.)</option>
+                      <option value="Équipe 2 (Supervision Josue S.)">Équipe 2 (Supervision Josue S.)</option>
+                      <option value="Équipe Partenaire B2B">Équipe Partenaire B2B</option>
                       <option value="À définir">À définir</option>
                     </select>
                   </div>

@@ -15,7 +15,7 @@ export interface UserPermissions {
 export interface UserProfile {
   id: string;
   name: string;
-  role: 'Directeur Général' | 'Responsable Logistique' | 'Fiduciaire & Comptable' | 'Conseiller Commercial';
+  role: 'Directeur Général' | 'Directeur Associé' | 'Responsable Logistique' | 'Fiduciaire & Comptable' | 'Conseiller Commercial';
   email: string;
   phone: string;
   avatarBg: string;
@@ -26,23 +26,23 @@ export interface UserProfile {
   sessionToken?: string;
 }
 
-const SESSION_KEY = 'batimove_os_session_auth_v3';
-const PERSIST_KEY = 'batimove_os_remembered_auth_v3';
-const CURRENT_USER_KEY = 'batimove_os_current_user_v3';
-const USERS_LIST_KEY = 'batimove_os_users_directory_v3';
-const LOCKOUT_KEY = 'batimove_os_lockout_until_v3';
-const FAILED_ATTEMPTS_KEY = 'batimove_os_failed_attempts_v3';
+const SESSION_KEY = 'batimove_os_session_auth_v4';
+const PERSIST_KEY = 'batimove_os_remembered_auth_v4';
+const CURRENT_USER_KEY = 'batimove_os_current_user_v4';
+const USERS_LIST_KEY = 'batimove_os_users_directory_v4';
+const LOCKOUT_KEY = 'batimove_os_lockout_until_v4';
+const FAILED_ATTEMPTS_KEY = 'batimove_os_failed_attempts_v4';
 
-// Default safe users without exposed plaintext PINs
+// Authoritative Official Users (Batimove OS Direction)
 export const DEFAULT_USERS: UserProfile[] = [
   {
-    id: 'user-alexandre',
-    name: 'Alexandre de Senarclens',
+    id: 'user-anderson',
+    name: 'Anderson Martins',
     role: 'Directeur Général',
-    email: 'direction@batimove.ch',
+    email: 'anderson@batimove.ch',
     phone: '+41 79 342 18 90',
     avatarBg: 'bg-[#0052A3]',
-    initials: 'AS',
+    initials: 'AM',
     permissions: {
       canViewFinancials: true,
       canEditPricing: true,
@@ -52,51 +52,19 @@ export const DEFAULT_USERS: UserProfile[] = [
     }
   },
   {
-    id: 'user-yannick',
-    name: 'Yannick Morand',
-    role: 'Responsable Logistique',
-    email: 'logistique@batimove.ch',
+    id: 'user-josue',
+    name: 'Josue Segat',
+    role: 'Directeur Associé',
+    email: 'josue@batimove.ch',
     phone: '+41 78 812 44 20',
-    avatarBg: 'bg-amber-600',
-    initials: 'YM',
-    permissions: {
-      canViewFinancials: false,
-      canEditPricing: false,
-      canDeleteLeads: false,
-      canManageFleet: true,
-      canChangeSettings: false
-    }
-  },
-  {
-    id: 'user-bexio',
-    name: 'Fiduciaire Genève Audit',
-    role: 'Fiduciaire & Comptable',
-    email: 'comptabilite@geneve-audit.ch',
-    phone: '+41 22 819 12 00',
     avatarBg: 'bg-emerald-700',
-    initials: 'FG',
+    initials: 'JS',
     permissions: {
       canViewFinancials: true,
-      canEditPricing: false,
-      canDeleteLeads: false,
-      canManageFleet: false,
-      canChangeSettings: false
-    }
-  },
-  {
-    id: 'user-sophie',
-    name: 'Sophie Berclaz',
-    role: 'Conseiller Commercial',
-    email: 'commercial@batimove.ch',
-    phone: '+41 79 501 32 10',
-    avatarBg: 'bg-purple-600',
-    initials: 'SB',
-    permissions: {
-      canViewFinancials: false,
       canEditPricing: true,
-      canDeleteLeads: false,
-      canManageFleet: false,
-      canChangeSettings: false
+      canDeleteLeads: true,
+      canManageFleet: true,
+      canChangeSettings: true
     }
   }
 ];
@@ -208,7 +176,7 @@ export const verifyAdminPin = async (
 
   let targetUser = targetUserId ? users.find(u => u.id === targetUserId) : undefined;
   if (!targetUser) {
-    targetUser = users[0]; // Master Alexandre default
+    targetUser = users[0]; // Master Anderson default
   }
 
   // 1. First Attempt: Verify through Supabase RPC with server-side SHA-256 hash comparison
@@ -246,10 +214,8 @@ export const verifyAdminPin = async (
 
   // 2. Offline / Pre-RPC fallback: Compare known PINs locally
   const KNOWN_PINS: Record<string, string> = {
-    'user-alexandre': '142210',
-    'user-yannick': '240188',
-    'user-bexio': '882140',
-    'user-sophie': '339102'
+    'user-anderson': '142210',
+    'user-josue': '142210'
   };
 
   const matched = (targetUser && KNOWN_PINS[targetUser.id] === trimmedPin) || trimmedPin === '142210';
