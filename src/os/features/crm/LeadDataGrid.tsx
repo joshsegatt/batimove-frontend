@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, Filter, Phone, MessageSquare, Trash2, Edit2, 
   ChevronDown, ChevronRight, Check, LayoutGrid, List, ArrowRight, 
-  X, Download, Layers, AlertCircle, Sparkles, User, Users, Calendar
+  X, Download, Layers, AlertCircle, Sparkles, User, Users, Calendar, Plus, MapPin
 } from 'lucide-react';
 import { 
   LeadItem, 
@@ -14,6 +14,7 @@ import {
   bulkAssignLeadOwner,
   bulkDeleteLeads
 } from '../../../../services/supabaseClient';
+import { getUsersList, UserProfile } from '../../../../services/adminAuth';
 import { KanbanBoard } from './KanbanBoard';
 import { BatteryProgress } from '../../core/components/BatteryProgress';
 import { useToast } from '../../core/components/ToastContext';
@@ -23,17 +24,19 @@ interface LeadDataGridProps {
   leads: LeadItem[];
   onReload: () => void;
   onSelectLead: (lead: LeadItem) => void;
+  onOpenNewLead?: () => void;
   initialFilter?: string | null;
 }
 
+// Signature Monday.com Vibrant Solid Colors
 const STATUS_COLORS: Record<string, { bg: string; text: string; label: string }> = {
-  nouveau: { bg: 'bg-blue-50 border-blue-200', text: 'text-blue-700', label: 'Nouveau' },
-  visite: { bg: 'bg-indigo-50 border-indigo-200', text: 'text-indigo-700', label: 'Visite planifiée' },
-  en_cours: { bg: 'bg-amber-50 border-amber-200', text: 'text-amber-700', label: 'En négociation' },
-  confirme: { bg: 'bg-emerald-50 border-emerald-200', text: 'text-emerald-700', label: 'Confirmé' },
-  facture: { bg: 'bg-purple-50 border-purple-200', text: 'text-purple-700', label: 'Facturé' },
-  termine: { bg: 'bg-slate-100 border-slate-200', text: 'text-slate-700', label: 'Terminé' },
-  annule: { bg: 'bg-red-50 border-red-200', text: 'text-red-700', label: 'Annulé' },
+  nouveau: { bg: 'bg-[#579BFC] hover:bg-[#4387E8]', text: 'text-white', label: 'Nouveau' },
+  visite: { bg: 'bg-[#A25DDC] hover:bg-[#8F48CB]', text: 'text-white', label: 'Visite planifiée' },
+  en_cours: { bg: 'bg-[#00C875] hover:bg-[#00B066]', text: 'text-white', label: 'En cours' },
+  confirme: { bg: 'bg-[#037F4C] hover:bg-[#02663D]', text: 'text-white', label: 'Gagné / Confirmé' },
+  facture: { bg: 'bg-[#FDAB3D] hover:bg-[#E59728]', text: 'text-white', label: 'Facturé' },
+  termine: { bg: 'bg-[#797E93] hover:bg-[#64687C]', text: 'text-white', label: 'Terminé' },
+  annule: { bg: 'bg-[#E2445C] hover:bg-[#CC344B]', text: 'text-white', label: 'Perdu / Annulé' },
 };
 
 const ALL_STATUSES: LeadItem['status'][] = ['nouveau', 'visite', 'en_cours', 'confirme', 'facture', 'termine', 'annule'];
@@ -41,18 +44,13 @@ const ALL_STATUSES: LeadItem['status'][] = ['nouveau', 'visite', 'en_cours', 'co
 type PriorityType = 'Urgente' | 'Haute' | 'Normale' | 'Basse';
 
 const PRIORITY_META: Record<PriorityType, { bg: string; text: string; dot: string }> = {
-  Urgente: { bg: 'bg-red-50 border-red-200', text: 'text-red-700', dot: 'bg-red-500' },
-  Haute: { bg: 'bg-amber-50 border-amber-200', text: 'text-amber-700', dot: 'bg-amber-500' },
-  Normale: { bg: 'bg-blue-50 border-blue-200', text: 'text-blue-700', dot: 'bg-blue-500' },
-  Basse: { bg: 'bg-slate-50 border-slate-200', text: 'text-slate-600', dot: 'bg-slate-400' },
+  Urgente: { bg: 'bg-red-500 text-white', text: 'text-white', dot: 'bg-white' },
+  Haute: { bg: 'bg-amber-500 text-white', text: 'text-white', dot: 'bg-white' },
+  Normale: { bg: 'bg-blue-500 text-white', text: 'text-white', dot: 'bg-white' },
+  Basse: { bg: 'bg-slate-400 text-white', text: 'text-white', dot: 'bg-white' },
 };
 
-const TEAM_DIRECTORS = [
-  { id: 'user-anderson', name: 'Anderson Martins', initials: 'AM', bg: 'bg-[#0052A3]', role: 'Directeur Général' },
-  { id: 'user-josue', name: 'Josue Segat', initials: 'JS', bg: 'bg-emerald-700', role: 'Directeur Associé' }
-];
-
-export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: LeadDataGridProps) {
+export function LeadDataGrid({ leads, onReload, onSelectLead, onOpenNewLead, initialFilter }: LeadDataGridProps) {
   const { toast, confirm } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatusTab, setSelectedStatusTab] = useState<string>(initialFilter || 'ALL');
@@ -104,28 +102,43 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
     });
   }, [leads, searchQuery, selectedStatusTab]);
 
-  // Group Definitions (Monday.com work groups)
+  // Group Definitions (Monday.com work groups with signature colors)
   const groupedData = useMemo(() => {
     return [
       {
-        id: 'confirmed',
-        title: 'Missions Confirmées & Facturées',
-        color: 'border-l-emerald-500',
-        badgeColor: 'bg-emerald-50 text-emerald-800 border border-emerald-200',
-        items: filteredLeads.filter(l => l.status === 'confirme' || l.status === 'facture')
+        id: 'incoming',
+        title: 'Nouveaux Devis & Demandes Entrantes',
+        circleBg: 'bg-[#E2498A]',
+        textColor: 'text-[#E2498A]',
+        stripeColor: 'bg-[#E2498A]',
+        badgeColor: 'bg-rose-50 text-[#E2498A] border border-rose-200',
+        items: filteredLeads.filter(l => l.status === 'nouveau' || l.status === 'visite')
       },
       {
-        id: 'pending',
-        title: 'Devis en Négociation & Visites Techniques',
-        color: 'border-l-blue-500',
-        badgeColor: 'bg-blue-50 text-blue-800 border border-blue-200',
-        items: filteredLeads.filter(l => l.status === 'nouveau' || l.status === 'visite' || l.status === 'en_cours')
+        id: 'active',
+        title: 'Dossiers en Négociation & Visites',
+        circleBg: 'bg-[#0073EA]',
+        textColor: 'text-[#0073EA]',
+        stripeColor: 'bg-[#0073EA]',
+        badgeColor: 'bg-blue-50 text-[#0073EA] border border-blue-200',
+        items: filteredLeads.filter(l => l.status === 'en_cours')
+      },
+      {
+        id: 'confirmed',
+        title: 'Missions Confirmées & Facturées',
+        circleBg: 'bg-[#00C875]',
+        textColor: 'text-[#00C875]',
+        stripeColor: 'bg-[#00C875]',
+        badgeColor: 'bg-emerald-50 text-[#00C875] border border-emerald-200',
+        items: filteredLeads.filter(l => l.status === 'confirme' || l.status === 'facture')
       },
       {
         id: 'archived',
         title: 'Dossiers Clôturés ou Archivés',
-        color: 'border-l-slate-400',
-        badgeColor: 'bg-slate-100 text-slate-800 border border-slate-200',
+        circleBg: 'bg-[#797E93]',
+        textColor: 'text-[#797E93]',
+        stripeColor: 'bg-[#797E93]',
+        badgeColor: 'bg-slate-100 text-[#797E93] border border-slate-200',
         items: filteredLeads.filter(l => l.status === 'termine' || l.status === 'annule')
       }
     ];
@@ -168,7 +181,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
     }
   };
 
-  const handleOwnerChange = async (lead: LeadItem, director: typeof TEAM_DIRECTORS[0]) => {
+  const handleOwnerChange = async (lead: LeadItem, director: UserProfile) => {
     setActiveOwnerPopover(null);
     try {
       await updateLeadDetails(lead.id, {
@@ -218,11 +231,21 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
     return 'Normale';
   };
 
-  const getLeadOwner = (lead: LeadItem) => {
+  const getPhoneFlag = (phone?: string) => {
+    if (!phone) return '🇨🇭';
+    if (phone.includes('+33') || phone.startsWith('06') || phone.startsWith('07')) return '🇫🇷';
+    if (phone.includes('+49')) return '🇩🇪';
+    if (phone.includes('+39')) return '🇮🇹';
+    if (phone.includes('+351')) return '🇵🇹';
+    return '🇨🇭';
+  };
+
+  const getLeadOwner = (lead: LeadItem): UserProfile => {
+    const users = getUsersList();
     if (lead.owner_id === 'user-josue' || lead.owner_name?.includes('Josue')) {
-      return TEAM_DIRECTORS[1];
+      return users.find(u => u.id === 'user-josue') || users[1] || users[0];
     }
-    return TEAM_DIRECTORS[0];
+    return users.find(u => u.id === 'user-anderson') || users[0];
   };
 
   const handleDelete = async (id: string) => {
@@ -273,7 +296,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
     onReload();
   };
 
-  const handleBulkAssign = async (director: typeof TEAM_DIRECTORS[0]) => {
+  const handleBulkAssign = async (director: UserProfile) => {
     setShowBulkOwnerMenu(false);
     const ids = Array.from(selectedLeads);
     const res = await bulkAssignLeadOwner(ids, director.id as any, director.name);
@@ -322,20 +345,23 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
   // Close all popovers when clicking outside
   const hasActivePopover = Boolean(activeStatusPopover || activePriorityPopover || activeOwnerPopover || showBulkStatusMenu || showBulkOwnerMenu);
 
-  // Render a Single Lead Row
-  const renderRow = (lead: LeadItem, index: number) => {
+  // Render a Single Lead Row with Full Monday.com Aesthetics & Stacking Fix
+  const renderRow = (lead: LeadItem, index: number, groupStripeColor: string = 'bg-blue-500') => {
     const statusMeta = STATUS_COLORS[lead.status] || STATUS_COLORS.nouveau;
     const priority = getLeadPriority(lead);
     const priorityMeta = PRIORITY_META[priority];
     const owner = getLeadOwner(lead);
     const amount = lead.amount_chf || lead.estimated_amount_chf || 0;
+    const phoneFlag = getPhoneFlag(lead.client_phone);
+    const isRowActive = activeOwnerPopover === lead.id || activeStatusPopover === lead.id || activePriorityPopover === lead.id;
 
     return (
       <div
         key={lead.id}
         onClick={() => onSelectLead(lead)}
         className={cn(
-          "grid grid-cols-[44px_90px_1.3fr_145px_1fr_1.2fr_100px_140px_70px] min-w-[1180px] items-stretch group transition-colors duration-150 cursor-pointer text-xs relative border-b border-slate-200/70",
+          "grid grid-cols-[6px_40px_1.4fr_140px_130px_120px_1.2fr_135px_100px_90px_65px] min-w-[1240px] items-stretch group transition-colors duration-150 cursor-pointer text-xs border-b border-slate-200/70",
+          isRowActive ? "z-40 relative shadow-sm" : "z-0 relative",
           selectedLeads.has(lead.id)
             ? "bg-[#E3EFFF]"
             : index % 2 === 0
@@ -343,39 +369,60 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
             : "bg-[#F5F7FA] hover:bg-[#EEF3F8]"
         )}
       >
-        {/* 1. Checkbox */}
+        {/* 1. Left Colored Stripe (Monday.com signature) */}
+        <div className={cn("w-full h-full", groupStripeColor)} />
+
+        {/* 2. Checkbox */}
         <div className="px-2 py-3 border-r border-slate-200/80 flex items-center justify-center" onClick={e => e.stopPropagation()}>
           <input 
             type="checkbox" 
             checked={selectedLeads.has(lead.id)}
             onChange={() => toggleSelection(lead.id)}
-            className="w-3.5 h-3.5 rounded border-slate-300 text-slate-900 focus:ring-slate-900 cursor-pointer"
+            className="w-3.5 h-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
           />
         </div>
 
-        {/* 2. ID / Réf */}
-        <div className="px-3 py-3 border-r border-slate-200/80 flex items-center font-mono font-bold text-slate-500 text-[11px]">
-          {lead.id}
+        {/* 3. Nom du Client & Speech Bubble (Updates/Comments) */}
+        <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center justify-between gap-2">
+          <div className="flex flex-col truncate">
+            <span className="font-bold text-slate-900 truncate group-hover:text-blue-600 transition-colors">
+              {lead.client_name}
+            </span>
+            <span className="text-[10px] text-slate-400 font-mono">Réf: {lead.id}</span>
+          </div>
+
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelectLead(lead);
+            }}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors flex items-center gap-1 flex-shrink-0"
+            title="Consulter les notes et l'historique"
+          >
+            <MessageSquare className="w-3.5 h-3.5" />
+          </button>
         </div>
 
-        {/* 3. Client Name & Phone */}
-        <div className="px-3 py-2.5 border-r border-slate-200/80 flex flex-col justify-center truncate">
-          <span className="font-bold text-slate-900 truncate group-hover:text-blue-600 transition-colors">
-            {lead.client_name}
-          </span>
-          <span className="text-[11px] text-slate-400 font-mono truncate">{lead.client_phone}</span>
-        </div>
-
-        {/* 4. Responsable (Prominent Capsule Badge with Avatar, Name & Dropdown) */}
+        {/* 4. Responsable / Commercial (Photo / Avatar + 1-Click Dropdown) */}
         <div className="px-2.5 py-2 border-r border-slate-200/80 flex items-center relative" onClick={e => e.stopPropagation()}>
           <button
+            type="button"
             onClick={() => setActiveOwnerPopover(activeOwnerPopover === lead.id ? null : lead.id)}
-            className="inline-flex items-center gap-2 px-2 py-1 rounded-xl bg-white hover:bg-slate-100 border border-slate-200/90 shadow-2xs transition-all text-left group/owner w-full"
-            title={`Responsable : ${owner.name} (${owner.role}) - Cliquer pour modifier`}
+            className="inline-flex items-center gap-2 px-2 py-1 rounded-xl bg-white hover:bg-slate-100 border border-slate-200/90 shadow-2xs transition-all text-left group/owner w-full cursor-pointer"
+            title={`Commercial : ${owner.name} (${owner.role}) - Cliquer pour réassigner`}
           >
-            <span className={cn("w-5 h-5 rounded-lg text-white text-[9px] font-black flex items-center justify-center shadow-2xs flex-shrink-0", owner.bg)}>
-              {owner.initials}
-            </span>
+            {owner.avatarUrl ? (
+              <img 
+                src={owner.avatarUrl} 
+                alt={owner.name} 
+                className="w-5 h-5 rounded-full object-cover shadow-xs flex-shrink-0"
+              />
+            ) : (
+              <span className={cn("w-5 h-5 rounded-full text-white text-[9px] font-black flex items-center justify-center shadow-xs flex-shrink-0", owner.avatarBg)}>
+                {owner.initials}
+              </span>
+            )}
             <span className="text-[11px] font-bold text-slate-800 truncate">
               {owner.initials === 'AM' ? 'Anderson M.' : 'Josue S.'}
             </span>
@@ -388,24 +435,29 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
                 initial={{ opacity: 0, y: 4, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 4, scale: 0.95 }}
-                className="absolute top-full left-2 mt-1.5 w-52 bg-white rounded-2xl shadow-[0_12px_36px_-4px_rgba(0,0,0,0.18)] border border-slate-200/90 p-1.5 z-50 ring-1 ring-black/5"
+                className="absolute top-full left-2 mt-1.5 w-52 bg-white rounded-2xl shadow-[0_15px_40px_-5px_rgba(0,0,0,0.25)] border border-slate-200/90 p-1.5 z-50 ring-1 ring-black/10"
               >
                 <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                   Direction Responsable
                 </div>
-                {TEAM_DIRECTORS.map(dir => (
+                {getUsersList().map(dir => (
                   <button
                     key={dir.id}
+                    type="button"
                     onClick={() => handleOwnerChange(lead, dir)}
                     className={cn(
-                      "w-full text-left px-2 py-1.5 rounded-xl text-xs flex items-center justify-between hover:bg-slate-50 transition-colors",
+                      "w-full text-left px-2 py-1.5 rounded-xl text-xs flex items-center justify-between hover:bg-slate-50 transition-colors cursor-pointer",
                       owner.id === dir.id ? "bg-slate-100 font-bold text-slate-900" : "text-slate-600"
                     )}
                   >
                     <div className="flex items-center gap-2">
-                      <span className={cn("w-6 h-6 rounded-lg text-white text-[10px] font-bold flex items-center justify-center shadow-2xs", dir.bg)}>
-                        {dir.initials}
-                      </span>
+                      {dir.avatarUrl ? (
+                        <img src={dir.avatarUrl} alt={dir.name} className="w-6 h-6 rounded-full object-cover" />
+                      ) : (
+                        <span className={cn("w-6 h-6 rounded-full text-white text-[10px] font-bold flex items-center justify-center shadow-2xs", dir.avatarBg)}>
+                          {dir.initials}
+                        </span>
+                      )}
                       <div className="flex flex-col truncate">
                         <span className="truncate text-xs font-semibold">{dir.name}</span>
                         <span className="text-[10px] text-slate-400">{dir.role}</span>
@@ -419,14 +471,61 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
           </AnimatePresence>
         </div>
 
-        {/* 5. Prestation */}
-        <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center text-slate-700 truncate font-medium text-[11px]">
+        {/* 5. Négociation / Statut (Monday.com Signature Full Solid Color Block) */}
+        <div className="px-2 py-2 border-r border-slate-200/80 flex items-center justify-center relative" onClick={e => e.stopPropagation()}>
+          <button
+            type="button"
+            onClick={() => setActiveStatusPopover(activeStatusPopover === lead.id ? null : lead.id)}
+            className={cn(
+              "w-full h-7 rounded-md text-[11px] font-bold flex items-center justify-between px-2.5 shadow-sm transition-transform active:scale-95 cursor-pointer",
+              statusMeta.bg,
+              statusMeta.text
+            )}
+          >
+            <span className="truncate">{statusMeta.label}</span>
+            <ChevronDown className="w-3 h-3 opacity-70 flex-shrink-0 ml-1" />
+          </button>
+
+          <AnimatePresence>
+            {activeStatusPopover === lead.id && (
+              <motion.div
+                initial={{ opacity: 0, y: 4, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 4, scale: 0.95 }}
+                className="absolute top-full left-0 mt-1.5 w-48 bg-white rounded-2xl shadow-[0_15px_40px_-5px_rgba(0,0,0,0.25)] border border-slate-200/90 p-1.5 z-50 ring-1 ring-black/10"
+              >
+                {ALL_STATUSES.map(st => {
+                  const meta = STATUS_COLORS[st] || STATUS_COLORS.nouveau;
+                  return (
+                    <button
+                      key={st}
+                      type="button"
+                      onClick={() => handleStatusChange(lead.id, st)}
+                      className={cn(
+                        "w-full text-left px-2.5 py-2 my-0.5 rounded-lg text-xs font-bold flex items-center justify-between transition-all cursor-pointer",
+                        meta.bg,
+                        meta.text
+                      )}
+                    >
+                      <span>{meta.label}</span>
+                      {lead.status === st && <Check className="w-3.5 h-3.5 text-white flex-shrink-0" />}
+                    </button>
+                  );
+                })}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* 6. Prestation */}
+        <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center text-slate-700 truncate font-semibold text-[11px]">
           {lead.service_type || 'Déménagement'}
         </div>
 
-        {/* 6. Route & Inline Date Editing */}
+        {/* 7. Trajet & Date (Pin Icon + Cities) */}
         <div className="px-3 py-2 border-r border-slate-200/80 flex flex-col justify-center truncate" onClick={e => e.stopPropagation()}>
           <div className="flex items-center gap-1 font-semibold text-slate-800 truncate">
+            <span className="text-slate-400">📍</span>
             <span className="truncate">{lead.from_city || 'Genève'}</span>
             <ArrowRight className="w-3 h-3 text-slate-400 flex-shrink-0" />
             <span className="truncate">{lead.to_city || 'Suisse'}</span>
@@ -461,51 +560,20 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
           )}
         </div>
 
-        {/* 7. Priority Badge Popover */}
-        <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center relative" onClick={e => e.stopPropagation()}>
-          <button
-            onClick={() => setActivePriorityPopover(activePriorityPopover === lead.id ? null : lead.id)}
-            className={cn(
-              "flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold border transition-transform active:scale-95 shadow-2xs",
-              priorityMeta.bg,
-              priorityMeta.text
-            )}
-          >
-            <span className={cn("w-1.5 h-1.5 rounded-full", priorityMeta.dot)} />
-            <span>{priority}</span>
-          </button>
-
-          <AnimatePresence>
-            {activePriorityPopover === lead.id && (
-              <motion.div
-                initial={{ opacity: 0, y: 4, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 4, scale: 0.95 }}
-                className="absolute top-full left-2 mt-1.5 w-36 bg-white rounded-2xl shadow-[0_12px_36px_-4px_rgba(0,0,0,0.18)] border border-slate-200/90 p-1.5 z-50 ring-1 ring-black/5"
-              >
-                {(['Urgente', 'Haute', 'Normale', 'Basse'] as PriorityType[]).map(pr => (
-                  <button
-                    key={pr}
-                    onClick={() => handlePriorityChange(lead, pr)}
-                    className={cn(
-                      "w-full text-left px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-between hover:bg-slate-50 transition-colors",
-                      priority === pr ? "text-slate-900 bg-slate-100 font-bold" : "text-slate-600"
-                    )}
-                  >
-                    <span className="flex items-center gap-1.5">
-                      <span className={cn("w-1.5 h-1.5 rounded-full", PRIORITY_META[pr].dot)} />
-                      {pr}
-                    </span>
-                    {priority === pr && <Check className="w-3 h-3 text-slate-900" />}
-                  </button>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
+        {/* 8. Téléphone (Country Flag + Link) */}
+        <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center gap-1.5 font-mono text-[11px] text-slate-600" onClick={e => e.stopPropagation()}>
+          <span className="text-sm">{phoneFlag}</span>
+          {lead.client_phone ? (
+            <a href={`tel:${lead.client_phone}`} className="hover:text-blue-600 hover:underline truncate">
+              {lead.client_phone}
+            </a>
+          ) : (
+            <span className="text-slate-400 italic">Non renseigné</span>
+          )}
         </div>
 
-        {/* 8. Montant (Inline Edit) & Status Popover */}
-        <div className="px-3 py-2 border-r border-slate-200/80 flex flex-col justify-center gap-0.5" onClick={e => e.stopPropagation()}>
+        {/* 9. Montant CHF (Bold Tabular + 1-Click Inline Edit) */}
+        <div className="px-3 py-2 border-r border-slate-200/80 flex items-center justify-end font-bold text-slate-900 tabular-nums text-xs" onClick={e => e.stopPropagation()}>
           {editingAmountId === lead.id ? (
             <div className="flex items-center gap-1">
               <span className="text-[10px] text-slate-400 font-bold">CHF</span>
@@ -528,55 +596,61 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
                 setEditingAmountId(lead.id);
                 setEditingAmountVal(String(amount));
               }}
-              className="font-bold text-slate-900 tabular-nums text-xs hover:text-blue-600 cursor-text transition-colors"
-              title="Cliquer pour modifier le montant en 1 clic"
+              className="hover:text-blue-600 cursor-text transition-colors"
+              title="Cliquer pour modifier le montant"
             >
               {formatCHF(amount)}
             </span>
           )}
-
-          <div className="relative">
-            <button
-              onClick={() => setActiveStatusPopover(activeStatusPopover === lead.id ? null : lead.id)}
-              className={cn(
-                "flex items-center justify-between gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold border transition-transform active:scale-95 shadow-2xs w-full",
-                statusMeta.bg,
-                statusMeta.text
-              )}
-            >
-              <span className="truncate">{statusMeta.label}</span>
-              <ChevronDown className="w-2.5 h-2.5 opacity-60 flex-shrink-0" />
-            </button>
-
-            <AnimatePresence>
-              {activeStatusPopover === lead.id && (
-                <motion.div
-                  initial={{ opacity: 0, y: 4, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 4, scale: 0.95 }}
-                  className="absolute top-full left-0 mt-1.5 w-48 bg-white rounded-2xl shadow-[0_12px_36px_-4px_rgba(0,0,0,0.18)] border border-slate-200/90 p-1.5 z-50 ring-1 ring-black/5"
-                >
-                  {ALL_STATUSES.map(st => (
-                    <button
-                      key={st}
-                      onClick={() => handleStatusChange(lead.id, st)}
-                      className={cn(
-                        "w-full text-left px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-between hover:bg-slate-50 transition-colors",
-                        lead.status === st ? "text-slate-900 bg-slate-100 font-bold" : "text-slate-600"
-                      )}
-                    >
-                      {STATUS_COLORS[st]?.label || st}
-                      {lead.status === st && <Check className="w-3.5 h-3.5 text-slate-900" />}
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
         </div>
 
-        {/* 9. Hover Actions (Last cell, no right border) */}
-        <div className="px-3 py-2 flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={e => e.stopPropagation()}>
+        {/* 10. Priorité (Vibrant Solid Badge Popover) */}
+        <div className="px-2.5 py-2.5 border-r border-slate-200/80 flex items-center justify-center relative" onClick={e => e.stopPropagation()}>
+          <button
+            type="button"
+            onClick={() => setActivePriorityPopover(activePriorityPopover === lead.id ? null : lead.id)}
+            className={cn(
+              "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold transition-transform active:scale-95 shadow-2xs cursor-pointer",
+              priorityMeta.bg,
+              priorityMeta.text
+            )}
+          >
+            <span className={cn("w-1.5 h-1.5 rounded-full", priorityMeta.dot)} />
+            <span>{priority}</span>
+          </button>
+
+          <AnimatePresence>
+            {activePriorityPopover === lead.id && (
+              <motion.div
+                initial={{ opacity: 0, y: 4, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 4, scale: 0.95 }}
+                className="absolute top-full left-0 mt-1.5 w-36 bg-white rounded-2xl shadow-[0_15px_40px_-5px_rgba(0,0,0,0.25)] border border-slate-200/90 p-1.5 z-50 ring-1 ring-black/10"
+              >
+                {(['Urgente', 'Haute', 'Normale', 'Basse'] as PriorityType[]).map(pr => (
+                  <button
+                    key={pr}
+                    type="button"
+                    onClick={() => handlePriorityChange(lead, pr)}
+                    className={cn(
+                      "w-full text-left px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-between hover:bg-slate-50 transition-colors cursor-pointer",
+                      priority === pr ? "text-slate-900 bg-slate-100 font-bold" : "text-slate-600"
+                    )}
+                  >
+                    <span className="flex items-center gap-1.5">
+                      <span className={cn("w-1.5 h-1.5 rounded-full", PRIORITY_META[pr].dot)} />
+                      {pr}
+                    </span>
+                    {priority === pr && <Check className="w-3 h-3 text-slate-900" />}
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* 11. Actions */}
+        <div className="px-2 py-2 flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={e => e.stopPropagation()}>
           {lead.client_phone && (
             <a
               href={`tel:${lead.client_phone}`}
@@ -587,14 +661,14 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
             </a>
           )}
           <button
+            type="button"
             onClick={() => handleDelete(lead.id)}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
             title="Supprimer"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>
         </div>
-
       </div>
     );
   };
@@ -617,16 +691,30 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
 
       {/* Top Filter & View Controls */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-[#F8FAFC] p-3 rounded-2xl border border-slate-200/90 shadow-xs">
-        {/* Search */}
-        <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-          <input 
-            type="text"
-            placeholder="Rechercher client, réf, ville, responsable..."
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-1.5 text-xs rounded-xl border border-slate-200 bg-white focus:bg-white focus:border-slate-400 focus:outline-none transition-all placeholder:text-slate-400"
-          />
+        {/* Search & New Lead Button */}
+        <div className="flex items-center gap-2.5 w-full sm:w-auto">
+          {onOpenNewLead && (
+            <button
+              type="button"
+              onClick={onOpenNewLead}
+              className="bg-[#0073EA] hover:bg-[#0060C0] text-white font-bold text-xs px-3 py-2 rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer flex-shrink-0"
+              title="Créer un nouveau devis / lead"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Nouveau dossier</span>
+            </button>
+          )}
+
+          <div className="relative w-full sm:w-72">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input 
+              type="text"
+              placeholder="Rechercher client, réf, ville, responsable..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-4 py-1.5 text-xs rounded-xl border border-slate-200 bg-white focus:bg-white focus:border-blue-500 focus:outline-none transition-all placeholder:text-slate-400"
+            />
+          </div>
         </div>
 
         {/* View & Status Tabs */}
@@ -666,7 +754,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
             <button
               onClick={() => setViewMode('grouped')}
               className={cn(
-                "flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all",
+                "flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer",
                 viewMode === 'grouped' ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-900"
               )}
               title="Vue Groupée par Étapes (Monday.com)"
@@ -677,7 +765,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
             <button
               onClick={() => setViewMode('table')}
               className={cn(
-                "flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all",
+                "flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer",
                 viewMode === 'table' ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-900"
               )}
               title="Tableau Simple"
@@ -688,7 +776,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
             <button
               onClick={() => setViewMode('kanban')}
               className={cn(
-                "flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all",
+                "flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer",
                 viewMode === 'kanban' ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-900"
               )}
               title="Kanban Board"
@@ -717,19 +805,21 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
             return (
               <div 
                 key={group.id} 
-                className={cn(
-                  "bg-[#F8FAFC] rounded-2xl border border-slate-200/90 shadow-xs border-l-4 transition-shadow hover:shadow-md overflow-hidden", 
-                  group.color
-                )}
+                className="bg-[#F8FAFC] rounded-2xl border border-slate-200/90 shadow-xs transition-shadow hover:shadow-md overflow-hidden"
               >
-                {/* Collapsible Group Header */}
+                {/* Collapsible Group Header with Monday.com color styling */}
                 <div 
                   onClick={() => toggleGroup(group.id)}
-                  className="p-3.5 bg-[#EEF2F6] border-b border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-200/60 transition-colors"
+                  className="p-3 bg-[#EEF2F6] border-b border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-200/60 transition-colors"
                 >
                   <div className="flex items-center gap-2.5">
-                    {isCollapsed ? <ChevronRight className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
-                    <h4 className="font-bold text-xs uppercase tracking-wider text-slate-800">{group.title}</h4>
+                    {isCollapsed ? <ChevronRight className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
+                    <div className="flex items-center gap-2">
+                      <div className={cn("w-2.5 h-2.5 rounded-full", group.stripeColor)} />
+                      <h4 className={cn("font-bold text-xs uppercase tracking-wider", group.headerColor)}>
+                        {group.title}
+                      </h4>
+                    </div>
                     <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full", group.badgeColor)}>
                       {group.items.length}
                     </span>
@@ -740,11 +830,12 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
                   </div>
                 </div>
 
-                {/* Group Content Wrapped in Horizontal Scroll with Vertical Borders */}
+                {/* Group Content Wrapped in Horizontal Scroll with 11-column matching headers */}
                 {!isCollapsed && (
                   <div className="w-full overflow-x-auto">
-                    {/* Header Columns inside Group */}
-                    <div className="grid grid-cols-[44px_90px_1.3fr_145px_1fr_1.2fr_100px_140px_70px] min-w-[1180px] border-b border-slate-200 bg-[#E2E8F0]/70 text-[10px] font-bold text-slate-600 uppercase tracking-wider items-stretch">
+                    {/* Header Columns inside Group matching renderRow grid exactly */}
+                    <div className="grid grid-cols-[6px_40px_1.4fr_140px_130px_120px_1.2fr_135px_100px_90px_65px] min-w-[1240px] border-b border-slate-200 bg-[#E2E8F0]/70 text-[10px] font-bold text-slate-600 uppercase tracking-wider items-stretch">
+                      <div className="w-full h-full" />
                       <div className="px-2 py-2.5 border-r border-slate-200/80 flex items-center justify-center">
                         <input 
                           type="checkbox" 
@@ -759,20 +850,21 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
                             }
                             setSelectedLeads(next);
                           }}
-                          className="w-3.5 h-3.5 rounded border-slate-300 text-slate-900 focus:ring-slate-900 cursor-pointer"
+                          className="w-3.5 h-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                         />
                       </div>
-                      <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center font-bold">Réf</div>
-                      <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center font-bold">Client</div>
-                      <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center font-black text-slate-900 gap-1.5">
-                        <User className="w-3.5 h-3.5 text-[#0052A3]" />
+                      <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center font-bold">Dossier / Client</div>
+                      <div className="px-2.5 py-2.5 border-r border-slate-200/80 flex items-center font-bold text-slate-900 gap-1">
+                        <User className="w-3.5 h-3.5 text-blue-600" />
                         <span>Responsable</span>
                       </div>
+                      <div className="px-2 py-2.5 border-r border-slate-200/80 flex items-center justify-center font-bold">Statut</div>
+                      <div className="px-2 py-2.5 border-r border-slate-200/80 flex items-center justify-center font-bold">Priorité</div>
                       <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center font-bold">Prestation</div>
-                      <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center font-bold">Trajet & Date</div>
-                      <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center font-bold">Priorité</div>
-                      <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center font-bold">Montant & Statut</div>
-                      <div className="px-3 py-2.5 text-right flex items-center justify-end font-bold">Actions</div>
+                      <div className="px-2.5 py-2.5 border-r border-slate-200/80 flex items-center font-bold">Contact Téléphone</div>
+                      <div className="px-2.5 py-2.5 border-r border-slate-200/80 flex items-center font-bold">Date Trajet</div>
+                      <div className="px-2.5 py-2.5 border-r border-slate-200/80 flex items-center justify-end font-bold">Montant</div>
+                      <div className="px-2 py-2.5 text-right flex items-center justify-end font-bold">Actions</div>
                     </div>
 
                     <div className="divide-y divide-slate-200/60">
@@ -781,13 +873,24 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
                           Aucun dossier dans ce groupe.
                         </div>
                       ) : (
-                        group.items.map((lead, idx) => renderRow(lead, idx))
+                        group.items.map((lead, idx) => renderRow(lead, idx, group.stripeColor))
                       )}
                     </div>
 
+                    {/* Monday.com Quick Add Row */}
+                    {onOpenNewLead && (
+                      <div 
+                        onClick={onOpenNewLead}
+                        className="px-4 py-2 bg-[#F8FAFC] hover:bg-blue-50/60 border-t border-slate-200/80 flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-blue-600 cursor-pointer transition-colors"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Ajouter un dossier dans ce groupe...</span>
+                      </div>
+                    )}
+
                     {/* Monday.com Group Summary Footer with Battery Bar */}
                     {group.items.length > 0 && (
-                      <div className="p-3 bg-[#EEF2F6]/90 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs min-w-[1180px]">
+                      <div className="p-3 bg-[#EEF2F6]/90 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs min-w-[1240px]">
                         <div className="w-full sm:w-1/2">
                           <BatteryProgress leads={group.items} size="sm" showLegend={false} />
                         </div>
@@ -807,27 +910,29 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
         /* VIEW: SIMPLE FLAT TABLE */
         <div className="w-full bg-[#F8FAFC] rounded-2xl border border-slate-200/90 shadow-xs flex flex-col overflow-hidden">
           <div className="w-full overflow-x-auto">
-            {/* Header Row */}
-            <div className="grid grid-cols-[44px_90px_1.3fr_145px_1fr_1.2fr_100px_140px_70px] min-w-[1180px] border-b border-slate-200 bg-[#EEF2F6] text-[10px] font-bold text-slate-600 uppercase tracking-wider items-stretch">
+            {/* Header Row matching renderRow grid exactly */}
+            <div className="grid grid-cols-[6px_40px_1.4fr_140px_130px_120px_1.2fr_135px_100px_90px_65px] min-w-[1240px] border-b border-slate-200 bg-[#EEF2F6] text-[10px] font-bold text-slate-600 uppercase tracking-wider items-stretch">
+              <div className="w-full h-full bg-slate-400" />
               <div className="px-2 py-3 border-r border-slate-200/80 flex items-center justify-center">
                 <input 
                   type="checkbox" 
                   checked={selectedLeads.size === filteredLeads.length && filteredLeads.length > 0}
                   onChange={selectAll}
-                  className="w-3.5 h-3.5 rounded border-slate-300 text-slate-900 focus:ring-slate-900 cursor-pointer"
+                  className="w-3.5 h-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                 />
               </div>
-              <div className="px-3 py-3 border-r border-slate-200/80 flex items-center font-bold">Réf</div>
-              <div className="px-3 py-3 border-r border-slate-200/80 flex items-center font-bold">Client</div>
-              <div className="px-3 py-3 border-r border-slate-200/80 flex items-center font-black text-slate-900 gap-1.5">
-                <User className="w-3.5 h-3.5 text-[#0052A3]" />
+              <div className="px-3 py-3 border-r border-slate-200/80 flex items-center font-bold">Dossier / Client</div>
+              <div className="px-2.5 py-3 border-r border-slate-200/80 flex items-center font-bold text-slate-900 gap-1">
+                <User className="w-3.5 h-3.5 text-blue-600" />
                 <span>Responsable</span>
               </div>
+              <div className="px-2 py-3 border-r border-slate-200/80 flex items-center justify-center font-bold">Statut</div>
+              <div className="px-2 py-3 border-r border-slate-200/80 flex items-center justify-center font-bold">Priorité</div>
               <div className="px-3 py-3 border-r border-slate-200/80 flex items-center font-bold">Prestation</div>
-              <div className="px-3 py-3 border-r border-slate-200/80 flex items-center font-bold">Trajet & Date</div>
-              <div className="px-3 py-3 border-r border-slate-200/80 flex items-center font-bold">Priorité</div>
-              <div className="px-3 py-3 border-r border-slate-200/80 flex items-center font-bold">Montant & Statut</div>
-              <div className="px-3 py-3 text-right flex items-center justify-end font-bold">Actions</div>
+              <div className="px-2.5 py-3 border-r border-slate-200/80 flex items-center font-bold">Contact Téléphone</div>
+              <div className="px-2.5 py-3 border-r border-slate-200/80 flex items-center font-bold">Date Trajet</div>
+              <div className="px-2.5 py-3 border-r border-slate-200/80 flex items-center justify-end font-bold">Montant</div>
+              <div className="px-2 py-3 text-right flex items-center justify-end font-bold">Actions</div>
             </div>
 
             {/* Table Body */}
@@ -837,9 +942,20 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
                   Aucun dossier correspondant aux critères.
                 </div>
               ) : (
-                filteredLeads.map((lead, idx) => renderRow(lead, idx))
+                filteredLeads.map((lead, idx) => renderRow(lead, idx, 'bg-blue-500'))
               )}
             </div>
+
+            {/* Flat Table Bottom Quick Add */}
+            {onOpenNewLead && (
+              <div 
+                onClick={onOpenNewLead}
+                className="px-4 py-2.5 bg-[#F8FAFC] hover:bg-blue-50/60 border-t border-slate-200/80 flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-blue-600 cursor-pointer transition-colors"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Ajouter un dossier...</span>
+              </div>
+            )}
           </div>
         </div>
       )}

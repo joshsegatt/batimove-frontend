@@ -20,6 +20,7 @@ export interface UserProfile {
   phone: string;
   avatarBg: string;
   initials: string;
+  avatarUrl?: string;
   pin?: string;
   pinHash?: string;
   permissions: UserPermissions;
@@ -33,7 +34,7 @@ const USERS_LIST_KEY = 'batimove_os_users_directory_v4';
 const LOCKOUT_KEY = 'batimove_os_lockout_until_v4';
 const FAILED_ATTEMPTS_KEY = 'batimove_os_failed_attempts_v4';
 
-// Authoritative Official Users (Batimove OS Direction)
+// Authoritative Official Users (Batimove OS Direction - Strictly 2 Directors)
 export const DEFAULT_USERS: UserProfile[] = [
   {
     id: 'user-anderson',
@@ -74,25 +75,6 @@ export const getSessionToken = (): string => {
 };
 
 export const fetchUsersListSafe = async (): Promise<UserProfile[]> => {
-  try {
-    const { data, error } = await supabase.rpc('get_team_users_safe');
-    if (!error && data && Array.isArray(data) && data.length > 0) {
-      const sanitized: UserProfile[] = data.map((u: any) => ({
-        id: u.id,
-        name: u.name,
-        role: u.role,
-        email: u.email,
-        phone: u.phone,
-        avatarBg: u.avatar_bg || u.avatarBg || 'bg-blue-600',
-        initials: u.initials || 'BM',
-        permissions: typeof u.permissions === 'string' ? JSON.parse(u.permissions) : u.permissions
-      }));
-      localStorage.setItem(USERS_LIST_KEY, JSON.stringify(sanitized));
-      return sanitized;
-    }
-  } catch (err) {
-    console.warn('Supabase get_team_users_safe notice:', err);
-  }
   return getUsersList();
 };
 
@@ -101,7 +83,15 @@ export const getUsersList = (): UserProfile[] => {
     const saved = localStorage.getItem(USERS_LIST_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        // Enforce strictly the 2 director accounts, preserving custom phone/email/avatarUrl
+        const matched = DEFAULT_USERS.map(defaultUser => {
+          const existing = parsed.find((p: any) => p.id === defaultUser.id);
+          return existing ? { ...defaultUser, ...existing } : defaultUser;
+        });
+        localStorage.setItem(USERS_LIST_KEY, JSON.stringify(matched));
+        return matched;
+      }
     }
   } catch {}
   localStorage.setItem(USERS_LIST_KEY, JSON.stringify(DEFAULT_USERS));
@@ -113,7 +103,11 @@ export const getCurrentUser = (): UserProfile => {
     const saved = localStorage.getItem(CURRENT_USER_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (parsed && parsed.id) return parsed;
+      if (parsed && (parsed.id === 'user-anderson' || parsed.id === 'user-josue')) {
+        const users = getUsersList();
+        const found = users.find(u => u.id === parsed.id);
+        return found || parsed;
+      }
     }
   } catch {}
   return DEFAULT_USERS[0];
@@ -148,6 +142,11 @@ export const updateUserProfile = (userId: string, updates: Partial<UserProfile>)
   } catch {
     return { success: false, message: "Erreur lors de la sauvegarde." };
   }
+};
+
+export const updateUserAvatar = (userId: string, avatarUrl?: string): { success: boolean; user?: UserProfile } => {
+  const res = updateUserProfile(userId, { avatarUrl: avatarUrl || undefined });
+  return { success: res.success, user: res.user };
 };
 
 export const checkLockout = (): { locked: boolean; remainingSeconds: number } => {

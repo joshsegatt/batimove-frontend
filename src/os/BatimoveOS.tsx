@@ -129,6 +129,7 @@ export function BatimoveOS({ onLogout }: BatimoveOSProps) {
                 leads={displayedLeads}
                 onReload={reloadData}
                 onSelectLead={setSelectedLead}
+                onOpenNewLead={() => setShowNewLeadModal(true)}
                 initialFilter={drillDownFilter}
               />
             </div>
@@ -142,6 +143,7 @@ export function BatimoveOS({ onLogout }: BatimoveOSProps) {
               leads={displayedLeads}
               onReload={reloadData}
               onSelectLead={setSelectedLead}
+              onOpenNewLead={() => setShowNewLeadModal(true)}
             />
           </div>
         )}
@@ -163,6 +165,7 @@ export function BatimoveOS({ onLogout }: BatimoveOSProps) {
               leads={operationLeads}
               onReload={reloadData}
               onSelectLead={setSelectedLead}
+              onOpenNewLead={() => setShowNewLeadModal(true)}
               initialFilter="confirme"
             />
           </div>
