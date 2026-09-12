@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Component } from 'react';
 import { Login } from './Login';
-import { Dashboard } from './Dashboard';
+import { BatimoveOS } from '../../src/os/BatimoveOS';
 import { isAdminAuthenticated, adminLogout } from '../../services/adminAuth';
 
 interface ErrorBoundaryProps {
@@ -93,7 +93,7 @@ export const Portal: React.FC = () => {
       {!authenticated ? (
         <Login onSuccess={handleLoginSuccess} />
       ) : (
-        <Dashboard onLogout={handleLogout} />
+        <BatimoveOS />
       )}
     </ErrorBoundary>
   );
