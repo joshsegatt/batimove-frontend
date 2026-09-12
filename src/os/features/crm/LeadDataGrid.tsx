@@ -323,7 +323,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
   const hasActivePopover = Boolean(activeStatusPopover || activePriorityPopover || activeOwnerPopover || showBulkStatusMenu || showBulkOwnerMenu);
 
   // Render a Single Lead Row
-  const renderRow = (lead: LeadItem) => {
+  const renderRow = (lead: LeadItem, index: number) => {
     const statusMeta = STATUS_COLORS[lead.status] || STATUS_COLORS.nouveau;
     const priority = getLeadPriority(lead);
     const priorityMeta = PRIORITY_META[priority];
@@ -335,12 +335,16 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
         key={lead.id}
         onClick={() => onSelectLead(lead)}
         className={cn(
-          "grid grid-cols-[36px_85px_1.3fr_75px_1fr_1.1fr_90px_125px_65px] gap-2.5 p-3 items-center group transition-colors duration-150 hover:bg-slate-50/90 cursor-pointer text-xs relative",
-          selectedLeads.has(lead.id) ? "bg-blue-50/40" : "bg-white"
+          "grid grid-cols-[44px_90px_1.3fr_145px_1fr_1.2fr_100px_140px_70px] min-w-[1180px] items-stretch group transition-colors duration-150 cursor-pointer text-xs relative border-b border-slate-200/70",
+          selectedLeads.has(lead.id)
+            ? "bg-[#E3EFFF]"
+            : index % 2 === 0
+            ? "bg-[#FAFBFD] hover:bg-[#EEF3F8]"
+            : "bg-[#F5F7FA] hover:bg-[#EEF3F8]"
         )}
       >
-        {/* Checkbox */}
-        <div className="flex items-center justify-center" onClick={e => e.stopPropagation()}>
+        {/* 1. Checkbox */}
+        <div className="px-2 py-3 border-r border-slate-200/80 flex items-center justify-center" onClick={e => e.stopPropagation()}>
           <input 
             type="checkbox" 
             checked={selectedLeads.has(lead.id)}
@@ -349,30 +353,33 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
           />
         </div>
 
-        {/* ID */}
-        <div className="font-mono font-semibold text-slate-500 text-[11px]">
+        {/* 2. ID / Réf */}
+        <div className="px-3 py-3 border-r border-slate-200/80 flex items-center font-mono font-bold text-slate-500 text-[11px]">
           {lead.id}
         </div>
 
-        {/* Client Name & Phone */}
-        <div className="flex flex-col truncate pr-2">
+        {/* 3. Client Name & Phone */}
+        <div className="px-3 py-2.5 border-r border-slate-200/80 flex flex-col justify-center truncate">
           <span className="font-bold text-slate-900 truncate group-hover:text-blue-600 transition-colors">
             {lead.client_name}
           </span>
           <span className="text-[11px] text-slate-400 font-mono truncate">{lead.client_phone}</span>
         </div>
 
-        {/* Responsable (Owner AM / JS) with Popover */}
-        <div className="relative flex items-center justify-start" onClick={e => e.stopPropagation()}>
+        {/* 4. Responsable (Prominent Capsule Badge with Avatar, Name & Dropdown) */}
+        <div className="px-2.5 py-2 border-r border-slate-200/80 flex items-center relative" onClick={e => e.stopPropagation()}>
           <button
             onClick={() => setActiveOwnerPopover(activeOwnerPopover === lead.id ? null : lead.id)}
-            className={cn(
-              "w-7 h-7 rounded-xl flex items-center justify-center text-white text-[10px] font-bold shadow-sm transition-transform active:scale-95 border border-black/10",
-              owner.bg
-            )}
-            title={`Responsable : ${owner.name} (${owner.role}) - Cliquer pour réattribuer`}
+            className="inline-flex items-center gap-2 px-2 py-1 rounded-xl bg-white hover:bg-slate-100 border border-slate-200/90 shadow-2xs transition-all text-left group/owner w-full"
+            title={`Responsable : ${owner.name} (${owner.role}) - Cliquer pour modifier`}
           >
-            {owner.initials}
+            <span className={cn("w-5 h-5 rounded-lg text-white text-[9px] font-black flex items-center justify-center shadow-2xs flex-shrink-0", owner.bg)}>
+              {owner.initials}
+            </span>
+            <span className="text-[11px] font-bold text-slate-800 truncate">
+              {owner.initials === 'AM' ? 'Anderson M.' : 'Josue S.'}
+            </span>
+            <ChevronDown className="w-3 h-3 text-slate-400 group-hover/owner:text-slate-700 flex-shrink-0 ml-auto" />
           </button>
 
           <AnimatePresence>
@@ -381,10 +388,10 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
                 initial={{ opacity: 0, y: 4, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 4, scale: 0.95 }}
-                className="absolute top-full left-0 mt-1.5 w-52 bg-white rounded-2xl shadow-[0_12px_36px_-4px_rgba(0,0,0,0.14)] border border-slate-200/90 p-1.5 z-50 ring-1 ring-black/5"
+                className="absolute top-full left-2 mt-1.5 w-52 bg-white rounded-2xl shadow-[0_12px_36px_-4px_rgba(0,0,0,0.18)] border border-slate-200/90 p-1.5 z-50 ring-1 ring-black/5"
               >
                 <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                  Attribuer à la direction
+                  Direction Responsable
                 </div>
                 {TEAM_DIRECTORS.map(dir => (
                   <button
@@ -396,7 +403,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
                     )}
                   >
                     <div className="flex items-center gap-2">
-                      <span className={cn("w-6 h-6 rounded-lg text-white text-[10px] font-bold flex items-center justify-center", dir.bg)}>
+                      <span className={cn("w-6 h-6 rounded-lg text-white text-[10px] font-bold flex items-center justify-center shadow-2xs", dir.bg)}>
                         {dir.initials}
                       </span>
                       <div className="flex flex-col truncate">
@@ -412,16 +419,16 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
           </AnimatePresence>
         </div>
 
-        {/* Service Type */}
-        <div className="text-slate-600 truncate font-medium text-[11px]">
+        {/* 5. Prestation */}
+        <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center text-slate-700 truncate font-medium text-[11px]">
           {lead.service_type || 'Déménagement'}
         </div>
 
-        {/* Route & Inline Date Editing */}
-        <div className="flex flex-col truncate" onClick={e => e.stopPropagation()}>
-          <div className="flex items-center gap-1 font-medium text-slate-800 truncate">
+        {/* 6. Route & Inline Date Editing */}
+        <div className="px-3 py-2 border-r border-slate-200/80 flex flex-col justify-center truncate" onClick={e => e.stopPropagation()}>
+          <div className="flex items-center gap-1 font-semibold text-slate-800 truncate">
             <span className="truncate">{lead.from_city || 'Genève'}</span>
-            <ArrowRight className="w-3 h-3 text-slate-300 flex-shrink-0" />
+            <ArrowRight className="w-3 h-3 text-slate-400 flex-shrink-0" />
             <span className="truncate">{lead.to_city || 'Suisse'}</span>
           </div>
 
@@ -445,7 +452,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
                 setEditingDateId(lead.id);
                 setEditingDateVal(lead.move_date || '');
               }}
-              className="text-[11px] text-slate-400 mt-0.5 hover:text-blue-600 hover:underline cursor-text transition-colors flex items-center gap-1"
+              className="text-[11px] text-slate-500 mt-0.5 hover:text-blue-600 hover:underline cursor-text transition-colors flex items-center gap-1"
               title="Cliquer pour modifier la date directement"
             >
               <Calendar className="w-2.5 h-2.5 opacity-60" />
@@ -454,12 +461,12 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
           )}
         </div>
 
-        {/* Priority Badge Popover */}
-        <div className="relative" onClick={e => e.stopPropagation()}>
+        {/* 7. Priority Badge Popover */}
+        <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center relative" onClick={e => e.stopPropagation()}>
           <button
             onClick={() => setActivePriorityPopover(activePriorityPopover === lead.id ? null : lead.id)}
             className={cn(
-              "flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold border transition-transform active:scale-95 shadow-sm",
+              "flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold border transition-transform active:scale-95 shadow-2xs",
               priorityMeta.bg,
               priorityMeta.text
             )}
@@ -474,7 +481,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
                 initial={{ opacity: 0, y: 4, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 4, scale: 0.95 }}
-                className="absolute top-full left-0 mt-1.5 w-36 bg-white rounded-2xl shadow-[0_12px_36px_-4px_rgba(0,0,0,0.14)] border border-slate-200/90 p-1.5 z-50 ring-1 ring-black/5"
+                className="absolute top-full left-2 mt-1.5 w-36 bg-white rounded-2xl shadow-[0_12px_36px_-4px_rgba(0,0,0,0.18)] border border-slate-200/90 p-1.5 z-50 ring-1 ring-black/5"
               >
                 {(['Urgente', 'Haute', 'Normale', 'Basse'] as PriorityType[]).map(pr => (
                   <button
@@ -497,8 +504,8 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
           </AnimatePresence>
         </div>
 
-        {/* Montant (Inline Edit) & Status Popover */}
-        <div className="flex flex-col gap-0.5" onClick={e => e.stopPropagation()}>
+        {/* 8. Montant (Inline Edit) & Status Popover */}
+        <div className="px-3 py-2 border-r border-slate-200/80 flex flex-col justify-center gap-0.5" onClick={e => e.stopPropagation()}>
           {editingAmountId === lead.id ? (
             <div className="flex items-center gap-1">
               <span className="text-[10px] text-slate-400 font-bold">CHF</span>
@@ -532,7 +539,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
             <button
               onClick={() => setActiveStatusPopover(activeStatusPopover === lead.id ? null : lead.id)}
               className={cn(
-                "flex items-center justify-between gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold border transition-transform active:scale-95 shadow-sm w-full",
+                "flex items-center justify-between gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold border transition-transform active:scale-95 shadow-2xs w-full",
                 statusMeta.bg,
                 statusMeta.text
               )}
@@ -547,7 +554,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
                   initial={{ opacity: 0, y: 4, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 4, scale: 0.95 }}
-                  className="absolute top-full left-0 mt-1.5 w-48 bg-white rounded-2xl shadow-[0_12px_36px_-4px_rgba(0,0,0,0.14)] border border-slate-200/90 p-1.5 z-50 ring-1 ring-black/5"
+                  className="absolute top-full left-0 mt-1.5 w-48 bg-white rounded-2xl shadow-[0_12px_36px_-4px_rgba(0,0,0,0.18)] border border-slate-200/90 p-1.5 z-50 ring-1 ring-black/5"
                 >
                   {ALL_STATUSES.map(st => (
                     <button
@@ -568,8 +575,8 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
           </div>
         </div>
 
-        {/* Hover Actions */}
-        <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={e => e.stopPropagation()}>
+        {/* 9. Hover Actions (Last cell, no right border) */}
+        <div className="px-3 py-2 flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={e => e.stopPropagation()}>
           {lead.client_phone && (
             <a
               href={`tel:${lead.client_phone}`}
@@ -609,7 +616,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
       )}
 
       {/* Top Filter & View Controls */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-[#F8FAFC] p-3 rounded-2xl border border-slate-200/90 shadow-xs">
         {/* Search */}
         <div className="relative w-full sm:w-80">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -618,7 +625,7 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
             placeholder="Rechercher client, réf, ville, responsable..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-1.5 text-xs rounded-xl border border-slate-200 bg-slate-50/70 focus:bg-white focus:border-slate-400 focus:outline-none transition-all placeholder:text-slate-400"
+            className="w-full pl-9 pr-4 py-1.5 text-xs rounded-xl border border-slate-200 bg-white focus:bg-white focus:border-slate-400 focus:outline-none transition-all placeholder:text-slate-400"
           />
         </div>
 
@@ -711,14 +718,14 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
               <div 
                 key={group.id} 
                 className={cn(
-                  "bg-white rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] border-l-4 transition-shadow hover:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] overflow-hidden", 
+                  "bg-[#F8FAFC] rounded-2xl border border-slate-200/90 shadow-xs border-l-4 transition-shadow hover:shadow-md overflow-hidden", 
                   group.color
                 )}
               >
                 {/* Collapsible Group Header */}
                 <div 
                   onClick={() => toggleGroup(group.id)}
-                  className="p-3.5 bg-slate-50/70 border-b border-slate-200/60 flex items-center justify-between cursor-pointer hover:bg-slate-100/70 transition-colors"
+                  className="p-3.5 bg-[#EEF2F6] border-b border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-200/60 transition-colors"
                 >
                   <div className="flex items-center gap-2.5">
                     {isCollapsed ? <ChevronRight className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
@@ -733,12 +740,12 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
                   </div>
                 </div>
 
-                {/* Group Content */}
+                {/* Group Content Wrapped in Horizontal Scroll with Vertical Borders */}
                 {!isCollapsed && (
-                  <div>
+                  <div className="w-full overflow-x-auto">
                     {/* Header Columns inside Group */}
-                    <div className="grid grid-cols-[36px_85px_1.3fr_75px_1fr_1.1fr_90px_125px_65px] gap-2.5 px-3 py-2 border-b border-slate-100 bg-slate-50/40 text-[10px] font-bold text-slate-400 uppercase tracking-wider items-center">
-                      <div className="flex items-center justify-center">
+                    <div className="grid grid-cols-[44px_90px_1.3fr_145px_1fr_1.2fr_100px_140px_70px] min-w-[1180px] border-b border-slate-200 bg-[#E2E8F0]/70 text-[10px] font-bold text-slate-600 uppercase tracking-wider items-stretch">
+                      <div className="px-2 py-2.5 border-r border-slate-200/80 flex items-center justify-center">
                         <input 
                           type="checkbox" 
                           checked={group.items.length > 0 && group.items.every(i => selectedLeads.has(i.id))}
@@ -755,29 +762,32 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
                           className="w-3.5 h-3.5 rounded border-slate-300 text-slate-900 focus:ring-slate-900 cursor-pointer"
                         />
                       </div>
-                      <div>Réf</div>
-                      <div>Client</div>
-                      <div>Responsable</div>
-                      <div>Prestation</div>
-                      <div>Trajet & Date</div>
-                      <div>Priorité</div>
-                      <div>Montant & Statut</div>
-                      <div className="text-right">Actions</div>
+                      <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center font-bold">Réf</div>
+                      <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center font-bold">Client</div>
+                      <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center font-black text-slate-900 gap-1.5">
+                        <User className="w-3.5 h-3.5 text-[#0052A3]" />
+                        <span>Responsable</span>
+                      </div>
+                      <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center font-bold">Prestation</div>
+                      <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center font-bold">Trajet & Date</div>
+                      <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center font-bold">Priorité</div>
+                      <div className="px-3 py-2.5 border-r border-slate-200/80 flex items-center font-bold">Montant & Statut</div>
+                      <div className="px-3 py-2.5 text-right flex items-center justify-end font-bold">Actions</div>
                     </div>
 
-                    <div className="divide-y divide-slate-100">
+                    <div className="divide-y divide-slate-200/60">
                       {group.items.length === 0 ? (
-                        <div className="p-6 text-center text-xs font-medium text-slate-400">
+                        <div className="p-8 text-center text-xs font-medium text-slate-400 bg-[#FAFBFD]">
                           Aucun dossier dans ce groupe.
                         </div>
                       ) : (
-                        group.items.map(lead => renderRow(lead))
+                        group.items.map((lead, idx) => renderRow(lead, idx))
                       )}
                     </div>
 
                     {/* Monday.com Group Summary Footer with Battery Bar */}
                     {group.items.length > 0 && (
-                      <div className="p-3 bg-slate-50/60 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                      <div className="p-3 bg-[#EEF2F6]/90 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs min-w-[1180px]">
                         <div className="w-full sm:w-1/2">
                           <BatteryProgress leads={group.items} size="sm" showLegend={false} />
                         </div>
@@ -795,36 +805,41 @@ export function LeadDataGrid({ leads, onReload, onSelectLead, initialFilter }: L
         </div>
       ) : (
         /* VIEW: SIMPLE FLAT TABLE */
-        <div className="w-full bg-white rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] flex flex-col overflow-hidden">
-          {/* Header Row */}
-          <div className="grid grid-cols-[36px_85px_1.3fr_75px_1fr_1.1fr_90px_125px_65px] gap-2.5 p-3.5 border-b border-slate-200/70 bg-slate-50/70 text-[11px] font-bold text-slate-400 uppercase tracking-wider items-center">
-            <div className="flex items-center justify-center">
-              <input 
-                type="checkbox" 
-                checked={selectedLeads.size === filteredLeads.length && filteredLeads.length > 0}
-                onChange={selectAll}
-                className="w-3.5 h-3.5 rounded border-slate-300 text-slate-900 focus:ring-slate-900 cursor-pointer"
-              />
-            </div>
-            <div>Réf</div>
-            <div>Client</div>
-            <div>Responsable</div>
-            <div>Prestation</div>
-            <div>Trajet & Date</div>
-            <div>Priorité</div>
-            <div>Montant & Statut</div>
-            <div className="text-right">Actions</div>
-          </div>
-
-          {/* Table Body */}
-          <div className="divide-y divide-slate-100">
-            {filteredLeads.length === 0 ? (
-              <div className="p-10 text-center text-sm font-medium text-slate-400">
-                Aucun dossier correspondant aux critères.
+        <div className="w-full bg-[#F8FAFC] rounded-2xl border border-slate-200/90 shadow-xs flex flex-col overflow-hidden">
+          <div className="w-full overflow-x-auto">
+            {/* Header Row */}
+            <div className="grid grid-cols-[44px_90px_1.3fr_145px_1fr_1.2fr_100px_140px_70px] min-w-[1180px] border-b border-slate-200 bg-[#EEF2F6] text-[10px] font-bold text-slate-600 uppercase tracking-wider items-stretch">
+              <div className="px-2 py-3 border-r border-slate-200/80 flex items-center justify-center">
+                <input 
+                  type="checkbox" 
+                  checked={selectedLeads.size === filteredLeads.length && filteredLeads.length > 0}
+                  onChange={selectAll}
+                  className="w-3.5 h-3.5 rounded border-slate-300 text-slate-900 focus:ring-slate-900 cursor-pointer"
+                />
               </div>
-            ) : (
-              filteredLeads.map(lead => renderRow(lead))
-            )}
+              <div className="px-3 py-3 border-r border-slate-200/80 flex items-center font-bold">Réf</div>
+              <div className="px-3 py-3 border-r border-slate-200/80 flex items-center font-bold">Client</div>
+              <div className="px-3 py-3 border-r border-slate-200/80 flex items-center font-black text-slate-900 gap-1.5">
+                <User className="w-3.5 h-3.5 text-[#0052A3]" />
+                <span>Responsable</span>
+              </div>
+              <div className="px-3 py-3 border-r border-slate-200/80 flex items-center font-bold">Prestation</div>
+              <div className="px-3 py-3 border-r border-slate-200/80 flex items-center font-bold">Trajet & Date</div>
+              <div className="px-3 py-3 border-r border-slate-200/80 flex items-center font-bold">Priorité</div>
+              <div className="px-3 py-3 border-r border-slate-200/80 flex items-center font-bold">Montant & Statut</div>
+              <div className="px-3 py-3 text-right flex items-center justify-end font-bold">Actions</div>
+            </div>
+
+            {/* Table Body */}
+            <div className="divide-y divide-slate-200/60">
+              {filteredLeads.length === 0 ? (
+                <div className="p-10 text-center text-sm font-medium text-slate-400 bg-[#FAFBFD]">
+                  Aucun dossier correspondant aux critères.
+                </div>
+              ) : (
+                filteredLeads.map((lead, idx) => renderRow(lead, idx))
+              )}
+            </div>
           </div>
         </div>
       )}
