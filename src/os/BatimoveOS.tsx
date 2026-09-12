@@ -14,6 +14,7 @@ import { CommandPalette } from "./core/components/CommandPalette";
 import { NotificationPopover } from "./core/components/NotificationPopover";
 import { LeadItem } from "../../services/supabaseClient";
 import { getCurrentUser, UserProfile } from "../../services/adminAuth";
+import { ToastProvider } from "./core/components/ToastContext";
 import { ShieldAlert, User, Users } from "lucide-react";
 
 interface BatimoveOSProps {
@@ -65,8 +66,9 @@ export function BatimoveOS({ onLogout }: BatimoveOSProps) {
   const unreadCount = leads.filter(l => l.status === 'nouveau').length;
 
   return (
-    <OsLayout 
-      activeView={activeView}
+    <ToastProvider>
+      <OsLayout 
+        activeView={activeView}
       onViewChange={(v) => {
         setActiveView(v);
         setDrillDownFilter(null);
@@ -261,5 +263,6 @@ export function BatimoveOS({ onLogout }: BatimoveOSProps) {
         onOpenAccount={() => setShowAccountDrawer(true)}
       />
     </OsLayout>
+    </ToastProvider>
   );
 }

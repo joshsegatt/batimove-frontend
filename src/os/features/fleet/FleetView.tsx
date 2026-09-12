@@ -10,6 +10,7 @@ import {
   saveFleetVehicle,
   deleteFleetVehicle 
 } from '../../../../services/supabaseClient';
+import { useToast } from '../../core/components/ToastContext';
 import { cn } from '../../core/utils/cn';
 
 interface FleetViewProps {
@@ -53,6 +54,8 @@ export function FleetView({ vehicles, onReload }: FleetViewProps) {
     });
   }, [vehicles, searchQuery, filterStatus]);
 
+  const { toast, confirm } = useToast();
+
   const handleOpenAdd = () => {
     setEditingVehicle(null);
     setFormData({
@@ -61,7 +64,7 @@ export function FleetView({ vehicles, onReload }: FleetViewProps) {
       capacity: '20 m³',
       status: 'Disponible',
       city: 'Genève',
-      team: 'Équipe Alpha'
+      team: 'Équipe 1 (Direction AM)'
     });
     setShowModal(true);
   };
@@ -74,7 +77,7 @@ export function FleetView({ vehicles, onReload }: FleetViewProps) {
       capacity: v.capacity,
       status: v.status,
       city: v.city,
-      team: v.team || 'Équipe Alpha'
+      team: v.team || 'Équipe 1 (Direction AM)'
     });
     setShowModal(true);
   };
@@ -87,19 +90,28 @@ export function FleetView({ vehicles, onReload }: FleetViewProps) {
 
     try {
       await updateFleetVehicleStatus(v.id, nextStatus);
+      toast.success("Statut véhicule", `${v.name} est passé à : ${nextStatus}`);
       onReload();
     } catch (err) {
-      alert('Erreur changement statut');
+      toast.error("Erreur", "Impossible de modifier le statut du véhicule");
     }
   };
 
   const handleDelete = async (v: FleetVehicle) => {
-    if (window.confirm(`Confirmer la suppression définitive du véhicule ${v.name} (${v.id}) ?`)) {
+    const ok = await confirm({
+      title: `Supprimer ${v.name} ?`,
+      message: `Voulez-vous retirer définitivement le véhicule ${v.id} (${v.driver}) de la flotte ?`,
+      confirmLabel: "Supprimer",
+      isDestructive: true
+    });
+
+    if (ok) {
       try {
         await deleteFleetVehicle(v.id);
+        toast.success("Véhicule supprimé", `${v.name} a été retiré de la flotte.`);
         onReload();
       } catch (err) {
-        alert('Erreur suppression véhicule');
+        toast.error("Erreur", "Échec de suppression du véhicule");
       }
     }
   };
@@ -107,7 +119,7 @@ export function FleetView({ vehicles, onReload }: FleetViewProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.driver) {
-      alert('Veuillez remplir le nom du véhicule et le chauffeur.');
+      toast.error('Champs manquants', 'Veuillez renseigner le nom du véhicule et le chauffeur.');
       return;
     }
 
@@ -118,9 +130,10 @@ export function FleetView({ vehicles, onReload }: FleetViewProps) {
       };
       await saveFleetVehicle(vehicleToSave);
       setShowModal(false);
+      toast.success("Flotte actualisée", `${formData.name} a été enregistré.`);
       onReload();
     } catch (err) {
-      alert('Erreur enregistrement véhicule');
+      toast.error("Erreur", "Échec d'enregistrement du véhicule");
     }
   };
 

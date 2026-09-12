@@ -13,6 +13,7 @@ import {
   updateMasterPin 
 } from '../../../../services/adminAuth';
 import { BATIMOVE_COMPANY_CONFIG } from '../../../../components/InvoiceDocument';
+import { useToast } from '../../core/components/ToastContext';
 import { cn } from '../../core/utils/cn';
 
 interface SettingsViewProps {
@@ -42,14 +43,16 @@ export function SettingsView({
   const [confirmPin, setConfirmPin] = useState('');
   const [pinMessage, setPinMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
+  const { toast } = useToast();
+
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
     const res = updateUserProfile(currentUser.id, { name, email, phone });
     if (res.success && res.user) {
       onUserChange(res.user);
-      alert('Coordonnées du profil enregistrées avec succès.');
+      toast.success("Profil enregistré", "Coordonnées de l'entreprise et profil actualisés.");
     } else {
-      alert(res.message);
+      toast.error("Erreur", res.message || "Échec de sauvegarde.");
     }
   };
 
@@ -77,13 +80,26 @@ export function SettingsView({
   };
 
   const exportBackupJson = () => {
+    const leadsRaw = localStorage.getItem('batimove_os_leads_v2') || localStorage.getItem('batimove_os_leads_v1') || '[]';
+    const fleetRaw = localStorage.getItem('batimove_os_fleet_v2') || localStorage.getItem('batimove_os_fleet_v1') || '[]';
+    const finRaw = localStorage.getItem('batimove_os_financial_v2') || localStorage.getItem('batimove_os_financial_v1') || '[]';
+
+    let leads = [];
+    let fleet = [];
+    let financial = [];
+    try { leads = JSON.parse(leadsRaw); } catch {}
+    try { fleet = JSON.parse(fleetRaw); } catch {}
+    try { financial = JSON.parse(finRaw); } catch {}
+
     const backupData = {
+      version: '4.0.0-enterprise',
       exported_at: new Date().toISOString(),
       user: currentUser,
+      team: allUsers,
       company: BATIMOVE_COMPANY_CONFIG,
-      leads: localStorage.getItem('batimove_os_leads_v1') || '[]',
-      fleet: localStorage.getItem('batimove_os_fleet_v1') || '[]',
-      financial: localStorage.getItem('batimove_os_financial_v1') || '[]'
+      leads,
+      fleet,
+      financial
     };
     const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -92,6 +108,7 @@ export function SettingsView({
     a.download = `BATIMOVE_OS_Backup_${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
+    toast.success("Sauvegarde exportée", "Fichier JSON complet téléchargé avec succès.");
   };
 
   return (

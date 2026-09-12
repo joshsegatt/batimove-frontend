@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Plus, Loader2, User, Phone, Mail, MapPin, Calendar, DollarSign } from 'lucide-react';
 import { saveLead, LeadItem } from '../../../../services/supabaseClient';
+import { useToast } from '../../core/components/ToastContext';
 
 interface NewLeadModalProps {
   isOpen: boolean;
@@ -12,6 +13,7 @@ interface NewLeadModalProps {
 export function NewLeadModal({ isOpen, onClose, onCreated }: NewLeadModalProps) {
   if (!isOpen) return null;
 
+  const { toast } = useToast();
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
     client_name: '',
@@ -22,6 +24,8 @@ export function NewLeadModal({ isOpen, onClose, onCreated }: NewLeadModalProps) 
     to_city: '',
     move_date: '',
     amount_chf: 1500,
+    owner_id: 'user-anderson' as 'user-anderson' | 'user-josue',
+    owner_name: 'Anderson Martins',
     status: 'nouveau' as const,
     details: '',
     notes: ''
@@ -30,7 +34,7 @@ export function NewLeadModal({ isOpen, onClose, onCreated }: NewLeadModalProps) 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.client_name || !formData.client_phone) {
-      alert('Veuillez renseigner au moins le nom et le téléphone du client.');
+      toast.error('Champs obligatoires', 'Veuillez renseigner au moins le nom et le téléphone du client.');
       return;
     }
 
@@ -41,10 +45,11 @@ export function NewLeadModal({ isOpen, onClose, onCreated }: NewLeadModalProps) 
         estimated_amount_chf: formData.amount_chf,
         created_at: new Date().toISOString()
       });
+      toast.success('Dossier créé', `Le dossier de ${formData.client_name} a été ajouté au pipeline.`);
       onCreated();
       onClose();
     } catch (err: any) {
-      alert('Erreur création: ' + (err?.message || 'Inconnue'));
+      toast.error('Erreur création', err?.message || 'Impossible d\'enregistrer le prospect');
     } finally {
       setSaving(false);
     }
@@ -128,6 +133,22 @@ export function NewLeadModal({ isOpen, onClose, onCreated }: NewLeadModalProps) 
                 onChange={e => setFormData({ ...formData, amount_chf: parseFloat(e.target.value) || 0 })}
                 className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm font-semibold tabular-nums focus:border-gray-900 focus:outline-none"
               />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Responsable Direction</label>
+              <select 
+                value={formData.owner_id}
+                onChange={e => {
+                  const id = e.target.value as 'user-anderson' | 'user-josue';
+                  const name = id === 'user-josue' ? 'Josue Segat' : 'Anderson Martins';
+                  setFormData({ ...formData, owner_id: id, owner_name: name });
+                }}
+                className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:border-gray-900 focus:outline-none bg-white font-medium"
+              >
+                <option value="user-anderson">Anderson Martins (Directeur Général)</option>
+                <option value="user-josue">Josue Segat (Directeur Associé)</option>
+              </select>
             </div>
 
             <div>

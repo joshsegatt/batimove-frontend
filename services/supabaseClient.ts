@@ -20,6 +20,8 @@ export interface LeadItem {
   estimated_amount_chf: number;
   status: 'nouveau' | 'visite' | 'en_cours' | 'confirme' | 'facture' | 'annule' | 'termine';
   notes?: string;
+  owner_id?: 'user-anderson' | 'user-josue';
+  owner_name?: string;
   version?: number;
   updated_at?: string;
   idempotency_key?: string;
@@ -178,7 +180,9 @@ const LOCAL_STORAGE_LEADS = 'batimove_os_leads_v2';
 const LOCAL_STORAGE_FINANCIAL = 'batimove_os_financial_v2';
 
 const getSessionAuthToken = (): string => {
-  return sessionStorage.getItem('batimove_os_session_auth_v3') || 
+  return sessionStorage.getItem('batimove_os_session_auth_v4') || 
+         localStorage.getItem('batimove_os_remembered_auth_v4') ||
+         sessionStorage.getItem('batimove_os_session_auth_v3') || 
          localStorage.getItem('batimove_os_remembered_auth_v3') || '';
 };
 
@@ -207,6 +211,8 @@ export const fetchLeads = async (): Promise<LeadItem[]> => {
             estimated_amount_chf: amt,
             status: st || 'nouveau',
             notes: item.notes || '',
+            owner_id: item.owner_id || (item.id && (item.id.endsWith('1') || item.id.endsWith('3')) ? 'user-josue' : 'user-anderson'),
+            owner_name: item.owner_name || ((item.owner_id === 'user-josue' || (item.id && (item.id.endsWith('1') || item.id.endsWith('3')))) ? 'Josue Segat' : 'Anderson Martins'),
             version: Number(item.version || 1),
             updated_at: item.updated_at || item.created_at || new Date().toISOString(),
             idempotency_key: item.idempotency_key || ''
@@ -243,6 +249,8 @@ export const fetchLeads = async (): Promise<LeadItem[]> => {
           estimated_amount_chf: amt,
           status: st || 'nouveau',
           notes: item.notes || '',
+          owner_id: item.owner_id || (item.id && (item.id.endsWith('1') || item.id.endsWith('3')) ? 'user-josue' : 'user-anderson'),
+          owner_name: item.owner_name || ((item.owner_id === 'user-josue' || (item.id && (item.id.endsWith('1') || item.id.endsWith('3')))) ? 'Josue Segat' : 'Anderson Martins'),
           version: Number(item.version || 1),
           updated_at: item.updated_at || item.created_at || new Date().toISOString(),
           idempotency_key: item.idempotency_key || ''
@@ -288,6 +296,8 @@ export const saveLead = async (lead: Partial<LeadItem>): Promise<LeadItem> => {
     estimated_amount_chf: amt,
     status: (lead.status as any) || 'en_cours',
     notes: lead.notes || '',
+    owner_id: lead.owner_id || 'user-anderson',
+    owner_name: lead.owner_name || 'Anderson Martins',
     version: 1,
     idempotency_key: idempotencyKey
   };
@@ -449,6 +459,53 @@ export const deleteLead = async (id: string): Promise<{ success: boolean; messag
   const updated = current.filter(item => item.id !== id);
   localStorage.setItem(LOCAL_STORAGE_LEADS, JSON.stringify(updated));
   return { success: true };
+};
+
+export const bulkUpdateLeadStatus = async (
+  ids: string[], 
+  status: LeadItem['status']
+): Promise<{ success: boolean; count: number }> => {
+  try {
+    for (const id of ids) {
+      await updateLeadStatus(id, status);
+    }
+    return { success: true, count: ids.length };
+  } catch (err) {
+    console.error("Bulk status update error:", err);
+    return { success: false, count: 0 };
+  }
+};
+
+export const bulkAssignLeadOwner = async (
+  ids: string[], 
+  ownerId: 'user-anderson' | 'user-josue',
+  ownerName: string
+): Promise<{ success: boolean; count: number }> => {
+  try {
+    for (const id of ids) {
+      await updateLeadDetails(id, { owner_id: ownerId, owner_name: ownerName });
+    }
+    return { success: true, count: ids.length };
+  } catch (err) {
+    console.error("Bulk assign owner error:", err);
+    return { success: false, count: 0 };
+  }
+};
+
+export const bulkDeleteLeads = async (
+  ids: string[]
+): Promise<{ success: boolean; count: number }> => {
+  try {
+    let deleted = 0;
+    for (const id of ids) {
+      const res = await deleteLead(id);
+      if (res.success) deleted++;
+    }
+    return { success: true, count: deleted };
+  } catch (err) {
+    console.error("Bulk delete leads error:", err);
+    return { success: false, count: 0 };
+  }
 };
 
 export const fetchFinancialRecords = async (): Promise<FinancialRecord[]> => {

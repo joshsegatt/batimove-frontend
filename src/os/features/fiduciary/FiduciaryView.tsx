@@ -11,6 +11,7 @@ import {
   saveFinancialRecord, 
   deleteFinancialRecord 
 } from '../../../../services/supabaseClient';
+import { useToast } from '../../core/components/ToastContext';
 import { cn } from '../../core/utils/cn';
 
 interface FiduciaryViewProps {
@@ -59,10 +60,12 @@ export function FiduciaryView({ leads, financialRecords, onSelectLead, onReload 
     }).format(amount);
   };
 
+  const { toast, confirm } = useToast();
+
   const handleAddRecord = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!description || !amountChf) {
-      alert('Veuillez remplir la description et le montant.');
+      toast.error('Champs manquants', 'Veuillez renseigner la description et le montant.');
       return;
     }
 
@@ -82,19 +85,28 @@ export function FiduciaryView({ leads, financialRecords, onSelectLead, onReload 
       setDescription('');
       setSupplier('');
       setInvoiceRef('');
+      toast.success('Écriture enregistrée', `${recordType === 'revenu' ? 'Revenu' : 'Dépense'} de CHF ${amountChf}.- ajouté.`);
       onReload();
     } catch (err) {
-      alert('Erreur ajout écriture financière');
+      toast.error('Erreur', 'Impossible d\'ajouter l\'écriture financière');
     }
   };
 
   const handleDeleteRecord = async (id: string) => {
-    if (window.confirm("Confirmer la suppression de cette écriture comptable ?")) {
+    const ok = await confirm({
+      title: "Supprimer l'écriture comptable ?",
+      message: "Cette écriture sera définitivement retirée du grand livre fiduciaire.",
+      confirmLabel: "Supprimer",
+      isDestructive: true
+    });
+
+    if (ok) {
       try {
         await deleteFinancialRecord(id);
+        toast.success("Écriture supprimée", "Le registre a été mis à jour.");
         onReload();
       } catch (err) {
-        alert('Erreur suppression');
+        toast.error("Erreur", "Échec de suppression de l'écriture");
       }
     }
   };

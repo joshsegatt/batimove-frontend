@@ -18,7 +18,7 @@ if (isLocalhost) {
   });
 } else {
   // Production PWA caching
-  const CACHE_NAME = 'batimove-os-v11';
+  const CACHE_NAME = 'batimove-os-v12';
   const PRECACHE_ASSETS = [
     '/',
     '/index.html',

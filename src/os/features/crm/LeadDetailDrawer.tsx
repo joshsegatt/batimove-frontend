@@ -10,6 +10,7 @@ import { InvoiceDocument } from '../../../../components/InvoiceDocument';
 import { exportInvoiceToPdf } from '../../../../utils/pdfExport';
 import { ActivityLog } from './ActivityLog';
 import { QuickMessageModal } from './QuickMessageModal';
+import { useToast } from '../../core/components/ToastContext';
 import { cn } from '../../core/utils/cn';
 
 interface LeadDetailDrawerProps {
@@ -27,6 +28,7 @@ export function LeadDetailDrawer({ lead, onClose, onUpdate }: LeadDetailDrawerPr
   const [exportingPdf, setExportingPdf] = useState(false);
   const [showQuickMsg, setShowQuickMsg] = useState(false);
   const [quickMsgChannel, setQuickMsgChannel] = useState<'whatsapp' | 'email'>('whatsapp');
+  const { toast, confirm } = useToast();
   const invoiceRef = useRef<HTMLDivElement>(null);
 
   const cleanPhone = (lead.client_phone || '').replace(/[^0-9]/g, '');
@@ -40,22 +42,34 @@ export function LeadDetailDrawer({ lead, onClose, onUpdate }: LeadDetailDrawerPr
       setSaving(true);
       await updateLeadDetails(lead.id, formData);
       onUpdate();
-      alert('Dossier mis à jour avec succès');
+      toast.success('Dossier enregistré', 'Modifications sauvegardées avec succès');
     } catch (err: any) {
-      alert('Erreur: ' + (err?.message || 'Échec de sauvegarde'));
+      toast.error('Erreur', err?.message || 'Échec de sauvegarde');
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async () => {
-    if (window.confirm(`Confirmer la suppression définitive du dossier ${lead.id} (${lead.client_name}) ?`)) {
+    const ok = await confirm({
+      title: `Supprimer le dossier ${lead.id} ?`,
+      message: `Voulez-vous supprimer définitivement le dossier de ${lead.client_name} ? Cette action est irréversible.`,
+      confirmLabel: "Supprimer définitivement",
+      isDestructive: true
+    });
+
+    if (ok) {
       try {
-        await deleteLead(lead.id);
-        onUpdate();
-        onClose();
+        const res = await deleteLead(lead.id);
+        if (res.success) {
+          toast.success('Dossier supprimé', `Le dossier ${lead.id} a été retiré.`);
+          onUpdate();
+          onClose();
+        } else {
+          toast.error('Erreur suppression', res.message || 'Action non autorisée.');
+        }
       } catch (err) {
-        alert('Erreur lors de la suppression');
+        toast.error('Erreur', 'Échec lors de la suppression');
       }
     }
   };
@@ -70,10 +84,12 @@ export function LeadDetailDrawer({ lead, onClose, onUpdate }: LeadDetailDrawerPr
         lead.client_name
       );
       if (!res.success) {
-        alert('Erreur génération PDF: ' + (res.error || 'Inconnue'));
+        toast.error('Erreur génération PDF', res.error || 'Document inaccessible');
+      } else {
+        toast.success('Facture générée', 'Téléchargement du PDF avec bulletin QR BCGE');
       }
     } catch (err: any) {
-      alert('Erreur PDF: ' + err.message);
+      toast.error('Erreur PDF', err.message);
     } finally {
       setExportingPdf(false);
     }
@@ -247,6 +263,23 @@ export function LeadDetailDrawer({ lead, onClose, onUpdate }: LeadDetailDrawerPr
                     <option value="facture">Facturé</option>
                     <option value="termine">Terminé</option>
                     <option value="annule">Annulé</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Responsable Direction</label>
+                  <select 
+                    value={formData.owner_id || 'user-anderson'}
+                    onChange={(e) => {
+                      const id = e.target.value as 'user-anderson' | 'user-josue';
+                      const name = id === 'user-josue' ? 'Josue Segat' : 'Anderson Martins';
+                      handleChange('owner_id', id);
+                      handleChange('owner_name', name);
+                    }}
+                    className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:border-gray-900 focus:outline-none bg-white font-medium"
+                  >
+                    <option value="user-anderson">Anderson Martins (Directeur Général)</option>
+                    <option value="user-josue">Josue Segat (Directeur Associé)</option>
                   </select>
                 </div>
 

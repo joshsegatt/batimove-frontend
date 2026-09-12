@@ -13,6 +13,7 @@ import {
   updateMasterPin 
 } from '../../../../services/adminAuth';
 import { cn } from '../utils/cn';
+import { useToast } from './ToastContext';
 
 interface AccountDrawerProps {
   isOpen: boolean;
@@ -48,12 +49,15 @@ export function AccountDrawer({
   const [confirmPin, setConfirmPin] = useState('');
   const [pinMessage, setPinMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
+  const { toast } = useToast();
+
   const handleSelectUser = (user: UserProfile) => {
     setCurrentUser(user);
     onUserChange(user);
     setName(user.name);
     setEmail(user.email);
     setPhone(user.phone);
+    toast.success("Profil actif", `Session basculée sur ${user.name}`);
   };
 
   const handleSaveProfile = (e: React.FormEvent) => {
@@ -63,9 +67,9 @@ export function AccountDrawer({
     setSavingProfile(false);
     if (res.success && res.user) {
       onUserChange(res.user);
-      alert('Profil mis à jour avec succès');
+      toast.success("Profil enregistré", "Vos coordonnées ont été mises à jour.");
     } else {
-      alert(res.message);
+      toast.error("Erreur", res.message || "Échec de sauvegarde.");
     }
   };
 

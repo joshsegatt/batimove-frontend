@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, ArrowUpRight, Receipt, FileCheck, AlertCircle, Clock, Calendar } from 'lucide-react';
 import { LeadItem } from '../../../../services/supabaseClient';
+import { BatteryProgress } from '../../core/components/BatteryProgress';
 import { cn } from '../../core/utils/cn';
 
 interface FinanceCockpitProps {
@@ -144,6 +145,18 @@ export function FinanceCockpit({ leads, loading, activeFilter, onFilterChange }:
           </button>
         </div>
       )}
+
+      {/* Monday.com Work OS Signature: Pipeline Distribution Battery */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] space-y-2.5">
+        <div className="flex items-center justify-between text-xs">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="font-bold text-slate-800 uppercase tracking-wider text-[11px]">Distribution du Pipeline (Monday.com Battery)</span>
+          </div>
+          <span className="text-slate-500 font-mono text-[11px] font-semibold">{periodLeads.length} dossiers au total</span>
+        </div>
+        <BatteryProgress leads={periodLeads} size="md" showLegend={true} />
+      </div>
 
       {/* Main Bento Cards Grid with Luxury Micro-Shadows */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
