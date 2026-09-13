@@ -1,78 +1,41 @@
-# Batimove SaaS - Frontend
+# Batimove — frontend
 
-Frontend React/Vite para a plataforma Batimove.
+Client and ops UI for [batimove.ch](https://www.batimove.ch), a Swiss moving platform.
 
-## 🚀 Deploy Rápido
+React + Vite app for quotes, contact, and business-lead capture. Talks to a separate API (local proxy on `:8000` in development).
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone)
+## Scope
 
-## 🛠️ Desenvolvimento Local
+- Multi-step moving quote
+- Contact and B2B lead forms
+- Dark / light themes
+- Production site: [batimove.ch](https://www.batimove.ch)
+
+## Stack
+
+React 19 · Vite 6 · TypeScript · Tailwind · Framer Motion · React Router 7
+
+## Local
 
 ```bash
-# Instalar dependências
 npm install
-
-# Iniciar dev server
 npm run dev
-
-# Build para produção
-npm run build
 ```
 
-## 🔗 Backend API
+API target:
 
-O frontend se conecta ao backend em:
-- **Local**: `http://localhost:8000/api` (via proxy Vite)
-- **Produção**: Configure em `services/api.ts`
-
-## 📦 Stack
-
-- React 19
-- Vite 6
-- TypeScript
-- Tailwind CSS (via classes inline)
-- Framer Motion
-- React Router v7
-- Lucide Icons
-
-## 🎨 Features
-
-- Multi-step quote form
-- Contact form
-- Business leads capture
-- Responsive design
-- Dark/Light themes
-- Smooth animations
-
-## ⚙️ Configuração
-
-### Atualizar URL do Backend
-
-Edite `services/api.ts`:
-
-```typescript
-const API_BASE = import.meta.env.PROD 
-  ? 'https://seu-backend.vercel.app/api'  // URL do backend deployado
-  : '/api';  // Proxy local
-```
-
-## 📝 Variáveis de Ambiente
-
-Crie `.env.local`:
+- Dev — Vite proxy → `http://localhost:8000/api`
+- Prod — set `VITE_API_URL` or the base URL in `services/api.ts`
 
 ```bash
-VITE_API_URL=https://seu-backend.vercel.app/api
+# .env.local
+VITE_API_URL=https://your-api.example/api
 ```
 
-## 🚢 Deploy na Vercel
+```bash
+npm run build    # output: dist/
+```
 
-1. Push para GitHub
-2. Conecte na Vercel
-3. Configure build:
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `dist`
-4. Deploy!
+## License
 
----
-
-**Desenvolvido para Batimove** 🚚
+Built for Batimove. Product source — not a template to republish.
